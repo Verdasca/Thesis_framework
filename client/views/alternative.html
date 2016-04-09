@@ -13,7 +13,7 @@
             <input type="button" value="Update" ng-click="updateAlternative()" class="btn btn-info"/>
             <br />
             <br />
-            <table id="alternativeTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+            <table border="1" bordercolor="#033773" class="table table-bordered horizontal">
                 <tr>
                     <th id="altHeader">Name</th>
                     <th id="altHeader">Description</th>
@@ -23,8 +23,8 @@
                     <td id="altBody">{{ alternative.name }}</td>
                     <td id="altBody">{{ alternative.description }}</td>
                     <td>
-                        <input id="altButtons" type="button" value="Edit" ng-click="editAlternative(alternative)" class="btn btn-warning"/>
-                        <input id="altButtons" type="button" value="Delete" ng-click="deleteAlternative(alternative)" class="btn btn-danger"/>  
+                        <input type="button" value="Edit" ng-click="editAlternative(alternative)" class="btn btn-warning"/>
+                        <input type="button" value="Delete" ng-click="deleteAlternative(alternative)" class="btn btn-danger"/>  
                 </tr>
             </table>
         </div>

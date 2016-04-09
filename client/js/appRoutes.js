@@ -11,7 +11,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             // route for the workspace page
             .when('/criterion', {
                 templateUrl : 'views/criterion.html',
-                controller  : 'criterionController'
+                controller  : 'criterionsController'
             })
             
             // route for the workspace page

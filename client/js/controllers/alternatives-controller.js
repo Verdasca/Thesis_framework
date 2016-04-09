@@ -8,13 +8,12 @@ var refresh = function(){
     });  
 }
 
- $http.get('/api/alternatives')
-        .success(function(data) {
-            $scope.alternatives = data;
-        })
-        .error(function(data) {
-            console.log('Error: ' + data);
-        });
+$http.get('/api/alternatives').success(function(data) {
+  $scope.alternatives = data;
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+});
 
 
   // $scope.createAlternative = function () {
@@ -44,14 +43,15 @@ $scope.createAlternative = function () {
 $scope.deleteAlternative = function(alternative) {
   var i = alternative._id;
   $http.delete('/api/alternative/' + i)
-    .success(function(data) {
+    .success(function() {
+      console.log("success");
       var idx = $scope.alternatives.indexOf(alternative);
       if (idx >= 0) {
         $scope.alternatives.splice(idx, 1);
       }
     })
-    .error(function(data) {
-      //console.log('Error: ' + data);
+    .error(function() {
+      //console.log('Error: ' + i);
       var idx = $scope.alternatives.indexOf(alternative);
       if (idx >= 0) {
         $scope.alternatives.splice(idx, 1);

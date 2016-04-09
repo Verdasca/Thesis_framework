@@ -2,8 +2,59 @@
 
 <div id="content" class="jumbotron text-center">
     <h2>Criterion Set</h2>
-    
-    <table id="criterionTable" style="width:auto;" class="table table-bordered">
+    <br>
+    <form id="criterionTable" runat="server">
+        <div>
+            <label id="criLabel">Name</label>
+            <input id="criInput" type="text" placeholder="Criterion name" ng-model="criterion.name"/>
+            <label id="criLabel">Description</label>
+            <input id="criInput" type="text" placeholder="Criterion description" ng-model="criterion.description"/>
+            <input type="button" value="Save" ng-click="createCriterion()" class="btn btn-primary"/>
+            <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/>
+            <br />
+            <br />
+            <label id="criLabel">Direction</label>
+            <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="criterion.direction">
+                <option value="maximize">Maximize</option>
+                <option value="minimize">Minimize</option>
+            </select>
+            <label id="criLabel">Measure</label>
+            <select id="criInput3" type="text" placeholder="Criterion measure" ng-model="criterion.measure">
+                <option value="ordinal">Ordinal</option>
+                <option value="cardinal">Cardinal</option>
+            </select>
+            <label id="criLabel">Weight</label>
+            <input id="criInput2" type="text" placeholder="Criterion weight" ng-model="criterion.weight"/>
+            <label id="criLabel">Rank</label>
+            <input id="criInput2" type="text" placeholder="Criterion rank" ng-model="criterion.rank"/>
+            <br />
+            <br />
+            <table border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <tr>
+                    <th id="criHeader">Name</th>
+                    <th id="criHeader">Description</th>
+                    <th id="criHeader">Direction</th>
+                    <th id="criHeader">Measure</th>
+                    <th id="criHeader">Weight</th>
+                    <th id="criHeader">Rank</th>
+                    <th id="altHeader2" style="width:150px">Action</th>
+                </tr>
+                <tr ng-repeat="criterion in criterions">
+                    <td id="criBody">{{ criterion.name }}</td>
+                    <td id="criBody">{{ criterion.description }}</td>
+                    <td id="criBody">{{ criterion.direction }}</td>
+                    <td id="criBody">{{ criterion.measure }}</td>
+                    <td id="criBody">{{ criterion.weight }}</td>
+                    <td id="criBody">{{ criterion.rank }}</td>
+                    <td>
+                        <input type="button" value="Edit" ng-click="editCriterion(criterion)" class="btn btn-warning"/>
+                        <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/>  
+                </tr>
+            </table>
+        </div>
+    </form>   
+</div>    
+<!--     <table id="criterionTable" style="width:auto;" class="table table-bordered">
         <thead>
             <tr>
                 <th>Index</th>
@@ -40,5 +91,5 @@
                 <td>{{criterion.rank}}</td>
             </tr>
         </tbody>
-   </table>         
-</div>
+   </table>  -->        
+

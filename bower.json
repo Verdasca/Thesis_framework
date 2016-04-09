@@ -1,11 +1,14 @@
 {
-    "name": "mcda-framework",
-    "version": "1.0.0",
-    "dependencies": {
-        "bootstrap": "latest",
-        "font-awesome": "latest",
-        "animate.css": "latest",
-        "angular": "latest",
-        "angular-route": "latest"   
-    }
+  "name": "mcda-framework",
+  "version": "1.0.0",
+  "dependencies": {
+    "bootstrap": "latest",
+    "font-awesome": "latest",
+    "animate.css": "latest",
+    "angular": "latest",
+    "angular-route": "latest",
+    "mobile-angular-ui": "^1.2.1",
+    "angular-ui": "^0.4.0",
+    "jquery-ui": "^1.11.4"
+  }
 }

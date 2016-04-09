@@ -1,0 +1,44 @@
+<!-- criterion set page -->
+
+<div id="content" class="jumbotron text-center">
+    <h2>Criterion Set</h2>
+    
+    <table id="criterionTable" style="width:auto;" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody ui:sortable ng:model="list">
+            <tr ng:repeat="item in list" class="item" style="cursor: move;">
+                <td>{{$index}}</td>
+                <td>{{item}}</td>
+            </tr>
+        </tbody>{{list}}
+        <hr>
+   </table>
+   
+   <table>
+       <thead>
+            <tr>
+                <th>Index</th>
+                <th>Count</th>
+                <th>Count</th>
+                <th>Count</th>
+                <th>Count</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="criterion in criterions">
+            <tr>
+                <td>{{criterion.name}}</td>
+                <td>{{criterion.description}}</td>
+                <td>{{criterion.direction}}</td>
+                <td>{{criterion.measure}}</td>
+                <td>{{criterion.weight}}</td>
+                <td>{{criterion.rank}}</td>
+            </tr>
+        </tbody>
+   </table>         
+</div>

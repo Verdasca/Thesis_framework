@@ -1,0 +1,150 @@
+/* Workspace style css */
+
+#main{ 
+	padding-top: 60px; 
+}
+
+#homeNav{
+    margin-left: 25%;
+}
+
+#navigationBar{
+    background-color: #033773;  
+    border: none;
+    border-radius: 0px;  
+    position: fixed;  
+    width: 100%;
+    padding: 1px;
+}
+
+#textNav{
+    color: #ffffff;
+    font-size: 16px;
+}
+
+#textNav:hover{
+    color: #000000;
+    font-size: 16px;
+}
+
+#content{
+    text-align: center;
+    width: 85%;
+    float: right;
+    padding-top: 5px;
+    background-color: #ffffff;
+}
+
+/* sidebar nav vertical */ 
+@media (min-width: 768px) {
+  .sidebar-nav .navbar .navbar-collapse {
+    padding: 0;
+    max-height: none;
+  }
+  .sidebar-nav .navbar ul {
+    float: none;
+  }
+  .sidebar-nav .navbar ul:not {
+    display: block;
+  }
+  .sidebar-nav .navbar li {
+    float: none;
+    display: block;
+  }
+  .sidebar-nav .navbar li a {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+@media (min-width: 768px){
+    .col-sm-3 {
+        width: 20%;
+        padding-left: 0px;
+    }
+}
+
+#verticalNav{
+    background-color: #eee;
+    border-radius: 0px;
+    height: 100%;
+    position: fixed;
+    margin-top: 52px;
+    border: none;
+    font-size: 16px;
+}
+
+#sections:hover{
+    background-color: #033773;
+}
+
+#aSections{
+    color: #333333;
+}
+
+#aSections:hover{
+    color: #ffffff;
+}
+
+/* Criterion section */
+.item, .placeholder {
+    padding: 2px;
+    width: 50px;
+    height: 20px;
+    border: 1px solid #333;
+    background: #EEE;
+}
+.placeholder {
+    background: #AEF;
+}
+
+#criterionTable{
+    margin-left: 50px;
+}
+
+/* Alternative section */
+#alternativeTable{
+    margin: auto;
+    text-align: center;
+    width: 90%;
+}
+
+#alternativeTbl{
+    width: 100%;
+    padding-top: 5px;
+}
+
+#altLabel{
+    font-size: 18px;   
+}
+
+#altInput{
+    margin-right: 25px;
+    padding-right: 80px;
+    padding-left: 80px;
+    text-align: center;  
+}
+
+#altHeader{
+    text-align: left;  
+    font-size: 18px;  
+}
+
+#altHeader2{
+    text-align: center;   
+    font-size: 18px;   
+}
+
+#altBody{
+    text-align: left;  
+    font-size: 15px;  
+    padding-left: 10px;  
+    vertical-align: middle;
+}
+
+.table.table-bordered.horizontal,
+.table.table-bordered.horizontal td,
+.table.table-bordered.horizontal th{
+  border-left: 0px solid white !important;
+  border-right: 0px solid white !important;
+}

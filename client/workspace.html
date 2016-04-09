@@ -1,0 +1,70 @@
+<!-- workspace main page -->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+
+    <title>Workspace Page</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/workspace.css"> <!-- custom styles -->
+
+    <!-- JS -->
+    <script src="libs/jquery/dist/jquery.min.js"></script>
+    <script src="libs/jquery-ui/jquery-ui.min.js"></script>
+    <script src="libs/angular/angular.js"></script>
+    <script src="libs/angular-route/angular-route.js"></script>
+    <script src="libs/angular-route/angular-route.min.js"></script>
+    <script src="libs/angular-resource/angular-resource.js"></script>
+    <script src="libs/angular-ui/build/angular-ui.min.js"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap.min.js"></script>
+    
+    <!-- ANGULAR CUSTOM -->
+    <script src="js/controllers/mainCtrl.js"></script>
+    <script src="js/controllers/criterionCtrl.js"></script>
+    <script src="js/controllers/alternatives-controller.js"></script>
+    <script src="js/controllers/performanceCtrl.js"></script>
+    <script src="js/controllers/configurationsCtrl.js"></script>
+    <script src="js/appRoutes.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/sortable.js"></script>
+</head>
+<!-- sampleApp is in app.js, is to set up every controller together -->
+<body ng-app="sampleApp">
+<!-- HEADER AND NAVBAR -->
+    <header>
+        <nav id="navigationBar" class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a id="textNav" class="navbar-brand" style="font-size:18px">MCDA Framework</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+        </div>
+        </nav>
+    </header>
+        <div class="col-sm-3">
+            <div class="sidebar-nav">
+                <div id="verticalNav" class="navbar navbar-default" role="navigation">
+                    <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li id="sections"><a id="aSections" href="/#/criterion">Criterion Set</a></li>
+                        <li id="sections"><a id="aSections" href="/#/alternative">Alternative Set</a></li>
+                        <li id="sections"><a id="aSections" href="/#/performance">Performance Table</a></li>
+                        <li id="sections"><a id="aSections" href="/#/configurations">Decision Configurations</a></li>
+                    </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+    <!-- MAIN CONTENT AND INJECTED VIEWS -->
+    <div id="main">
+        <!-- angular templating - this is where content will be injected -->
+        <div ng-view></div>
+    </div>
+</body>
+</html>

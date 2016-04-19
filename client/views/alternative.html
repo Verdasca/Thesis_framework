@@ -24,9 +24,13 @@
                     <td id="altBody">{{ alternative.description }}</td>
                     <td>
                         <input type="button" value="Edit" ng-click="editAlternative(alternative)" class="btn btn-warning"/>
-                        <input type="button" value="Delete" ng-click="deleteAlternative(alternative)" class="btn btn-danger"/>  
+                        <input type="button" value="Delete" ng-click="deleteAlternative(alternative)" class="btn btn-danger"/> 
+                    </td>     
                 </tr>
             </table>
         </div>
     </form>
+    <!-- <button class="btn btn-default ng-isolate-scope" ng-csv="getAlternatives()" filename="alternatives">Export CSV</button> -->
+    <button export-alternatives-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>
+    <button export-alternatives-to-csv-without-description class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without description</button>
 </div>

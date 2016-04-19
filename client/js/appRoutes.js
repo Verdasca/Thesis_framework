@@ -23,7 +23,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             // route for the workspace page
             .when('/performance', {
                 templateUrl : 'views/performance.html',
-                controller  : 'performanceController'
+                controller  : 'performancesController'
             })
             
             // route for the workspace page

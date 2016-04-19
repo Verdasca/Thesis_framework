@@ -94,4 +94,13 @@ $scope.updateAlternative = function() {
   });
 }
 
+$scope.getAlternatives = function(){
+$http.get('/api/alternatives').success(function(data) {
+  $scope.alternatives = data;
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+});
+}
+
 }]);

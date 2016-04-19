@@ -8,6 +8,7 @@ var refresh = function(){
     });  
 }
 
+//Get the data from criterions in mongoDB
 $http.get('/api/criterions').success(function(data) {
   $scope.criterions = data;
   })

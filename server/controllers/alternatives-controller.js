@@ -16,14 +16,12 @@ module.exports.create = function (req, res) {
 
 //Get all alternatives
 module.exports.get = function (req, res) {
-
-    // use mongoose to get all todos in the database
+    // use mongoose to get all alternatives in the database
     Alternative.find(function(err, alternatives) {
-
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err)
-            res.send(err)
-
+        if (err){
+            res.send(err);    
+        }
         res.json(alternatives); // return all todos in JSON format
     });
 }
@@ -82,4 +80,4 @@ module.exports.delete = function(req, res){
             res.send(alternative);
 
         });
-    }
+}

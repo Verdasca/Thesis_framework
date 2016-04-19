@@ -37,7 +37,7 @@
                     <th id="criHeader">Measure</th>
                     <th id="criHeader">Weight</th>
                     <th id="criHeader">Rank</th>
-                    <th id="altHeader2" style="width:150px">Action</th>
+                    <th id="criHeader2" style="width:150px">Action</th>
                 </tr>
                 <tr ng-repeat="criterion in criterions">
                     <td id="criBody">{{ criterion.name }}</td>
@@ -48,11 +48,15 @@
                     <td id="criBody">{{ criterion.rank }}</td>
                     <td>
                         <input type="button" value="Edit" ng-click="editCriterion(criterion)" class="btn btn-warning"/>
-                        <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/>  
+                        <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
+                    </td>     
                 </tr>
             </table>
         </div>
-    </form>   
+    </form> 
+    <button export-criterion-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>  
+    <button export-criterion-to-csv-without-rank class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without rank</button> 
+    <button export-criterion-to-csv-without-weight class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without rank and weight</button> 
 </div>    
 <!--     <table id="criterionTable" style="width:auto;" class="table table-bordered">
         <thead>

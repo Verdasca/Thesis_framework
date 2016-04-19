@@ -8,6 +8,7 @@ var methodOverride = require('method-override');
 var mongoose       = require('mongoose');
 
 var alternativesController = require('./server/controllers/alternatives-controller');
+var criterionsController = require('./server/controllers/criterions-controller');
 
 // configuration ===========================================
     
@@ -36,12 +37,19 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 // set the static files location /client/img will be /img for users
 app.use(express.static(__dirname + '/client')); 
 
-//REST API
+//REST API ==================================================================
+//Alternative 
 app.get('/api/alternatives', alternativesController.get);
 app.get('/api/alternative/:id', alternativesController.findById);
 app.post('/api/alternatives', alternativesController.create);
 app.put('/api/alternative/:id', alternativesController.edit);
 app.delete('/api/alternative/:id', alternativesController.delete);
+//Criterion 
+app.get('/api/criterions', criterionsController.get);
+app.get('/api/criterion/:id', criterionsController.findById);
+app.post('/api/criterions', criterionsController.create);
+app.put('/api/criterion/:id', criterionsController.edit);
+app.delete('/api/criterion/:id', criterionsController.delete);
 
 // frontend routes =========================================================
 // route to handle all angular requests

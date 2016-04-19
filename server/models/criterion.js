@@ -1,14 +1,10 @@
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
 
-// create a schema
-var CriterionSchema = new Schema({
-  name: { type: String, required: true, unique: true },
-  description: String,
-  direction: String,
-  measure: String,
-  weight: Number,
-  rank: Number
+module.exports = mongoose.model('Criterion', {
+  name: { type: String, required: true, unique: true},
+  description: {type : String, default: ''},
+  direction: {type : String, default: ''},
+  measure: {type : String, default: ''},
+  weight: {type : Number, default: ''},
+  rank: {type : Number, default: ''}	
 });
-
-module.exports = mongoose.model('Criterion', CriterionSchema);

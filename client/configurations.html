@@ -1,0 +1,528 @@
+<!-- decision configurations page -->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+
+    <title>Configurations Page</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/workspace.css"> <!-- custom styles -->
+
+    <!-- JS -->
+    <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="libs/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="libs/angular/angular.js" type="text/javascript"></script>
+    <script src="libs/angular-route/angular-route.js" type="text/javascript"></script>
+    <script src="libs/angular-route/angular-route.min.js" type="text/javascript"></script>
+    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
+    <script src="libs/angular-ui/build/angular-ui.min.js" type="text/javascript"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
+    <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
+    <script src="libs/ng-csv/build/ng-csv.min.js" type="text/javascript"></script>
+    
+    <!-- ANGULAR CUSTOM -->
+    <script src="js/appRoutes.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+    <script src="js/amcharts_3/amcharts/amcharts.js" type="text/javascript"></script>
+    <script src="js/amcharts_3/amcharts/serial.js" type="text/javascript"></script>
+    <script src="js/amcharts_3/amcharts/plugins/export/export.js" type="text/javascript"></script>
+    <script src="js/controllers/criterions-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/alternatives-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/performances-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/configurations-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/mainCtrl.js" type="text/javascript"></script>
+    <script src="js/sortable.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //Execute refresh function after some time, so the drag/drop function work nicely (time is set in milliseconds)
+        setTimeout(addDragDrop, 100);
+        activeSection();
+        document.getElementById("electreTriCMethod").style.display = 'none';
+        document.getElementById("weightMethod").style.display = 'none';
+        document.getElementById("exportBtnAll").style.display = 'none';
+        document.getElementById("exportBtn").style.display = 'none';
+        document.getElementById("exportBtnWeight").style.display = 'none';
+        document.getElementById("exportBtn2").style.display = 'none';
+        document.getElementById("exportBtnWeight2").style.display = 'none';
+        document.getElementById("exportBtn3").style.display = 'none';
+        document.getElementById("exportBtnWeight3").style.display = 'none';
+        document.getElementById("error").style.display = 'none';
+        document.getElementById("auxTbl").style.display = 'none';
+        document.getElementById("auxTbl2").style.display = 'none';
+        document.getElementById("auxTbl3").style.display = 'none';
+        document.getElementById("auxTbl4").style.display = 'none';
+        document.getElementById("auxTbl5").style.display = 'none';
+        document.getElementById("auxTbl6").style.display = 'none';
+        document.getElementById("weightTbl").style.display = 'none';
+        document.getElementById("weightTbl2").style.display = 'none';
+        document.getElementById("weightTbl3").style.display = 'none';
+        document.getElementById("chartCriterion").style.display = 'none';
+        document.getElementById("chartCriterion2").style.display = 'none';
+        document.getElementById("chartCriterion3").style.display = 'none';
+        document.getElementById("chartRank").style.display = 'none';
+        document.getElementById("chartRank2").style.display = 'none';
+        document.getElementById("chartRank3").style.display = 'none';
+
+        //Actualize interval result when the minimal value of the interval is changed
+        $('#ratioZIntervalMin').bind('keypress keyup blur', function() {
+            $('#ratioZIntervalResult').val($(this).val());
+        });
+
+        $('input[type="radio"]').click(function(){
+        if($(this).attr("value")=="weightR"){
+            $(".box").not(".weight").hide();
+            $(".weight").show();
+        }
+        if($(this).attr("value")=="electreTriCR"){
+            $(".box").not(".electreTriC").hide();
+            $(".electreTriC").show();
+        }
+        });
+    });
+
+    //Functions to show/hide tutorials/steps explanations
+    $(function() {
+      var moveLeft = 20;
+      var moveDown = 10;
+
+      $('a#helpRank').hover(function(e) {
+        $('div#pop-up-help-rank').show();
+      }, function() {
+        $('div#pop-up-help-rank').hide();
+      });
+
+      $('a#helpRank').mousemove(function(e) {
+        $("div#pop-up-help-rank").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpWhiteCard').hover(function(e) {
+        $('div#pop-up-help-whiteCard').show();
+      }, function() {
+        $('div#pop-up-help-whiteCard').hide();
+      });
+
+      $('a#helpWhiteCard').mousemove(function(e) {
+        $("div#pop-up-help-whiteCard").css('top', e.pageY + 20).css('left', e.pageX - 670);
+      });
+
+      $('a#helpRatioZ').hover(function(e) {
+        $('div#pop-up-help-ratioZ').show();
+      }, function() {
+        $('div#pop-up-help-ratioZ').hide();
+      });
+
+      $('a#helpRatioZ').mousemove(function(e) {
+        $("div#pop-up-help-ratioZ").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpInterval').hover(function(e) {
+        $('div#pop-up-help-interval').show();
+      }, function() {
+        $('div#pop-up-help-interval').hide();
+      });
+
+      $('a#helpInterval').mousemove(function(e) {
+        $("div#pop-up-help-interval").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpValues').hover(function(e) {
+        $('div#pop-up-help-values').show();
+      }, function() {
+        $('div#pop-up-help-values').hide();
+      });
+
+      $('a#helpValues').mousemove(function(e) {
+        $("div#pop-up-help-values").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpDecimals').hover(function(e) {
+        $('div#pop-up-help-decimals').show();
+      }, function() {
+        $('div#pop-up-help-decimals').hide();
+      });
+
+      $('a#helpDecimals').mousemove(function(e) {
+        $("div#pop-up-help-decimals").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+    });  
+</script>
+<!-- sampleApp is in app.js, is to set up every controller together -->
+<body ng-app="configurations-controller" ng-controller="configurationsController">
+<!-- HEADER AND NAVBAR -->
+    <header>
+        <nav id="navigationBar" class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a id="textNav" class="navbar-brand" style="font-size:18px">MCDA Framework</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+        </div>
+        </nav>
+    </header>
+        <div class="col-sm-3">
+            <div class="sidebar-nav">
+                <div id="verticalNav" class="navbar navbar-default" role="navigation">
+                    <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                    <ul id="optionList" class="nav navbar-nav">
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/criterion'">Criterion Set</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/alternative'">Alternative Set</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/performance'">Performance Table</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/configurations.html'">Decision Configurations</a></li>
+                    </ul>
+                    </div><!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+    <!-- MAIN CONTENT AND INJECTED VIEWS -->
+    <div id="main">
+        <div id="content" class="jumbotron text-center">
+            <h2>Decision Configurations</h2>
+            <br />
+            <!-- Selection ratios for the available methods -->
+            <table id="methodsTable">
+                <tr>
+                    <td id="selectionTitle">
+                        <label id="selectLabel">Select method to configure and execute:</label>
+                    </td>
+                    <td>
+                        <form id='methods-form'>
+                            <input id="weightFunction" name='method' type='radio' value="weightR"><label for="weightFunction" id="ratioLabel" class="radio"> Determining weights of criteria</label> 
+                            <br/>
+                            <input id="electreTriCFunction" name='method' type='radio' value="electreTriCR"><label for="electreTriCFunction" id="ratioLabel" class="radio"> Electre Tri-C</label>  
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <!-- Electre Tri C method section -->
+            <div id="electreTriCMethod" class="electreTriC box">
+                <h3>Electre Tri-C</h3>
+                <br/>
+                <!-- TODO -->
+            </div>
+            <!-- Weight method section -->
+            <div id="weightMethod" class="weight box">
+                <h3>Determining weights of criteria</h3>
+                <br/>
+                <!-- Instructions section -->
+                <ul id="instructionsSection">
+                    <li id="stepOne"><b><a href="#" id="helpRank">Step 1)</a></b> Order the criteria from most important (top) to the least important (bottom).</li>
+                    <li><small id="note"><b>Note:</b> Criteria can have the same importance.</small></li>
+                </ul>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-rank">
+                  <h3 id="pop-up-header">Rank the criteria</h3>
+                  <p id="pop-up-content">
+                    Which criteria are more or less important for you? Order them by dragging them to the available gray boxes. 
+                  </p>  
+                  <p id="pop-up-content">  
+                    If some criteria have the same importance, both belong to the same gray box and the empty gray boxes should be the last boxes below (the ones closer to the "Least Importance" sign). 
+                  </p>
+                </div>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-whiteCard">
+                  <h3 id="pop-up-header">White Cards</h3>
+                  <p id="pop-up-content">
+                    The more white cards exist between two criteria, the greater the difference in importance between them.
+                    Between the two criteria insert the white card(s) on the gray box of the criterion with bigger importance.
+                  </p>  
+                  <p id="pop-up-content">
+                    If there is no assignment of white cards, this means that the difference between two criteria is considered as a unit.
+                    If a white card is assigned, the difference between two criteria can be considered as twice the unit, and so on.
+                  </p>
+                </div>
+                <table id="rankingTable">
+                    <col width="30%">
+                    <col width="70%">
+                    <tr>
+                        <td>
+                            <p id="importance">Most Important</p>
+                        </td>
+                        <td ROWSPAN=2>
+                            <!-- Upload all the criterion -->
+                            <ol ng-repeat="criterion in criterions" data-draggable="target">
+                                <li id="cardCriterion" data-draggable="item">{{criterion.name}}</li>
+                            </ol>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: bottom;">
+                            <p id="importance">Least Important</p>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <li id="steptwo"><b><a href="#" id="helpWhiteCard">Step 2)</a></b> Add a white card to detach the importance between criteria.</li>
+                <!-- White cards section -->
+                <ol id="whiteSection" data-draggable="target">
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                    <li id="card" data-draggable="item">White Card</li>
+                </ol>
+                <br/>
+                <!-- Ratio Z section -->
+                <h3 id="ratioTitle"><a href="#" id="helpRatioZ">Step 3)</a> Define Ratio Z</h3>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-ratioZ">
+                    <h3 id="pop-up-header">Define Ratio Z</h3>
+                    <p id="pop-up-content">
+                        Ratio Z = how many times the last criterion is more important than the first one in the ranking? 
+                    </p>
+                    <p id="pop-up-content">
+                        You can define 1 value, 3 values or indicate an interval to generate a random value and check which one to use.
+                        Decimal numbers are allowed using dot ('.').
+                    </p>
+                </div>
+                <script type="text/javascript">  
+                $(document).ready(function(){                      
+                    $('#ratioOptions input[type="checkbox"]').on('change', function() {
+                       $('#ratioOptions input[type="checkbox"]').not(this).prop('checked', false);
+                    });
+                });    
+                </script>
+                <div id="ratioOptions">
+                    <div>
+                        <br/>
+                        <p>
+                            <input type="checkbox" id="oneValue"/> 
+                            1 value = 
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ')"></input>
+                            <input id="ratioZ" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ')"></input>
+                        </p>
+                    </div>
+                    <div>
+                        <br/>
+                        <p>
+                            <input type="checkbox" id="interval"/>
+                            <a href="#" id="helpInterval">Interval</a> =
+                            [
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMin')"></input>
+                            <input id="ratioZIntervalMin" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMin')"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMax')"></input>
+                            <input id="ratioZIntervalMax" ype="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMax')"></input>
+                            ]
+                            <input id="getRandomN" type="button" value="<" onclick="decreaseIntervalResult()"></input>
+                            <input id="getRandomN" type="button" value=">" onclick="increaseIntervalResult()"></input>
+                            <input id="ratioZIntervalResult" value="1"></input>
+                        </p>
+                    </div>
+                    <div>
+                        <br/>
+                        <p>
+                            <input type="checkbox" id="threeValues"/>
+                            <a href="#" id="helpValues">3 values</a> =
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ1')"></input>
+                            <input id="ratioZ1" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ1')"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ2')"></input>
+                            <input id="ratioZ2" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ2')"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ3')"></input>
+                            <input id="ratioZ3" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ3')"></input>
+                        </p>
+                    </div>
+                </div>
+                <br/>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-interval">
+                    <h3 id="pop-up-header">Define Interval</h3>
+                    <p id="pop-up-content">
+                        First, define an interval of integers and then click on the equal button ("=") to generate a random number inside the interval, with 2 decimal places. 
+                    </p>
+                </div>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-values">
+                    <h3 id="pop-up-header">Define 3 values</h3>
+                    <p id="pop-up-content">
+                        You can define 3 different values, if you are not sure which one to use. The results for each value will be shown.
+                    </p>
+                </div>
+                <!-- Choose the number of decimals -->
+                <h3 id="ratioTitle">
+                <a href="#" id="helpDecimals">Step 4)</a> Nº of decimal places =
+                <input id="decimalBtn" type="button" value="-" onclick="decreaseDecimal()"></input>
+                <div id="nDecimals">x</div>
+                <input id="decimalBtn" type="button" value="+" onclick="increaseDecimal()"></input>
+                </h3>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-decimals">
+                  <h3 id="pop-up-header">Number of decimals to apply</h3>
+                  <p id="pop-up-content">
+                    Choose how many decimal places you want to apply on the final results.
+                  </p>
+                </div>
+                <br/>
+                <h3><input id="executeWeightsBtn" type="button" value="Execute" onclick="weightMethod()" class="btn btn-success"/></h3>
+                <br/>
+                <h3 id="error">Ratio Z not defined!</h3>
+                <button export-weights-to-csv export-two-weights-to-csv export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnAll">Export all to CSV</button> 
+                <br/>
+                <div id="showRatio"></div>
+                <table id="weightTbl" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button export-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>
+                <button export-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight">Export name and norm. weight to CSV</button>
+                <div id="chartCriterion"></div>
+                <br/>
+                <div id="chartRank"></div>
+                <br/><br/>
+                <div id="showRatio2"></div>
+                <table id="weightTbl2" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button export-two-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn2">Export to CSV</button>
+                <button export-two-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight2">Export name and norm. weight to CSV</button>
+                <div id="chartCriterion2"></div>
+                <br/>
+                <div id="chartRank2"></div>
+                <br/><br/>
+                <div id="showRatio3"></div>
+                <table id="weightTbl3" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn3">Export to CSV</button>
+                <button export-three-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight3">Export name and norm. weight to CSV</button>
+                <div id="chartCriterion3"></div>
+                <br/>
+                <div id="chartRank3"></div>
+                <br/>
+            </div>
+            <!-- Auxiliar tables to calculate all the results -->
+            <div>
+                <table id="auxTbl" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">e'r</th>
+                        <th id="configHeader">er</th>
+                        <th id="configHeader">k(r)</th>
+                        <th id="configHeader">Total</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl2" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">k*i</th>
+                        <th id="configHeader">k''i</th>
+                        <th id="configHeader">di</th>
+                        <th id="configHeader">/di</th>
+                        <th id="configHeader">ki</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table id="auxTbl3" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">e'r</th>
+                        <th id="configHeader">er</th>
+                        <th id="configHeader">k(r)</th>
+                        <th id="configHeader">Total</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl4" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">k*i</th>
+                        <th id="configHeader">k''i</th>
+                        <th id="configHeader">di</th>
+                        <th id="configHeader">/di</th>
+                        <th id="configHeader">ki</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table id="auxTbl5" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">e'r</th>
+                        <th id="configHeader">er</th>
+                        <th id="configHeader">k(r)</th>
+                        <th id="configHeader">Total</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl6" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">k*i</th>
+                        <th id="configHeader">k''i</th>
+                        <th id="configHeader">di</th>
+                        <th id="configHeader">/di</th>
+                        <th id="configHeader">ki</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

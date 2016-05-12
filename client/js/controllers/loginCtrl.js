@@ -7,7 +7,7 @@ app.controller('loginController', function($scope) {
         var pass = $scope.password;
         if($scope.username == 'admin' && $scope.password == 'admin'){
             $scope.errorMessage = '';
-            window.location = '/workspace.html';    
+            window.location = '/configurations.html';    
         }else if($scope.username == null || $scope.password == null){
             //Nothing happens - message already appears    
         }else{

@@ -26,13 +26,12 @@
     
     <!-- ANGULAR CUSTOM -->
     <script src="js/controllers/mainCtrl.js"></script>
-    <script src="js/controllers/criterions-controller.js"></script>
-    <script src="js/controllers/alternatives-controller.js"></script>
-    <script src="js/controllers/performances-controller.js"></script>
-    <script src="js/controllers/configurations-controller.js"></script>
     <script src="js/appRoutes.js"></script>
     <script src="js/app.js"></script>
     <script src="js/sortable.js"></script>
+    <script src="js/amcharts_3/amcharts/amcharts.js" type="text/javascript"></script>
+    <script src="js/amcharts_3/amcharts/serial.js" type="text/javascript"></script>
+    <script src="js/amcharts_3/amcharts/plugins/export/export.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
 <body ng-app="sampleApp">
@@ -53,11 +52,11 @@
             <div class="sidebar-nav">
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="/#/criterion">Criterion Set</a></li>
-                        <li id="sections"><a id="aSections" href="/#/alternative">Alternative Set</a></li>
-                        <li id="sections"><a id="aSections" href="/#/performance">Performance Table</a></li>
-                        <li id="sections"><a id="aSections" href="/#/configurations">Decision Configurations</a></li>
+                    <ul id="optionList" class="nav navbar-nav">
+                        <li id="sections"><a id="aSections" href="/criterion">Criterion Set</a></li>
+                        <li id="sections"><a id="aSections" href="/alternative">Alternative Set</a></li>
+                        <li id="sections"><a id="aSections" href="/performance">Performance Table</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/configurations.html'">Decision Configurations</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -68,5 +67,21 @@
         <!-- angular templating - this is where content will be injected -->
         <div ng-view></div>
     </div>
+    <script type="text/javascript">
+        var selector = '#optionList li a';
+
+        $(selector).on('click', function(){
+            $(selector).removeClass('active');
+            $(this).addClass('active');
+        });
+
+        $(document).ready(function () {
+            activeSection();        
+        });
+    </script>
+    <script src="js/controllers/criterions-controller.js"></script>
+    <script src="js/controllers/alternatives-controller.js"></script>
+    <script src="js/controllers/performances-controller.js"></script>
+    <script src="js/controllers/configurations-controller.js"></script>
 </body>
 </html>

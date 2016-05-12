@@ -1,4 +1,4 @@
-var app = angular.module('sampleApp', ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl']);
+var app = angular.module('sampleApp', ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
 //Export alternatives into a .csv file without the description column 
 app.directive('exportAlternativesToCsvWithoutDescription',function(){

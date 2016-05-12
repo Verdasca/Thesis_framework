@@ -25,8 +25,6 @@
             </select>
             <label id="criLabel">Weight</label>
             <input id="criInput2" type="text" placeholder="Criterion weight" ng-model="criterion.weight"/>
-            <label id="criLabel">Rank</label>
-            <input id="criInput2" type="text" placeholder="Criterion rank" ng-model="criterion.rank"/>
             <br />
             <br />
             <table border="1" bordercolor="#033773" class="table table-bordered horizontal">
@@ -36,7 +34,6 @@
                     <th id="criHeader">Direction</th>
                     <th id="criHeader">Measure</th>
                     <th id="criHeader">Weight</th>
-                    <th id="criHeader">Rank</th>
                     <th id="criHeader2" style="width:150px">Action</th>
                 </tr>
                 <tr ng-repeat="criterion in criterions">
@@ -45,7 +42,6 @@
                     <td id="criBody">{{ criterion.direction }}</td>
                     <td id="criBody">{{ criterion.measure }}</td>
                     <td id="criBody">{{ criterion.weight }}</td>
-                    <td id="criBody">{{ criterion.rank }}</td>
                     <td>
                         <input type="button" value="Edit" ng-click="editCriterion(criterion)" class="btn btn-warning"/>
                         <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
@@ -72,28 +68,5 @@
             </tr>
         </tbody>{{list}}
         <hr>
-   </table>
-   
-   <table>
-       <thead>
-            <tr>
-                <th>Index</th>
-                <th>Count</th>
-                <th>Count</th>
-                <th>Count</th>
-                <th>Count</th>
-                <th>Count</th>
-            </tr>
-        </thead>
-        <tbody ng-repeat="criterion in criterions">
-            <tr>
-                <td>{{criterion.name}}</td>
-                <td>{{criterion.description}}</td>
-                <td>{{criterion.direction}}</td>
-                <td>{{criterion.measure}}</td>
-                <td>{{criterion.weight}}</td>
-                <td>{{criterion.rank}}</td>
-            </tr>
-        </tbody>
-   </table>  -->        
+   </table> -->        
 

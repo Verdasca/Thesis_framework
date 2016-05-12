@@ -74,23 +74,12 @@ $scope.updateCriterion = function() {
     $scope.criterion.direction = '';
     $scope.criterion.measure = '';
     $scope.criterion.weight = '';
-    $scope.criterion.rank = '';
   });
 }
 
 }]);
-    // $scope.list = ["one", "two", "thre", "four", "five", "six"];
 
-    // $scope.criterions=[
-    //     {
-    //         "name" : "test",
-    //         "description" : "nada",
-    //         "direction" : "",
-    //         "measure" : "",
-    //         "weight" : "0",
-    //         "rank" : ""
-    //     }
-    // ];
+// $scope.list = ["one", "two", "thre", "four", "five", "six"];
 
 
 // angular.element(document).ready(function() {

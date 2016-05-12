@@ -15,6 +15,7 @@
     position: fixed;  
     width: 100%;
     padding: 1px;
+    z-index: 2;
 }
 
 #textNav{
@@ -86,56 +87,61 @@
     color: #ffffff;
 }
 
-#exportBtn{
+#aSections.active{
+    background-color: #033773;
+    color: #fff;
+}
+
+.sectionActive{
+    background-color: #033773;
+    color: #fff !important;
+}
+
+#exportBtn,
+#exportBtn2,
+#exportBtn3,
+#exportBtnAll,
+#exportBtnWeight,
+#exportBtnWeight2,
+#exportBtnWeight3{
     margin: 5px;
-    margin-top: 10px;
+    margin-top: 15px;
     text-align: center;
+    margin-bottom: -18px;
 }
 
 
 /* Criterion section */
-.item, .placeholder {
-    padding: 2px;
-    width: 50px;
-    height: 20px;
-    border: 1px solid #333;
-    background: #EEE;
-}
-.placeholder {
-    background: #AEF;
-}
-
 #criterionTable{
     margin: auto;
     text-align: center;
-    width: 90%;
+    width: 95%;
 }
 
 #criLabel{
     font-size: 18px; 
-    margin-right: 5px;
 }
 
 #criInput{
-    margin-right: 25px;
+    margin-right: 42px;
     padding-right: 80px;
     padding-left: 80px;
     text-align: center;  
 }
 
 #criInput2{
-    margin-right: 35px;
+    margin-right: 60px;
     padding-right: 10px;
     padding-left: 10px;
     text-align: center;  
 }
 
 #criInput3{
-    margin-right: 35px;
+    margin-right: 30px;
     padding-right: 10px;
     padding-left: 10px;
     text-align: center;  
-    width: 10%;
+    width: 12%;
     height: 10%;
     font-size: 16px;
 }
@@ -167,7 +173,6 @@
 
 #altLabel{
     font-size: 18px;  
-    margin-right: 5px; 
 }
 
 #altInput{
@@ -222,16 +227,16 @@
 
 
 /* Decision Configuration section */
-#rankTable{
-    margin: auto;
-    text-align: center;
-    width: 90%;
+#configHeader{
+    text-align: center;  
+    font-size: 16px;  
 }
 
-#configHeader{
+#configHeader2{
     text-align: center;  
     font-size: 18px;  
 }
+
 
 #configBody{
     text-align: center;  
@@ -240,15 +245,18 @@
     vertical-align: middle;
 }
 
-#configMethod{
-    margin-right: 35px;
-    margin-left: 5px;
+#methodsTable{
+    text-align: left;
+    margin: auto;
+    padding: 5px;
+    width: 80%;
+}
+
+#selectionTitle{
+    text-align: right;
+    vertical-align: top;
     padding-right: 10px;
-    padding-left: 10px;
-    text-align: center;  
-    width: 20%;
-    height: 20%;
-    font-size: 16px;
+    padding-top: 1px;
 }
 
 #selectLabel{
@@ -257,24 +265,512 @@
     font-size: 16px;
 }
 
+#ratioLabel{
+    text-align: left; 
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 18px; 
+    font-weight: 500 !important; 
+    margin-top: 2px;
+    margin-bottom: 10px;
+}
+
+/* Determining Weights method */
+#rankingTable{
+    text-align: center;
+    width: 90%;
+    margin: auto;
+    border-collapse:separate;
+    border: solid #033773 5px;
+    border-radius: 25px;
+}
+
+#rankingTable tr td{
+    margin: auto;
+    vertical-align: top;
+    padding-bottom: 10px;
+}
+
+#whiteCardRow{
+    vertical-align: top;
+    padding-top: 20px;
+}
+
+#error{
+    color: red;
+    margin: auto;
+    padding-bottom: 20px;
+}
+
+#configRatio{
+    margin-right: 35px;
+    margin-left: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    text-align: center;  
+/*    width: 15%;*/
+    height: 20%;
+    font-size: 16px;
+}
+
+#ratioTitle{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#ratioOptions{
+    font-size: 18px;
+}
+
 #rankInput{
     width: 45%;
     text-align: center;  
 }
 
-#ratioZ{
+#ratioZIntervalResult{
     text-align: center;
     width: 8%;
-    height: 36px;
-    margin-right: 40px;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 18px;
+    vertical-align: middle;
 }
 
-#ratioW{
+#ratioZ1,
+#ratioZ2,
+#ratioZ3,
+#ratioZ,
+#ratioZIntervalMin,
+#ratioZIntervalMax{
+    text-align: center;
+    width: 7%;
+    font-size: 18px;
+    margin: -7px;
+    vertical-align: middle;
+}
+
+#getRandomN{
+    padding-top: 5px;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    padding-left: 15px;
+    font-size: 18px;
+    margin-left: 10px;
+}
+
+#decimalBtn{
+    padding-top: 5px;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    padding-left: 15px;
+    font-size: 18px;
+    margin: 5px;
+}
+
+#nDecimals{
     margin: 10px;
+    display: inline;
     background: #FFF;
     color: #000;
     text-shadow: 0 1px 0 rgba(0,0,0,0.4);
-    width: 8%;
     text-align: center;
-    text-indent: 5px;
+    font-size: 18px;
 }
+
+.item, .placeholder {
+    padding: 2px;
+    width: 50px;
+    height: 20px;
+    border: 1px solid #333;
+    background: #EEE;
+}
+.placeholder {
+    background: #AEF;
+}
+
+/* draggable targets */
+[data-draggable="target"]
+{
+    /*float: left; */
+    list-style-type:none;
+    
+    width:70%;
+    overflow-y:auto;
+    
+    margin-top: 15px;
+   /* margin-right: auto;*/
+    margin-bottom: 15px;
+    margin-left: 50px;
+    /*margin:0 0.5em 0.5em 0;*/
+    padding:0.5em;
+    
+    border:2px solid #888;
+    border-radius:0.2em;
+    
+    background:#ddd;
+    color:#555;
+
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* drop target state */
+[data-draggable="target"][aria-dropeffect="move"]
+{
+    border-color:#68b;
+
+    background:#fff;
+}
+
+/* drop target focus and dragover state */
+[data-draggable="target"][aria-dropeffect="move"]:focus,
+[data-draggable="target"][aria-dropeffect="move"].dragover
+{
+    outline:none;
+    
+    box-shadow:0 0 0 1px #fff, 0 0 0 3px #68b;
+}
+
+/* draggable items */
+[data-draggable="item"]
+{
+    display:block;
+    list-style-type:none;
+    
+    margin:0 0 2px 0;
+    padding:0.2em 0.4em;
+    
+    border-radius:0.2em;
+    
+    line-height:1.3;
+}
+
+/* items focus state */
+[data-draggable="item"]:focus
+{
+    outline:none;
+    
+    box-shadow:0 0 0 2px #68b, inset 0 0 0 1px #ddd;
+}
+
+/* items grabbed state */
+[data-draggable="item"][aria-grabbed="true"]
+{
+    background:#8ad;
+    color:#fff;
+}
+
+#whiteSection{ 
+    margin: auto;
+    width: 20%;
+    height: 50px;
+    text-align: center;
+    font-size: 18px;
+}
+
+#instructionsSection{
+/*    float:right; */ 
+    text-align: center;   
+/*    margin-right: 100px;
+    margin-bottom: 20px;*/
+    font-size: 18px;
+    list-style-type: none;
+}
+
+#stepOne{
+    margin-right: 30px;
+}
+
+#steptwo{
+    font-size: 18px;
+    list-style-type: none; 
+    text-align: center;  
+    margin-bottom: 15px;   
+}
+
+#importance{
+    margin-bottom: 15px;
+    font-size: 35px;
+    font-weight: 400;
+    margin-top: 20px;
+    text-align: right;
+}
+
+#executeWeightsBtn{
+    font-size: 18px;
+    text-align: center;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: auto;
+}
+
+#auxTbl,
+#auxTbl2,
+#auxTbl3,
+#auxTbl4,
+#auxTbl5,
+#auxTbl6{
+    width: 90%;
+    margin: auto;
+    text-align: center;
+}
+
+#weightTbl,
+#weightTbl2,
+#weightTbl3,
+#chartCriterion,
+#chartRank,
+#chartCriterion2,
+#chartRank2,
+#chartCriterion3,
+#chartRank3{
+    width: 800px;
+    height: 400px;
+    margin: auto;
+    margin-top: 25px;
+}
+
+.amcharts-export-menu{
+/*    margin: 5px;*/
+}
+
+.amcharts-export-menu ul{
+    list-style-type: none;
+}
+
+.amcharts-export-menu  ul li{
+    display: inline;
+    text-align: center;
+}
+
+.amcharts-export-menu  ul li a{
+    margin: 5px;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+ 
+.amcharts-export-menu  ul li a:hover {
+    margin: 5px;
+    margin-bottom: 10px;
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #ccc;
+    text-decoration: none;
+}
+
+#showRatio,
+#showRatio2,
+#showRatio3{
+    margin: auto;
+    margin-top: 40px;
+    margin-bottom: 0px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold; 
+}
+
+#note{
+    margin-right: 35px;
+}
+
+#card{
+    border: 1px solid;
+    border-color: #000;
+    background-color: #fff;
+    color: #000;
+    width: 100%;
+}
+
+#cardCriterion{
+    border: 1px solid;
+    border-color: #000;
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+}
+
+/* HOVER STYLES */
+div#pop-up-help-rank{
+  display: none;
+  position: absolute;
+  width: 35%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+}
+
+div#pop-up-help-ratioZ{
+  display: none;
+  position: absolute;
+  width: 40%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+}
+
+div#pop-up-help-interval{
+  display: none;
+  position: absolute;
+  width: 38%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+}
+
+div#pop-up-help-whiteCard{
+  display: none;
+  position: absolute;
+  width: 53%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+}
+
+div#pop-up-help-values{
+  display: none;
+  position: absolute;
+  width: 30%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+}
+
+div#pop-up-help-decimals{
+  display: none;
+  position: absolute;
+  width: 20%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+}
+
+#pop-up-header{
+      font-size: 16px;
+}
+
+#pop-up-content{
+      font-size: 14px;
+      padding-top: 0px;
+}
+
+input[type="checkbox"]{
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: red;
+    border-radius: 15px;
+    box-sizing: border-box;
+    position: relative;
+    box-sizing: content-box ;
+    width: 30px;
+    height: 30px;
+    border-width: 0;
+    transition: all .3s linear;
+    vertical-align: top;
+    margin-right: 10px;
+}
+
+input[type="checkbox"]:checked{
+  background-color: green;
+}
+
+input[type="checkbox"]:focus{
+  outline: 0 none;
+  box-shadow: none;
+}
+
+.radio {
+  position: relative;
+  float: left;
+  clear: left;
+  display: block;
+  padding-left: 30px;
+  margin-bottom: 12px;
+  line-height: 22px;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+}
+.radio:before {
+  background: #fff;
+  content: "";
+  position: absolute;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 21px;
+  border: 1px solid #bbb;
+
+  border-radius: 100%;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+
+  box-shadow: inset 0 0 3px 0 #ccc;
+  -moz-box-shadow: inset 0 0 3px 0 #ccc;
+  -webkit-box-shadow: inset 0 0 3px 0 #ccc;
+}
+input[type="radio"] {
+  display: none;
+} 
+input[type="radio"]:checked + label:before {
+  content: "\2022";
+  text-align: center;
+  line-height: 15px;
+  font-family: Tahoma;
+  font-size: 44px;
+  color: #00a0db;
+  text-shadow: 0 0 4px #bbb;
+}
+
+input[name="ratio"]{
+    text-align: center;  
+}
+
+#addBtn{
+    padding-top: 3px;
+    padding-right: 15px;
+    padding-bottom: 3px;
+    padding-left: 15px;
+    font-size: 18px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+#minusBtn{
+    padding-top: 3px;
+    padding-right: 15px;
+    padding-bottom: 3px;
+    padding-left: 15px;
+    font-size: 18px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+

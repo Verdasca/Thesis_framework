@@ -24,13 +24,13 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             .when('/performance', {
                 templateUrl : 'views/performance.html',
                 controller  : 'performancesController'
-            })
+            });
             
             // route for the workspace page
-            .when('/configurations', {
-                templateUrl : 'views/configurations.html',
-                controller  : 'configurationsController'
-            });
+            // .when('/configurations', {
+            //     templateUrl : 'views/configurations.html',
+            //     controller  : 'configurationsController'
+            // });
             
     $locationProvider.html5Mode(true);
 

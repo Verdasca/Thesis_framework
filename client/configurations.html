@@ -44,7 +44,13 @@
         activeSection();
         document.getElementById("electreTriCMethod").style.display = 'none';
         document.getElementById("weightMethod").style.display = 'none';
+        document.getElementById("compareWeightMethod").style.display = 'none';
+        document.getElementById("tableResults").style.display = 'none';
         document.getElementById("exportBtnAll").style.display = 'none';
+        document.getElementById("saveBtn").style.display = 'none';
+        document.getElementById("saveBtn2").style.display = 'none';
+        document.getElementById("saveBtn3").style.display = 'none';
+        document.getElementById("compareBtn").style.display = 'none';
         document.getElementById("exportBtn").style.display = 'none';
         document.getElementById("exportBtnWeight").style.display = 'none';
         document.getElementById("exportBtn2").style.display = 'none';
@@ -52,6 +58,7 @@
         document.getElementById("exportBtn3").style.display = 'none';
         document.getElementById("exportBtnWeight3").style.display = 'none';
         document.getElementById("error").style.display = 'none';
+        document.getElementById("errorCompare").style.display = 'none';
         document.getElementById("auxTbl").style.display = 'none';
         document.getElementById("auxTbl2").style.display = 'none';
         document.getElementById("auxTbl3").style.display = 'none';
@@ -161,6 +168,7 @@
                 <a id="textNav" class="navbar-brand" style="font-size:18px">MCDA Framework</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
+                <li><a id="textNav2" href="" onclick="showHelp();"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
         </div>
@@ -182,6 +190,16 @@
         </div>
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
+        <!-- HIDDEN / POP-UP DIV -->
+        <div id="helpInfo">
+            <h3 id="pop-up-header">Help - Quick Guide</h3>
+                <p id="pop-up-content">
+                    In each step, like Step 1), Step 2) and so on, click on them or pass over them to show a brief explanation about each step and their objectives.
+                </p>
+                <p id="pop-up-content">
+                    The results can be compared. First, save the wanted results to compare using the "Save Result" button and then click on the "Compare Results" button to go to the comparative section.
+                </p>
+        </div>
         <div id="content" class="jumbotron text-center">
             <h2>Decision Configurations</h2>
             <br />
@@ -207,6 +225,8 @@
                 <br/>
                 <!-- TODO -->
             </div>
+            <!-- END of Electre Tri C method section -->
+
             <!-- Weight method section -->
             <div id="weightMethod" class="weight box">
                 <h3>Determining weights of criteria</h3>
@@ -387,6 +407,8 @@
                 <br/>
                 <h3 id="error">Ratio Z not defined!</h3>
                 <button export-weights-to-csv export-two-weights-to-csv export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnAll">Export all to CSV</button> 
+                <button id="saveBtn" class="btn btn-info" onclick="saveWeightResult()">Save Result</button> 
+                <button id="compareBtn" class="btn btn-primary" onclick="compareWeightResults()">Compare Results</button> 
                 <br/>
                 <div id="showRatio"></div>
                 <table id="weightTbl" class="table table-bordered horizontal">
@@ -418,6 +440,7 @@
                 </table>
                 <button export-two-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn2">Export to CSV</button>
                 <button export-two-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight2">Export name and norm. weight to CSV</button>
+                <button id="saveBtn2" class="btn btn-info" onclick="saveWeightResult(2)">Save Result</button> 
                 <div id="chartCriterion2"></div>
                 <br/>
                 <div id="chartRank2"></div>
@@ -435,12 +458,15 @@
                 </table>
                 <button export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn3">Export to CSV</button>
                 <button export-three-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight3">Export name and norm. weight to CSV</button>
+                <button id="saveBtn3" class="btn btn-info" onclick="saveWeightResult(3)">Save Result</button> 
                 <div id="chartCriterion3"></div>
                 <br/>
                 <div id="chartRank3"></div>
                 <br/>
             </div>
-            <!-- Auxiliar tables to calculate all the results -->
+            <!-- END of Weight method section -->
+
+            <!-- Auxiliar tables to calculate all the results for the weight method section -->
             <div>
                 <table id="auxTbl" class="table table-bordered horizontal">
                     <thead>
@@ -522,7 +548,44 @@
                     </tbody>
                 </table>
             </div>
+            <!-- END of auxiliar tables to calculate all results for the weight method section -->
         </div>
+        <!-- COMPARE SECTION - Weight method -->
+        <div id="compareWeightMethod">
+            <h2>Compare results - weights of criteria</h2>
+            <br/><br/>
+            <table id="compareOptionsTable" class="table table-bordered horizontal">
+                <thead>
+                    <th id="configHeader">Results</th>
+                    <th id="configHeader">Ratio Z</th>
+                    <th id="configHeader">Compare?</th>
+                    <th id="configHeader">Delete</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <!-- <div>
+                Compare...
+                <input type="checkbox" id="compareRatio"/>Ratio Z
+                <input type="checkbox" id="compareWeight"/>Weight
+                <input type="checkbox" id="compareNonWeight"/>Non-norma. Weight
+            </div> -->
+            <br/><br/>
+            <button id="compareButton" class="btn btn-success" onclick="compareResults()">Compare</button> 
+            <button id="compareButton" class="btn btn-primary" onclick="backToConfiguration()">Back to Configuration Section</button> 
+            <br/><br/><br/>
+            <h3 id="errorCompare">No results selected! Please select results to compare.</h3>
+            <div id="compareResults">
+                <table id="compareTable" class="table table-bordered horizontal">
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tableResults">
+            </div>
+            <br/>
+        </div>
+        <!-- END of COMPARE SECTION - Weight method -->
     </div>
 </body>
 </html>

@@ -78,10 +78,3 @@ $scope.updateCriterion = function() {
 }
 
 }]);
-
-// $scope.list = ["one", "two", "thre", "four", "five", "six"];
-
-
-// angular.element(document).ready(function() {
-//   angular.bootstrap(document, ['criterionsController']);
-// });

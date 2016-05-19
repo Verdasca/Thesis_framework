@@ -761,16 +761,20 @@ function addDragDrop(){
 
 }
 
-/**
- * Returns a random number between min (inclusive) and max (exclusive) with 2 decimals
- */
-// function getRandomArbitrary() {
-//     var min = document.getElementById("ratioZIntervalMin").value;
-//     var max = document.getElementById("ratioZIntervalMax").value;
-//     var number = (Math.random() * (parseFloat(max)-parseFloat(min))) + parseFloat(min);
-//     var result = parseFloat(number).toFixed(2);
-//     document.getElementById("ratioZIntervalResult").value = result;
-// }
+var helpVisible = false;
+function showHelp(){
+    $("div#helpInfo").css('top', 51).css('right', 0);
+
+    if(helpVisible){
+        document.getElementById("textNav2").style.color = "#ffffff";
+        $('div#helpInfo').hide();
+        helpVisible = false;
+    }else{
+        document.getElementById("textNav2").style.color = "#000000";
+        $('div#helpInfo').show();
+        helpVisible = true;
+    }
+}
 
 //Functions to increase/decrease the number between the interval
 var intervalResult = 0.00;
@@ -1057,6 +1061,9 @@ function increaseDecimal(){
 
 /* Execute Weight Method */
 function weightMethod(){
+    document.getElementById("saveBtn").style.display = 'none';
+    document.getElementById("saveBtn2").style.display = 'none';
+    document.getElementById("saveBtn3").style.display = 'none';
     document.getElementById("exportBtnAll").style.display = 'none';
     document.getElementById("exportBtn").style.display = 'none';
     document.getElementById("exportBtnWeight").style.display = 'none';
@@ -1355,6 +1362,8 @@ function weightResults(){
     document.getElementById("chartRank").style.display = '';
     document.getElementById("exportBtn").style.display = '';
     document.getElementById("exportBtnWeight").style.display = '';
+    document.getElementById("saveBtn").style.display = '';
+    document.getElementById("compareBtn").style.display = '';
 
     //Show value of ratio chosen
     if(document.getElementById("oneValue").checked == true){
@@ -1964,6 +1973,10 @@ function weightResults3(){
     document.getElementById("exportBtn3").style.display = '';
     document.getElementById("exportBtnWeight3").style.display = '';
     document.getElementById("exportBtnAll").style.display = '';
+    document.getElementById("saveBtn").style.display = '';
+    document.getElementById("saveBtn2").style.display = '';
+    document.getElementById("saveBtn3").style.display = '';
+    document.getElementById("compareBtn").style.display = '';
 
     //Show value of ratio chosen
     document.getElementById("showRatio3").innerHTML = "Ratio Z = " + document.getElementById("ratioZ3").value;
@@ -1982,3 +1995,158 @@ function activeSection(){
         options.getElementsByTagName("a")[3].className = 'active';
     }  
 }
+
+var numResults = 0;
+//Save weight result
+function saveWeightResult(idTable){
+    var addTbl = document.getElementById('tableResults');
+    var tbl = document.createElement('table');
+    var tbdy = document.createElement('tbody');
+    tbl.appendChild(tbdy);
+    addTbl.appendChild(tbl);
+
+    //Save the result on the new table
+    var newName = 'tbl' + numResults;
+    //See which table is to save when executed the 3 ratio choice
+    if(idTable == 2){
+        var source = document.getElementById('weightTbl2');
+        var ratioValue = document.getElementById('showRatio2').innerHTML;
+    }else if(idTable == 3){
+        var source = document.getElementById('weightTbl3');
+        var ratioValue = document.getElementById('showRatio3').innerHTML;
+    }else{
+        var source = document.getElementById('weightTbl');
+        var ratioValue = document.getElementById('showRatio').innerHTML;
+    }
+    var copy = source.cloneNode(true);
+    copy.setAttribute('id', newName);
+    tbl.parentNode.replaceChild(copy, tbl);
+
+    var inputName = 'option' + numResults;
+    var rowName = 'row' + numResults;
+    var addOptionTbl = document.getElementById("compareOptionsTable").getElementsByTagName('tbody')[0];
+    // Create an empty <tr> element and add it to the 1st position of the table:
+    var row = addOptionTbl.insertRow(0);
+                        
+    // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+                        
+    // Add some text to the new cells:
+    cell1.innerHTML = "Result " + numResults;
+    cell2.innerHTML = ratioValue;
+    cell3.innerHTML = "<input type='checkbox' id='" + inputName + "' style='vertical-align:initial'/>";
+    cell4.innerHTML = "<input type='button' value='Delete' onclick='deleteResultOption(this, "+numResults+")' class='btn btn-danger'/>";
+
+    cell1.setAttribute('style', 'vertical-align:middle');
+    cell2.setAttribute('style', 'vertical-align:middle');
+    row.setAttribute('id', rowName);
+    numResults = numResults + 1;
+}
+
+//Delete the result saved
+function deleteResultOption(row, idTable){
+    //Delete result from option compare list
+    var i = row.parentNode.parentNode.rowIndex;
+    document.getElementById("compareOptionsTable").deleteRow(i);
+    //Delete result from table result list
+    var name = "#tbl" + idTable;
+    $(name).remove();
+}
+
+//Go to compare results section
+function compareWeightResults(){
+    document.getElementById("content").style.display = 'none';
+    document.getElementById("compareWeightMethod").style.display = '';
+}
+
+//Go back to configuration section of the weight method
+function backToConfiguration(){
+    document.getElementById("compareWeightMethod").style.display = 'none';
+    document.getElementById("content").style.display = '';
+}
+
+//Compare weight results
+function compareResults(){
+    //Eliminates previous data from the tables
+    $("#compareTable tbody tr").remove();
+
+    var table = document.getElementById("compareTable").getElementsByTagName('tbody')[0];
+    var optionTbl = document.getElementById("compareOptionsTable").getElementsByTagName('tbody')[0];
+    var numOptions = optionTbl.rows.length;
+    var ids = [];
+    var resultNames = [];
+    var ratioValues = [];
+    var numOptionsSelected = 0;
+
+    //Get ids and number of results selected that are going to be compared
+    for (var k = 0; k < numOptions; k++) {
+        var name = optionTbl.rows[k].cells[2].getElementsByTagName('input')[0].id;
+        //If this result was selected
+        if(document.getElementById(name).checked){
+            var rowId = document.getElementById(name).parentNode.parentNode.rowIndex - 1;   //Get row index
+            resultNames[numOptionsSelected] = optionTbl.rows[rowId].cells[0].innerHTML;     //Save result name
+            ids[numOptionsSelected] = 'tbl' + k;                                            //Save table id of the select result
+            ratioValues[numOptionsSelected] = optionTbl.rows[rowId].cells[1].innerHTML;     //Save ratio Z value
+            numOptionsSelected = numOptionsSelected + 1;                                    //Increase number of selected results
+        }else{
+            //Do nothing, result not selected
+        }
+    } 
+
+    if(numOptionsSelected == 0){
+        document.getElementById("errorCompare").style.display = '';
+    }else{
+        document.getElementById("errorCompare").style.display = 'none';       
+
+        //Make header for the table according to the number of options chosen
+        var row = table.insertRow(0);
+        for (var i = 0; i <= numOptionsSelected; i++) {
+            if(i == 0){
+                var cell = row.insertCell(i);    
+                cell.innerHTML = "Criteria";
+                cell.setAttribute('style', 'vertical-align:middle');
+                cell.setAttribute('id', 'configHeader3');
+            }else{
+                var cell1 = row.insertCell(i);    
+                cell1.innerHTML = resultNames[i-1] +'<br/>'+ ratioValues[i-1];
+                cell1.setAttribute('id', 'configHeader3');
+            }
+        }
+
+        //Get the number of criteria of the first result choosen
+        var tableExample = document.getElementById(ids[0]).getElementsByTagName('tbody')[0];
+        var numRows = tableExample.rows.length;
+        var criterionExists = false;
+        //Insert criteria it's weights according to each result chosen
+        for (var j = 1; j <= numRows; j++) {
+            var row2 = table.insertRow(j);
+            for (var i = 0; i <= numOptionsSelected; i++) {
+                if(i == 0){
+                    var cell = row2.insertCell(i);    
+                    cell.innerHTML = tableExample.rows[j-1].cells[0].innerHTML;
+                }else{
+                    var cell1 = row2.insertCell(i);    
+                    var tbl = document.getElementById(ids[i-1]).getElementsByTagName('tbody')[0];
+                    var len = tbl.rows.length;
+                    //Get the correct weight according to the criteria
+                    for (var k = 0; k < len; k++) {
+                        if(tbl.rows[k].cells[0].innerHTML == cell.innerHTML){
+                            cell1.innerHTML = tbl.rows[k].cells[3].innerHTML;
+                            criterionExists = true;
+                        }else{
+                            //Add blank if criterion does not exist in this result
+                            if(!criterionExists){
+                                cell1.innerHTML = "NA";    
+                            }
+                        }
+                    }
+                    criterionExists = false;
+                }
+            }
+        }   
+    }
+}
+

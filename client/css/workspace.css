@@ -28,6 +28,16 @@
     font-size: 16px;
 }
 
+#textNav2{
+    color: #ffffff;
+    font-size: 16px;
+}
+
+#textNav2:hover{
+    color: #000000;
+    font-size: 16px;
+}
+
 #content{
     text-align: center;
     width: 85%;
@@ -100,16 +110,24 @@
 #exportBtn,
 #exportBtn2,
 #exportBtn3,
-#exportBtnAll,
 #exportBtnWeight,
 #exportBtnWeight2,
-#exportBtnWeight3{
+#exportBtnWeight3,
+#saveBtn2,
+#saveBtn3{
     margin: 5px;
     margin-top: 15px;
     text-align: center;
     margin-bottom: -18px;
 }
 
+#exportBtnAll,
+#saveBtn,
+#compareBtn{
+    margin: 5px;
+    text-align: center;
+    margin-bottom: -18px;
+}
 
 /* Criterion section */
 #criterionTable{
@@ -237,6 +255,12 @@
     font-size: 18px;  
 }
 
+#configHeader3{
+    text-align: center;  
+    font-size: 18px; 
+    font-weight: bold;
+    border: 3px solid #eee;
+}
 
 #configBody{
     text-align: center;  
@@ -295,7 +319,8 @@
     padding-top: 20px;
 }
 
-#error{
+#error,
+#errorCompare{
     color: red;
     margin: auto;
     padding-bottom: 20px;
@@ -393,7 +418,7 @@
     /*float: left; */
     list-style-type:none;
     
-    width:70%;
+    width:85%;
     overflow-y:auto;
     
     margin-top: 15px;
@@ -411,6 +436,7 @@
 
     font-size: 18px;
     font-weight: bold;
+    display: flex;
 }
 
 /* drop target state */
@@ -461,10 +487,34 @@
 
 #whiteSection{ 
     margin: auto;
-    width: 20%;
-    height: 50px;
     text-align: center;
     font-size: 18px;
+    width: 50%;
+/*    height: 50px;
+    display: block;*/
+}
+
+#card{
+    border: 1px solid;
+    border-color: #000;
+    background-color: #fff;
+    color: #000;
+    margin-left: 5px;
+    width: 20%;
+    height: 90px;
+    margin-top: 10px;
+    display: inline-table;
+}
+
+#cardCriterion{
+    border: 1px solid;
+    border-color: #000;
+    background-color: #000;
+    color: #fff;
+    width: 20%;
+    height: 90px;
+    display: inline-table;
+    margin-left: 5px;
 }
 
 #instructionsSection{
@@ -504,12 +554,23 @@
     margin: auto;
 }
 
+#compareButton{
+    font-size: 18px;
+    text-align: center;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: auto;
+    margin-left: 30px;
+}
+
 #auxTbl,
 #auxTbl2,
 #auxTbl3,
 #auxTbl4,
 #auxTbl5,
-#auxTbl6{
+#auxTbl6,
+#compareTable{
     width: 90%;
     margin: auto;
     text-align: center;
@@ -528,6 +589,11 @@
     height: 400px;
     margin: auto;
     margin-top: 25px;
+}
+
+#compareOptionsTable{
+    width: 50%;
+    margin: auto;
 }
 
 .amcharts-export-menu{
@@ -587,23 +653,21 @@
     margin-right: 35px;
 }
 
-#card{
-    border: 1px solid;
-    border-color: #000;
-    background-color: #fff;
-    color: #000;
-    width: 100%;
-}
-
-#cardCriterion{
-    border: 1px solid;
-    border-color: #000;
-    background-color: #000;
-    color: #fff;
-    width: 100%;
-}
-
 /* HOVER STYLES */
+div#helpInfo{
+  display: none;
+  position: fixed;
+  width: 84.3%;
+  padding-left: 5px;
+  padding-right: 5px;
+  background: #eeeeee;
+  color: #000000;
+  border: 1px solid #1a1a1a;
+  margin: auto;
+  text-align: center;
+  z-index: 2;
+}
+
 div#pop-up-help-rank{
   display: none;
   position: absolute;
@@ -773,4 +837,10 @@ input[name="ratio"]{
     vertical-align: middle;
 }
 
-
+#compareWeightMethod{
+  text-align: center;
+  width: 85%;
+  float: right;
+  padding-top: 5px;
+  background-color: #ffffff;
+}

@@ -11,12 +11,14 @@ var alternativesController = require('./server/controllers/alternatives-controll
 var criterionsController = require('./server/controllers/criterions-controller');
 
 // configuration ===========================================
+var node_env = process.env.NODE_ENV;
     
 // config files
 var db = require('./config/db');
+var appConfig = require('./config/app');
 
 // set our port
-var port = process.env.PORT || 8080; 
+var port = appConfig.ports[node_env]|| 8080; 
 
 // connect to our mongoDB database 
 mongoose.connect(db.url);     //uncomment when setting up or ned to use database
@@ -36,6 +38,7 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 // set the static files location /client/img will be /img for users
 app.use(express.static(__dirname + '/client')); 
+//app.use(express.static(__dirname + '/templates/client')); 
 
 //REST API ==================================================================
 //Alternative 
@@ -54,7 +57,8 @@ app.delete('/api/criterion/:id', criterionsController.delete);
 // frontend routes =========================================================
 // route to handle all angular requests
 app.get('*', function(req, res) {
-	res.sendfile(__dirname + '/client/workspace.html'); // load our client/workspace.html file
+	res.sendfile(__dirname + '/client/workspace.html');
+	//res.sendfile(__dirname + '/templates/client/workspace.html'); // load our client/workspace.html file
 });
 
 // start app ===============================================

@@ -16,7 +16,7 @@
     <script src="libs/jquery/dist/jquery.min.js"></script>
     <script src="libs/jquery-ui/jquery-ui.min.js"></script>
     <script src="libs/angular/angular.js"></script>
-    <script src="libs/angular-route/angular-route.js"></script>
+    <!-- <script src="libs/angular-route/angular-route.js"></script>-->
     <script src="libs/angular-route/angular-route.min.js"></script>
     <script src="libs/angular-resource/angular-resource.js"></script>
     <script src="libs/angular-ui/build/angular-ui.min.js"></script>
@@ -53,10 +53,12 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="/criterion">Criterion Set</a></li>
-                        <li id="sections"><a id="aSections" href="/alternative">Alternative Set</a></li>
-                        <li id="sections"><a id="aSections" href="/performance">Performance Table</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/criterion.html'">Criterion Set</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/alternative.html'">Alternative Set</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/performance.html'">Performance Table</a></li>
                         <li id="sections"><a id="aSections" href="" onclick="window.location = '/configurations.html'">Decision Configurations</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = 'http://localhost:5000'">MCDA Methods</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/results.html'">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -64,24 +66,7 @@
         </div>
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
-        <!-- angular templating - this is where content will be injected -->
-        <div ng-view></div>
+        <!-- content -->
     </div>
-    <script type="text/javascript">
-        var selector = '#optionList li a';
-
-        $(selector).on('click', function(){
-            $(selector).removeClass('active');
-            $(this).addClass('active');
-        });
-
-        $(document).ready(function () {
-            activeSection();        
-        });
-    </script>
-    <script src="js/controllers/criterions-controller.js"></script>
-    <script src="js/controllers/alternatives-controller.js"></script>
-    <script src="js/controllers/performances-controller.js"></script>
-    <script src="js/controllers/configurations-controller.js"></script>
 </body>
 </html>

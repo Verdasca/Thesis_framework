@@ -1,4 +1,7 @@
+var app = angular.module("alternatives-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+
 app.controller('alternativesController', ['$scope', '$http', '$resource', function ($scope, $http, $resource) {
+
 var Alternatives = $resource('/api/alternatives');
 
 var refresh = function(){
@@ -104,3 +107,68 @@ $http.get('/api/alternatives').success(function(data) {
 }
 
 }]);
+
+//Export alternatives into a .csv file without the description column 
+app.directive('exportAlternativesToCsvWithoutDescription',function(){
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+        var el = element[0];
+          element.bind('click', function(e){
+            //var table = e.target.nextElementSibling;
+            var table = document.getElementById("alternativeTbl");
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+              var rowData = table.rows[i].cells;
+              for(var j=0; j<rowData.length-2;j++){ //number of columns to export
+                csvString = csvString + rowData[j].innerHTML + ",";
+              }
+              csvString = csvString.substring(0,csvString.length); // -1); //delete the last values which is a coma (,)
+              csvString = csvString + "\n";
+          }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'alternatives.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+          });
+      }
+    }
+});
+
+
+//Export alternatives into a .csv file 
+app.directive('exportAlternativesToCsv',function(){
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+        var el = element[0];
+          element.bind('click', function(e){
+            //var table = e.target.nextElementSibling;
+            var table = document.getElementById("alternativeTbl");
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+              var rowData = table.rows[i].cells;
+              for(var j=0; j<rowData.length-1;j++){ //number of columns to export
+                csvString = csvString + rowData[j].innerHTML + ",";
+              }
+              csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+              csvString = csvString + "\n";
+          }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'alternatives.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+          });
+      }
+    }
+});
+
+

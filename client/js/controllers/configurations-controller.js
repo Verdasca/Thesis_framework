@@ -1982,20 +1982,6 @@ function weightResults3(){
     document.getElementById("showRatio3").innerHTML = "Ratio Z = " + document.getElementById("ratioZ3").value;
 }
 
-//Make the sections selectable
-function activeSection(){
-    var options = document.getElementById("optionList");
-    if(window.location.href.indexOf("criterion") > -1){
-        options.getElementsByTagName("a")[0].className = 'active';
-    }else if(window.location.href.indexOf("alternative") > -1){
-        options.getElementsByTagName("a")[1].className = 'active';
-    }else if(window.location.href.indexOf("performance") > -1){
-        options.getElementsByTagName("a")[2].className = 'active';
-    }else{
-        options.getElementsByTagName("a")[3].className = 'active';
-    }  
-}
-
 var numResults = 0;
 //Save weight result
 function saveWeightResult(idTable){

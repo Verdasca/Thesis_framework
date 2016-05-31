@@ -9,6 +9,10 @@ var mongoose       = require('mongoose');
 
 var alternativesController = require('./server/controllers/alternatives-controller');
 var criterionsController = require('./server/controllers/criterions-controller');
+var categoriesController = require('./server/controllers/categories-controller');
+var parametersController = require('./server/controllers/parameters-controller');
+var performanceTableController = require('./server/controllers/performanceTable-controller');
+var profileTableController = require('./server/controllers/profileTable-controller');
 
 // configuration ===========================================
 var node_env = process.env.NODE_ENV;
@@ -53,6 +57,30 @@ app.get('/api/criterion/:id', criterionsController.findById);
 app.post('/api/criterions', criterionsController.create);
 app.put('/api/criterion/:id', criterionsController.edit);
 app.delete('/api/criterion/:id', criterionsController.delete);
+//Category 
+app.get('/api/categories', categoriesController.get);
+app.get('/api/category/:id', categoriesController.findById);
+app.post('/api/categories', categoriesController.create);
+app.put('/api/category/:id', categoriesController.edit);
+app.delete('/api/category/:id', categoriesController.delete);
+//Parameter 
+app.get('/api/parameters', parametersController.get);
+app.get('/api/parameter/:id', parametersController.findById);
+app.post('/api/parameters', parametersController.create);
+app.put('/api/parameter/:id', parametersController.edit);
+app.delete('/api/parameter/:id', parametersController.delete);
+//Performance Table 
+app.get('/api/performances', performanceTableController.get);
+app.get('/api/performance/:id', performanceTableController.findById);
+app.post('/api/performances', performanceTableController.create);
+app.put('/api/performance/:id', performanceTableController.edit);
+app.delete('/api/performance/:id', performanceTableController.delete);
+//Profile Table 
+app.get('/api/profiles', profileTableController.get);
+app.get('/api/profile/:id', profileTableController.findById);
+app.post('/api/profiles', profileTableController.create);
+app.put('/api/profile/:id', profileTableController.edit);
+app.delete('/api/profile/:id', profileTableController.delete);
 
 // frontend routes =========================================================
 // route to handle all angular requests

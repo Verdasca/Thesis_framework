@@ -27,7 +27,9 @@ $scope.createCriterion = function () {
   criterion.direction = $scope.criterion.direction;
   criterion.measure = $scope.criterion.measure;
   criterion.weight = $scope.criterion.weight;
-  criterion.rank = $scope.criterion.rank;
+  criterion.indifference = $scope.criterion.indifference;
+  criterion.preference = $scope.criterion.preference;
+  criterion.veto = $scope.criterion.veto;
   criterion.$save(function (result) {
     $scope.criterions.push(result);
     $scope.criterion.name = '';
@@ -35,7 +37,9 @@ $scope.createCriterion = function () {
     $scope.criterion.direction = '';
     $scope.criterion.measure = '';
     $scope.criterion.weight = '';
-    $scope.criterion.rank = '';
+    $scope.criterion.indifference = '';
+    $scope.criterion.preference = '';
+    $scope.criterion.veto = '';
   })
 }  
 
@@ -77,6 +81,9 @@ $scope.updateCriterion = function() {
     $scope.criterion.direction = '';
     $scope.criterion.measure = '';
     $scope.criterion.weight = '';
+    $scope.criterion.indifference = '';
+    $scope.criterion.preference = '';
+    $scope.criterion.veto = '';
   });
 }
 
@@ -125,7 +132,7 @@ app.directive('exportCriterionToCsvWithoutRank',function(){
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
               var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-2;j++){ //number of columns to export
+              for(var j=0; j<rowData.length-5;j++){ //number of columns to export
                 csvString = csvString + rowData[j].innerHTML + ",";
               }
               csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
@@ -156,7 +163,7 @@ app.directive('exportCriterionToCsvWithoutWeight',function(){
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
               var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-3;j++){ //number of columns to export
+              for(var j=0; j<rowData.length-6;j++){ //number of columns to export
                 csvString = csvString + rowData[j].innerHTML + ",";
               }
               csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)

@@ -8,7 +8,188 @@ $http.get('/api/criterions').success(function(data) {
   })
   .error(function(data) {
     console.log('Error: ' + data);
-});  
+});    
+
+var Categories = $resource('/api/categories');
+
+//Get the data from categories in mongoDB
+$http.get('/api/categories').success(function(data) {
+  $scope.categories = data;
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+});
+
+var refresh = function(){
+  $http.get('/api/categories').success(function(response) {
+    console.log('I got the data I requested');
+        $scope.categories = response;
+    });  
+}  
+
+//Create category
+$scope.createCategory = function () {
+  var category = new Categories();
+  category.name = $scope.category.name;
+  category.rank = $scope.category.rank;
+  category.action = $scope.category.action;
+  category.$save(function (result) {
+    $scope.categories.push(result);
+    $scope.category.name = '';
+    $scope.category.rank = '';
+    $scope.category.action = '';
+  })
+}
+
+//Delete category
+$scope.deleteCategory = function(category) {
+  var i = category._id;
+  $http.delete('/api/category/' + i)
+    .success(function() {
+      console.log("success");
+      var idx = $scope.categories.indexOf(category);
+      if (idx >= 0) {
+        $scope.categories.splice(idx, 1);
+      }
+    })
+    .error(function() {
+      //console.log('Error: ' + i);
+      var idx = $scope.categories.indexOf(category);
+      if (idx >= 0) {
+        $scope.categories.splice(idx, 1);
+      }
+    });
+}
+
+//Edit category
+$scope.editCategory = function(category) {
+  var i = category._id;
+  console.log(i);
+  $http.get('/api/category/' + i).success(function(response) {
+        $scope.category = response;
+    });
+}
+
+//Then save it or update it
+$scope.updateCategory = function() {
+  console.log($scope.category._id);
+  $http.put('/api/category/' + $scope.category._id, $scope.category).success(function(response) {
+    refresh();
+    $scope.category.name = '';
+    $scope.category.rank = '';
+    $scope.category.action = '';
+  });
+}
+
+//Get parameter in mongoDB
+$http.get('/api/parameters').success(function(data) {
+  $scope.parameters = data;
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+}); 
+
+var refreshParameter = function(){
+  $http.get('/api/parameters').success(function(response) {
+    console.log('I got the data I requested');
+        $scope.parameters = response;
+    });  
+}  
+
+//Edit parameter
+$scope.editParameter = function(parameter) {
+  var i = parameter._id;
+  console.log(i);
+  $http.get('/api/parameter/' + i).success(function(response) {
+        $scope.parameter = response;
+    });
+}
+
+//Then save it or update it
+$scope.updateParameter = function() {
+  console.log($scope.parameter._id);
+  $http.put('/api/parameter/' + $scope.parameter._id, $scope.parameter).success(function(response) {
+    refreshParameter();
+  });
+}
+
+var Profiles = $resource('/api/profiles');
+
+//Get the data from profiles in mongoDB
+$http.get('/api/profiles').success(function(data) {
+  $scope.profiles = data;
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+});
+
+var refreshProfiles = function(){
+  $http.get('/api/profiles').success(function(response) {
+    console.log('I got the data I requested');
+        $scope.profiles = response;
+    });  
+}  
+
+//Create profile
+$scope.createProfile = function () {
+  var profile = new Profiles();
+  profile.action = $scope.profile.action;
+  profile.criterion = $scope.profile.criterion;
+  profile.value = $scope.profile.value;
+  profile.$save(function (result) {
+    $scope.profiles.push(result);
+    $scope.profile.action = '';
+    $scope.profile.criterion = '';
+    $scope.profile.value = '';
+  })
+}
+
+//Delete profile
+$scope.deleteProfile = function(profile) {
+  var i = profile._id;
+  $http.delete('/api/profile/' + i)
+    .success(function() {
+      console.log("success");
+      var idx = $scope.profiles.indexOf(profile);
+      if (idx >= 0) {
+        $scope.profiles.splice(idx, 1);
+      }
+    })
+    .error(function() {
+      //console.log('Error: ' + i);
+      var idx = $scope.profiles.indexOf(profile);
+      if (idx >= 0) {
+        $scope.profiles.splice(idx, 1);
+      }
+    });
+}
+
+//Edit profile
+$scope.editProfile = function(profile) {
+  var i = profile._id;
+  console.log(i);
+  $http.get('/api/profile/' + i).success(function(response) {
+        $scope.profile = response;
+    });
+}
+
+//Then save it or update it
+$scope.updateProfile = function() {
+  console.log($scope.profile._id);
+  $http.put('/api/profile/' + $scope.profile._id, $scope.profile).success(function(response) {
+    refreshProfiles();
+    $scope.profile.action = '';
+    $scope.profile.criterion = '';
+    $scope.profile.value = '';
+  });
+}
+
+
+//Teste.... experiencia em inputs  para usar ng-change, ng-model, etc...
+$scope.teste = function() {
+    $scope.myTeste = "resultou!";
+}
+
 
 }]);
 

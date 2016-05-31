@@ -6,5 +6,8 @@ module.exports = mongoose.model('Criterion', {
   direction: {type : String, default: ''},
   measure: {type : String, default: ''},
   weight: {type : Number, default: ''},
-  rank: {type : Number, default: ''}	
+  rank: {type : Number, default: ''},
+  indifference: {type : Number, default: ''},
+  preference: {type : Number, default: ''},
+  veto: {type : Number, default: ''}	
 });

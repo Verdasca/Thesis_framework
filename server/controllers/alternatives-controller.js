@@ -22,7 +22,7 @@ module.exports.get = function (req, res) {
         if (err){
             res.send(err);    
         }
-        res.json(alternatives); // return all todos in JSON format
+        res.json(alternatives); // return all alternatives in JSON format
     });
 }
 

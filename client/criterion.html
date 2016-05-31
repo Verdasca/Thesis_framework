@@ -85,8 +85,8 @@
                     <br />
                     <label id="criLabel">Direction</label>
                     <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="criterion.direction">
-                        <option value="maximize">Maximize</option>
-                        <option value="minimize">Minimize</option>
+                        <option value="maximize">max</option>
+                        <option value="minimize">min</option>
                     </select>
                     <label id="criLabel">Measure</label>
                     <select id="criInput3" type="text" placeholder="Criterion measure" ng-model="criterion.measure">
@@ -97,6 +97,14 @@
                     <input id="criInput2" type="text" placeholder="Criterion weight" ng-model="criterion.weight"/>
                     <br />
                     <br />
+                    <label id="criLabel">Indifference</label>
+                    <input id="criInput2" type="text" placeholder="Indifference" ng-model="criterion.indifference"/>
+                    <label id="criLabel">Preference</label>
+                    <input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/>
+                    <label id="criLabel">Veto</label>
+                    <input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/>
+                    <br />
+                    <br />
                     <table id="criterionTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
                             <th id="criHeader">Name</th>
@@ -104,6 +112,9 @@
                             <th id="criHeader">Direction</th>
                             <th id="criHeader">Measure</th>
                             <th id="criHeader">Weight</th>
+                            <th id="criHeader">Indifference</th>
+                            <th id="criHeader">Preference</th>
+                            <th id="criHeader">Veto</th>
                             <th id="criHeader2" style="width:150px">Action</th>
                         </tr>
                         <tr ng-repeat="criterion in criterions">
@@ -112,6 +123,9 @@
                             <td id="criBody">{{ criterion.direction }}</td>
                             <td id="criBody">{{ criterion.measure }}</td>
                             <td id="criBody">{{ criterion.weight }}</td>
+                            <td id="criBody">{{ criterion.indifference }}</td>
+                            <td id="criBody">{{ criterion.preference }}</td>
+                            <td id="criBody">{{ criterion.veto }}</td>
                             <td>
                                 <input type="button" value="Edit" ng-click="editCriterion(criterion)" class="btn btn-warning"/>
                                 <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 

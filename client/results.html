@@ -101,7 +101,7 @@ function meuCallback(dataViaJsonp){
 		    <h2>Results</h2>
             <button type="button" onclick="loadXMLDoc()">Get alternatives</button>
             <button type="button" onclick="novoJogo()">Get novo jogo</button>
-            <p id="demo"></p>
+            <p id="demo">lol</p>
             <h1>Customers</h1>
             <div id="id01"></div>
 		</div>
@@ -114,7 +114,7 @@ function loadXMLDoc() {
         myFunction(xmlhttp);
     }
   };
-  xmlhttp.open("GET", "http://localhost:8000/inputsOutputs/electreTriC/out/assignments.xml", true);  
+  xmlhttp.open("GET", "./out/assignments.xml", true);  
   //xmlhttp.open("GET", "http://localhost:5000", true); 
   xmlhttp.send();
 }
@@ -129,39 +129,39 @@ function myFunction(xml) {
   }
   document.getElementById("demo").innerHTML = txt;
 }
-
+loadXMLDoc(); 
 </script>  
 
 
 <script>
-var xmlhttp = new XMLHttpRequest();
-var url = "http://www.w3schools.com/website/Customers_MYSQL.php";
-//var url = "http://localhost:8000/catalog.xml";
-xmlhttp.onreadystatechange=function() {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        myFunction(xmlhttp.responseText);
-    }
-}
-xmlhttp.open("GET", url, true);
-xmlhttp.send();
+// var xmlhttp = new XMLHttpRequest();
+// var url = "http://www.w3schools.com/website/Customers_MYSQL.php";
+// //var url = "http://localhost:8000/catalog.xml";
+// xmlhttp.onreadystatechange=function() {
+//     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+//         myFunction(xmlhttp.responseText);
+//     }
+// }
+// xmlhttp.open("GET", url, true);
+// xmlhttp.send();
 
-function myFunction(response) {
-    var arr = JSON.parse(response);
-    var i;
-    var out = "<table>";
+// function myFunction(response) {
+//     var arr = JSON.parse(response);
+//     var i;
+//     var out = "<table>";
 
-    for(i = 0; i < arr.length; i++) {
-        out += "<tr><td>" + 
-        arr[i].note +
-        "</td><td>" +
-        arr[i].CD +
-        "</td><td>" +
-        arr[i].COUNTRY +
-        "</td></tr>";
-    }
-    out += "</table>";
-    document.getElementById("id01").innerHTML = out;
-}
+//     for(i = 0; i < arr.length; i++) {
+//         out += "<tr><td>" + 
+//         arr[i].note +
+//         "</td><td>" +
+//         arr[i].CD +
+//         "</td><td>" +
+//         arr[i].COUNTRY +
+//         "</td></tr>";
+//     }
+//     out += "</table>";
+//     document.getElementById("id01").innerHTML = out;
+// }
 </script> 
 </body>
 </html>

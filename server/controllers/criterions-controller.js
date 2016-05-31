@@ -1,6 +1,6 @@
 var Criterion = require('../models/criterion');
 
-//Create an criterion
+//Create a criterion
 module.exports.create = function (req, res) {
 	var criterion = new Criterion(req.body);
 	criterion.save(function (err, result) {
@@ -16,7 +16,7 @@ module.exports.get = function (req, res) {
         if (err){
             res.send(err);    
         }
-        res.json(criterions); // return all todos in JSON format
+        res.json(criterions); // return all criteria in JSON format
     });
 }
 
@@ -30,12 +30,12 @@ module.exports.findById = function (req, res) {
     });
 }
 
-//Edit an criterion
+//Edit a criterion
 module.exports.edit = function (req, res) {
 	Criterion.findOneAndUpdate({
             _id:req.params.id
         },
-        {$set:{name:req.body.name, description:req.body.description, direction:req.body.direction, measure:req.body.measure, weight:req.body.weight, rank:req.body.rank}},
+        {$set:{name:req.body.name, description:req.body.description, direction:req.body.direction, measure:req.body.measure, weight:req.body.weight, rank:req.body.rank, indifference:req.body.indifference, preference:req.body.preference, veto:req.body.veto}},
         {upsert:true},
         function(err,criterion){
             if(err){

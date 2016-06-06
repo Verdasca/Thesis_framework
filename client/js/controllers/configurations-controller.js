@@ -1,6 +1,6 @@
 var app = angular.module("configurations-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('configurationsController', ['$scope', '$http', function ($scope, $http) {
+app.controller('configurationsController', ['$scope', '$http', '$resource', function ($scope, $http, $resource) {
 
 //Get the data from criterions in mongoDB
 $http.get('/api/criterions').success(function(data) {
@@ -184,8 +184,8 @@ $scope.updateProfile = function() {
   });
 }
 
-
 //Teste.... experiencia em inputs  para usar ng-change, ng-model, etc...
+$scope.myTeste = "teste!";
 $scope.teste = function() {
     $scope.myTeste = "resultou!";
 }

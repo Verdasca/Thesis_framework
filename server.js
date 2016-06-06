@@ -75,6 +75,8 @@ app.get('/api/performance/:id', performanceTableController.findById);
 app.post('/api/performances', performanceTableController.create);
 app.put('/api/performance/:id', performanceTableController.edit);
 app.delete('/api/performance/:id', performanceTableController.delete);
+app.delete('/api/performances', performanceTableController.deleteAll);
+//app.delete('/api/performances', performanceTableController.destroy);
 //Profile Table 
 app.get('/api/profiles', profileTableController.get);
 app.get('/api/profile/:id', profileTableController.findById);

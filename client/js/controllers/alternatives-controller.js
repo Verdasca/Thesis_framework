@@ -119,12 +119,16 @@ app.directive('exportAlternativesToCsvWithoutDescription',function(){
             var table = document.getElementById("alternativeTbl");
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
-              var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-2;j++){ //number of columns to export
-                csvString = csvString + rowData[j].innerHTML + ",";
+              if(i == 1){
+                //Ignore save/update line
+              }else{
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length-2;j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
               }
-              csvString = csvString.substring(0,csvString.length); // -1); //delete the last values which is a coma (,)
-              csvString = csvString + "\n";
           }
             csvString = csvString.substring(0, csvString.length - 1);
             var a = $('<a/>', {
@@ -151,12 +155,16 @@ app.directive('exportAlternativesToCsv',function(){
             var table = document.getElementById("alternativeTbl");
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
-              var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-1;j++){ //number of columns to export
-                csvString = csvString + rowData[j].innerHTML + ",";
+              if(i == 1){
+                //Ignore save/update line
+              }else{
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length-1;j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
               }
-              csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-              csvString = csvString + "\n";
           }
             csvString = csvString.substring(0, csvString.length - 1);
             var a = $('<a/>', {

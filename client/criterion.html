@@ -75,7 +75,7 @@
             <br>
             <form id="criterionTable" runat="server">
                 <div>
-                    <label id="criLabel">Name</label>
+                    <!--<label id="criLabel">Name</label>
                     <input id="criInput" type="text" placeholder="Criterion name" ng-model="criterion.name"/>
                     <label id="criLabel">Description</label>
                     <input id="criInput" type="text" placeholder="Criterion description" ng-model="criterion.description"/>
@@ -85,8 +85,8 @@
                     <br />
                     <label id="criLabel">Direction</label>
                     <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="criterion.direction">
-                        <option value="maximize">max</option>
-                        <option value="minimize">min</option>
+                        <option value="max">max</option>
+                        <option value="min">min</option>
                     </select>
                     <label id="criLabel">Measure</label>
                     <select id="criInput3" type="text" placeholder="Criterion measure" ng-model="criterion.measure">
@@ -103,7 +103,7 @@
                     <input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/>
                     <label id="criLabel">Veto</label>
                     <input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/>
-                    <br />
+                    <br />-->
                     <br />
                     <table id="criterionTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
@@ -116,6 +116,30 @@
                             <th id="criHeader">Preference</th>
                             <th id="criHeader">Veto</th>
                             <th id="criHeader2" style="width:150px">Action</th>
+                        </tr>
+                        <tr>
+                            <td><input id="criInput" type="text" placeholder="Criterion name" ng-model="criterion.name"/></td>
+                            <td><input id="criInput" type="text" placeholder="Criterion description" ng-model="criterion.description"/></td>
+                            <td>
+                                <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="criterion.direction">
+                                    <option value="max">max</option>
+                                    <option value="min">min</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="criInput3" type="text" placeholder="Criterion measure" ng-model="criterion.measure">
+                                    <option value="ordinal">Ordinal</option>
+                                    <option value="cardinal">Cardinal</option>
+                                </select>
+                            </td>
+                            <td><input id="criInput2" type="text" placeholder="Weight" ng-model="criterion.weight"/></td>
+                            <td><input id="criInput2" type="text" placeholder="Indifference" ng-model="criterion.indifference"/></td>
+                            <td><input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/></td>
+                            <td><input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/></td>
+                            <td>
+                                <input type="button" value="Save" ng-click="createCriterion()" class="btn btn-primary"/>
+                                <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/>
+                            </td>
                         </tr>
                         <tr ng-repeat="criterion in criterions">
                             <td id="criBody">{{ criterion.name }}</td>
@@ -135,8 +159,8 @@
                 </div>
             </form> 
             <button export-criterion-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>  
-            <button export-criterion-to-csv-without-rank class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without rank</button> 
-            <button export-criterion-to-csv-without-weight class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without rank and weight</button> 
+            <button export-criterion-to-csv-without-thresholds class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without thresholds</button> 
+            <button export-criterion-to-csv-without-weight class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without thresholds and weight</button> 
         </div>
     </div>
 </body>

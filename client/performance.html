@@ -72,8 +72,77 @@
     <div id="main">
 		<div id="content" class="jumbotron text-center">
 		    <h2>Performance Table</h2>
+            <table id="performanceTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <tr>
+                    <th id="criHeader">Alternative</th>
+                    <th id="criHeader">Criterion</th>
+                    <th id="criHeader">Value</th>
+                    <th id="criHeader2" style="width:150px">Action</th>
+                </tr>
+                <tr>
+                    <td><input id="criBody" type="text" placeholder="Alternative" ng-model="performance.alternative"/></td>
+                    <td><input id="criBody" type="text" placeholder="Criterion" ng-model="performance.criterion"/></td>
+                    <td><input id="criBody" type="text" placeholder="Value" ng-model="performance.value"/></td>
+                    <td>
+                        <input type="button" value="Save" ng-click="createPerformance()" class="btn btn-primary"/>
+                        <input type="button" value="Update" ng-click="updatePerformance()" class="btn btn-info"/>
+                    </td>
+                </tr> 
+                <tr ng-repeat="performance in performances">
+                    <td id="criBody">{{ performance.alternative }}</td>
+                    <td id="criBody">{{ performance.criterion }}</td>
+                    <td id="criBody">{{ performance.value }}</td>
+                    <td>
+                        <input type="button" value="Edit" ng-click="editPerformance(performance)" class="btn btn-warning"/>
+                        <input type="button" value="Delete" ng-click="deletePerformance(performance)" class="btn btn-danger"/> 
+                    </td>     
+                </tr> 
+            </table>
+            <br/>
+<!--             <table border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <tr>
+                    <th id="criHeader">Alternatives\Criteria</th>
+                    <th id="criHeader" ng-repeat="criterion in criterions | orderBy: 'name' track by criterion.name">{{ criterion.name }}</th>
+                </tr> 
+                <tr ng-repeat="alternative in alternatives | orderBy: 'name' track by alternative.name">
+                    <td id="criHeader">{{ alternative.name }}</td>
+                    <td ng-repeat="performance in performances | limitTo: criterions.length | orderBy:['alternative','criterion']" ng-if="$index % criterions.length+1 > 0">
+                        <input id="performanceInput" type="text" value="{{ performance.value }}"/>
+                    </td>
+                </tr>  
+            </table> -->
+            <br/>
 
-			<script type="text/javascript">
+            <div>
+                <div ng-model="numPerform">{{performances.length}}</div>
+                <input type="button" value="Reset Performance Table" ng-click="deletePerformance2()" class="btn btn-danger"/> 
+                <!-- <input id="performanceInput" type="text" value="0" ng-init="createPerformance2(a4, g3);"/> -->
+                <table>
+                <tr ng-repeat="alternative in alternatives | orderBy: 'name' track by alternative.name">
+                    <td id="criHeader">{{ alternative.name }}</td>
+                    <td ng-repeat="criterion in criterions | limitTo: criterions.length | orderBy:['alternative','criterion']">
+                        <input type="text" value="0" ng-if="performances.length === 0" ng-init="createPerformance2(alternative, criterion, alternatives.length, criterions.length);"/>
+                         <!-- <input type="text" value="0" ng-if="performances.length === 0" ng-init="createPerformance2(alternative, criterion, alternatives.length, criterions.length);"/> -->
+                    </td>
+                </tr> 
+                </table>
+                
+                <br/>
+                <table id="performanceTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <tr>
+                    <th id="criHeader">Alternatives\Criteria</th>
+                    <th id="criHeader" ng-repeat="criterion in criterions | orderBy: 'name' track by criterion.name">{{ criterion.name }}</th>
+                </tr> 
+                <tr ng-repeat="alternative in alternatives | orderBy: 'name' track by alternative.name">
+                    <td id="criHeader">{{ alternative.name }}</td>
+                    <td ng-repeat="performance in performances | limitTo: criterions.length | orderBy:['alternative','criterion']" ng-if="$index % criterions.length+1 > 0">
+                        <input id="performanceInput" type="text" value="{{ performance.value }}" ng-model="performance.value" ng-change="updatePerformance2(performance);"/>
+                    </td>
+                </tr>  
+                </table>
+            </div>
+			<br/>
+            <script type="text/javascript">
 			function Upload() {
 			    var fileUpload = document.getElementById("fileUpload");
 			    var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;

@@ -223,10 +223,80 @@
             <br/>
             <!-- Electre Tri C method section -->
             <div id="electreTriCMethod" class="electreTriC box">
-                <h3>Electre Tri-C</h3>
+                <h2>Electre Tri-C</h2>
+                <br />
+                <h3>Category Set</h3>
+                <br />
+                <form id="categoryTable" runat="server">
+                <div>
+                <table id="categoryTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                    <tr>
+                        <th id="criHeader">Category Name</th>
+                        <th id="criHeader">Category Rank</th>
+                        <th id="criHeader">Reference Action</th>
+                        <th id="criHeader2" style="width:150px">Action</th>
+                    </tr>
+                    <tr>
+                        <td><input id="criBody" type="text" placeholder="Category name" ng-model="category.name"/></td>
+                        <td><input id="criBody" type="text" placeholder="Category rank" ng-model="category.rank"/></td>
+                        <td><input id="criBody" type="text" placeholder="Reference Action" ng-model="category.action"/></td>
+                        <td>
+                            <input type="button" value="Save" ng-click="createCategory()" class="btn btn-primary"/>
+                            <input type="button" value="Update" ng-click="updateCategory()" class="btn btn-info"/>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="category in categories">
+                        <td id="criBody">{{ category.name }}</td>
+                        <td id="criBody">{{ category.rank }}</td>
+                        <td id="criBody">{{ category.action }}</td>
+                        <td>
+                            <input type="button" value="Edit" ng-click="editCategory(category)" class="btn btn-warning"/>
+                            <input type="button" value="Delete" ng-click="deleteCategory(category)" class="btn btn-danger"/> 
+                        </td>     
+                    </tr>
+                </table>
+                </div>
+                </form> 
                 <br/>
-                <!-- TODO -->
-                <td id="testePy"><input type="text" id="teste" ng-change="teste()" ng-model="myTeste"></input><td>
+                <h3>Parameters</h3>
+                <br/>
+                <div ng-repeat="parameter in parameters">
+                    <label id="credibilityLambda">Credibility Lambda:</label>
+                    <input id="credibilityInput" type="text" placeholder="Credibility value" ng-model="parameter.credibility"/>
+                </div>
+                <br/>
+                <br/>
+                <h3>Profiles Performance Table</h3>
+                <br/>
+                <div>
+                    <table id="profileTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                        <tr>
+                            <th id="criHeader">Reference Action</th>
+                            <th id="criHeader">Criterion</th>
+                            <th id="criHeader">Value</th>
+                            <th id="criHeader2" style="width:150px">Action</th>
+                        </tr>
+                        <tr>
+                            <td><input id="criBody" type="text" placeholder="Reference Action" ng-model="profile.action"/></td>
+                            <td><input id="criBody" type="text" placeholder="Criterion" ng-model="profile.criterion"/></td>
+                            <td><input id="criBody" type="text" placeholder="Value" ng-model="profile.value"/></td>
+                            <td>
+                                <input type="button" value="Save" ng-click="createProfile()" class="btn btn-primary"/>
+                                <input type="button" value="Update" ng-click="updateProfile()" class="btn btn-info"/>
+                            </td>
+                        </tr>
+                        <tr ng-repeat="profile in profiles">
+                            <td id="criBody">{{ profile.action }}</td>
+                            <td id="criBody">{{ profile.criterion }}</td>
+                            <td id="criBody">{{ profile.value }}</td>
+                            <td>
+                                <input type="button" value="Edit" ng-click="editProfile(profile)" class="btn btn-warning"/>
+                                <input type="button" value="Delete" ng-click="deleteProfile(profile)" class="btn btn-danger"/> 
+                            </td>     
+                        </tr>
+                    </table>
+                </div>
+                <input type="text" value="teste" ng-model="myTeste" ng-Change="teste()"/>
             </div>
             <!-- END of Electre Tri C method section -->
 

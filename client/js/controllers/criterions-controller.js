@@ -100,12 +100,16 @@ app.directive('exportCriterionToCsv',function(){
             var table = document.getElementById("criterionTbl");
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
-              var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-1;j++){ //number of columns to export
-                csvString = csvString + rowData[j].innerHTML + ",";
+              if(i == 1){
+                //Ignore save/update line
+              }else{
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length-1;j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
               }
-              csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-              csvString = csvString + "\n";
           }
             csvString = csvString.substring(0, csvString.length - 1);
             var a = $('<a/>', {
@@ -121,7 +125,7 @@ app.directive('exportCriterionToCsv',function(){
 });
 
 //Export criterion into a .csv file without rank
-app.directive('exportCriterionToCsvWithoutRank',function(){
+app.directive('exportCriterionToCsvWithoutThresholds',function(){
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
@@ -131,12 +135,16 @@ app.directive('exportCriterionToCsvWithoutRank',function(){
             var table = document.getElementById("criterionTbl");
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
-              var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-5;j++){ //number of columns to export
-                csvString = csvString + rowData[j].innerHTML + ",";
+              if(i == 1){
+                //Ignore save/update line
+              }else{
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length-4;j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
               }
-              csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-              csvString = csvString + "\n";
           }
             csvString = csvString.substring(0, csvString.length - 1);
             var a = $('<a/>', {
@@ -162,12 +170,16 @@ app.directive('exportCriterionToCsvWithoutWeight',function(){
             var table = document.getElementById("criterionTbl");
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
-              var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length-6;j++){ //number of columns to export
-                csvString = csvString + rowData[j].innerHTML + ",";
+              if(i == 1){
+                //Ignore save/update line
+              }else{
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length-5;j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
               }
-              csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-              csvString = csvString + "\n";
           }
             csvString = csvString.substring(0, csvString.length - 1);
             var a = $('<a/>', {

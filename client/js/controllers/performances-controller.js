@@ -1,6 +1,6 @@
 var app = angular.module("performances-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('performancesController', ['$scope', '$http', '$resource', '$timeout', function ($scope, $http, $resource, $timeout) {
+app.controller('performancesController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $timeout, orderBy) {
 
 //Get all data when loading body
 $scope.run = function () {
@@ -116,6 +116,8 @@ $scope.updatePerformance = function() {
   });
 }
 
+$scope.propertyName = 'alternative';
+$scope.reverse = false;
 // Count the performances created
 $scope.j = 0;
 //Create all performances
@@ -151,6 +153,14 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
       console.log("Create performance");
       $scope.j = $scope.j + 1;
       console.log($scope.j);
+      if($scope.j > rightNumPerformances){
+        // It creates double number of rightNumPerformances because of ng-repeat
+        console.log('Stop creating more performances...');
+        if($scope.j == rightNumPerformances*2){
+          $scope.resetChunks();
+        }
+        return 0;
+      }
       var performance = new Performances();
       performance.alternative = alternative.name;
       performance.criterion = criterion.name;
@@ -162,18 +172,7 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
       if($scope.j == rightNumPerformances){
         console.log('Last performance being created...');
           refresh();
-          //Update performance table after some time
-          $timeout( function(){ 
-            //Show all values on performance table
-            var i, l = $scope.performances.length;
-            var x = $scope.criterions.length;
-            // Slice the performances results so it can be put inside a table numAlternativeXnumCriteria
-            $scope.chunks = [];
-            for ( i = 0; i < l; i += x) {
-                $scope.chunks.push( $scope.performances.slice(i, i + x));
-            }
-            console.log('Done slicing performances');
-          }, 1000);
+          $scope.resetChunks();
       }
     }else{
       //Delete all performances if it's length is not equal to zero or rightNumPerformances before creating all of them
@@ -208,13 +207,15 @@ $scope.confirmPerformance  = function() {
   //for(var i = 0; i < 2; i++){
     if(numExistingPerformances == rightNumPerformances){
       console.log('Performance Table is current.');
+        //Order performances by alternative before slicing it
+        $scope.performances2 = orderBy($scope.performances, $scope.propertyName, $scope.reverse);
         //Get all performances to put them inside a table
         var i, l = $scope.performances.length;
         var x = $scope.criterions.length;
         // Slice the performances results so it can be put inside a table numAlternativeXnumCriteria
         $scope.chunks = [];
         for ( i = 0; i < l; i += x) {
-            $scope.chunks.push( $scope.performances.slice(i, i + x));
+            $scope.chunks.push( $scope.performances2.slice(i, i + x));
         }
         console.log('Done slicing performances');
     }else{
@@ -248,6 +249,30 @@ $scope.updatePerformance2 = function(performance) {
   });
 }
 
+$scope.resetChunks  = function() {
+  $timeout( function(){ 
+    //Order performances by alternative before slicing it
+    $scope.performances2 = orderBy($scope.performances, $scope.propertyName, $scope.reverse);
+    //Show all values on performance table
+    var i, l = $scope.performances.length;
+    var x = $scope.criterions.length;
+    // Slice the performances results so it can be put inside a table numAlternativeXnumCriteria
+    $scope.chunks = [];
+    for ( i = 0; i < l; i += x) {
+      $scope.chunks.push( $scope.performances2.slice(i, i + x));
+    }
+    var numCriteria = $scope.criterions.length;
+    var numAlternatives = $scope.alternatives.length;
+    var rightNumPerformances = numCriteria * numAlternatives;
+    refresh();
+    var numExistingPerformances = $scope.performances.length;
+    console.log('Number of performances that should exist: ' + rightNumPerformances);
+    console.log('Actual number of performances now: ' + numExistingPerformances);
+    console.log('Done slicing performances');
+    }, 1000);      
+}
+
+
 // $scope.teste = [];
 // $scope.setTable = function(performances) {
 //   $scope.teste = performances;
@@ -278,7 +303,7 @@ $scope.uploadfile = function(scope, element) {
 
 }]);
 
-//Export performance atbel into a .csv file 
+//Export performance table into a .csv file 
 app.directive('exportPerformanceToCsv',function(){
     return {
       restrict: 'A',

@@ -73,7 +73,12 @@
         <div id="content" class="jumbotron text-center">
             <h2>Criterion Set</h2>
             <br>
-            <form id="criterionTable" runat="server">
+            <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
+              <div ng-show="myForm.name.$error.required">
+                Name is required!
+              </div>
+            </div>
+            <form name="myForm" id="criterionTable" runat="server" novalidate>
                 <div>
                     <!--<label id="criLabel">Name</label>
                     <input id="criInput" type="text" placeholder="Criterion name" ng-model="criterion.name"/>
@@ -104,7 +109,6 @@
                     <label id="criLabel">Veto</label>
                     <input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/>
                     <br />-->
-                    <br />
                     <table id="criterionTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
                             <th id="criHeader">Name</th>
@@ -118,7 +122,7 @@
                             <th id="criHeader2" style="width:150px">Action</th>
                         </tr>
                         <tr>
-                            <td><input id="criInput" type="text" placeholder="Criterion name" ng-model="criterion.name"/></td>
+                            <td><input id="criInput" type="text" placeholder="Criterion name" name="name" ng-model="criterion.name" required/></td>
                             <td><input id="criInput" type="text" placeholder="Criterion description" ng-model="criterion.description"/></td>
                             <td>
                                 <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="criterion.direction">
@@ -137,12 +141,12 @@
                             <td><input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/></td>
                             <td><input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/></td>
                             <td>
-                                <input type="button" value="Save" ng-click="createCriterion()" class="btn btn-primary"/>
-                                <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/>
+                                <input type="button" value="Add Criterion" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createCriterion()" class="btn btn-primary"/>
+                                <!-- <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/> -->
                             </td>
                         </tr>
-                        <tr ng-repeat="criterion in criterions">
-                            <td id="criBody">{{ criterion.name }}</td>
+                        <tr ng-repeat="criterion in criterions" ng-include="getTemplate(criterion)">
+                            <!-- <td id="criBody">{{ criterion.name }}</td>
                             <td id="criBody">{{ criterion.description }}</td>
                             <td id="criBody">{{ criterion.direction }}</td>
                             <td id="criBody">{{ criterion.measure }}</td>
@@ -153,9 +157,47 @@
                             <td>
                                 <input type="button" value="Edit" ng-click="editCriterion(criterion)" class="btn btn-warning"/>
                                 <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
-                            </td>     
+                            </td>    -->  
                         </tr>
                     </table>
+                    <script type="text/ng-template" id="display">
+                        <td id="criBody">{{ criterion.name }}</td>
+                        <td id="criBody">{{ criterion.description }}</td>
+                        <td id="criBody">{{ criterion.direction }}</td>
+                        <td id="criBody">{{ criterion.measure }}</td>
+                        <td id="criBody">{{ criterion.weight }}</td>
+                        <td id="criBody">{{ criterion.indifference }}</td>
+                        <td id="criBody">{{ criterion.preference }}</td>
+                        <td id="criBody">{{ criterion.veto }}</td>
+                        <td>
+                            <input type="button" value="Edit" ng-click="editCriterion2(criterion)" class="btn btn-warning"/>
+                            <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
+                        </td>  
+                    </script>
+                    <script type="text/ng-template" id="edit">
+                        <td><input id="criInput" type="text" placeholder="Criterion name" ng-model="model.name"/></td>
+                        <td><input id="criInput" type="text" placeholder="Criterion description" ng-model="model.description"/></td>
+                        <td>
+                            <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="model.direction">
+                                <option value="max">max</option>
+                                <option value="min">min</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="criInput3" type="text" placeholder="Criterion measure" ng-model="model.measure">
+                                <option value="ordinal">Ordinal</option>
+                                <option value="cardinal">Cardinal</option>
+                            </select>
+                        </td>
+                        <td><input id="criInput2" type="text" placeholder="Weight" ng-model="model.weight"/></td>
+                        <td><input id="criInput2" type="text" placeholder="Indifference" ng-model="model.indifference"/></td>
+                        <td><input id="criInput2" type="text" placeholder="Preference" ng-model="model.preference"/></td>
+                        <td><input id="criInput2" type="text" placeholder="Veto" ng-model="model.veto"/></td>
+                        <td>
+                            <input type="button" value="Save" ng-click="updateCriterion2(criterion)" class="btn btn-success"/>
+                            <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
+                        </td>
+                    </script>
                 </div>
             </form> 
             <button export-criterion-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>  

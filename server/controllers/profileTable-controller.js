@@ -59,3 +59,13 @@ module.exports.delete = function(req, res){
 
         });
 }
+
+//Delete all profiles
+exports.deleteAll = function(req, res) {
+        ProfileTable.remove({}, function(err, profile) {
+            if (err) {
+                throw new Error(err);
+            }
+            res.send(profile);
+        });
+}

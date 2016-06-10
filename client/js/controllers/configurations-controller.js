@@ -1,6 +1,33 @@
 var app = angular.module("configurations-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('configurationsController', ['$scope', '$http', '$resource', function ($scope, $http, $resource) {
+app.controller('configurationsController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $timeout, orderBy) {
+
+//Get all data when loading body
+$scope.run = function () {
+    //Get the data from criterions in mongoDB
+    $http.get('/api/criterions').success(function(data) {
+    $scope.criterions = data;
+    })
+    .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+
+    //Get the data from categories in mongoDB
+    $http.get('/api/categories').success(function(data) {
+      $scope.categories = data;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    });  
+
+    //Get the data from profiles in mongoDB
+    $http.get('/api/profiles').success(function(data) {
+      $scope.profiles = data;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    });
+}
 
 //Get the data from criterions in mongoDB
 $http.get('/api/criterions').success(function(data) {
@@ -9,6 +36,13 @@ $http.get('/api/criterions').success(function(data) {
   .error(function(data) {
     console.log('Error: ' + data);
 });    
+
+var refreshCriteria = function(){
+  $http.get('/api/criterions').success(function(data) {
+    //console.log('I got the data I requested');
+        $scope.criterions = data;
+    });  
+}  
 
 var Categories = $resource('/api/categories');
 
@@ -21,9 +55,9 @@ $http.get('/api/categories').success(function(data) {
 });
 
 var refresh = function(){
-  $http.get('/api/categories').success(function(response) {
-    console.log('I got the data I requested');
-        $scope.categories = response;
+  $http.get('/api/categories').success(function(data) {
+    //console.log('I got the data I requested');
+        $scope.categories = data;
     });  
 }  
 
@@ -81,6 +115,52 @@ $scope.updateCategory = function() {
   });
 }
 
+
+//Update the value and reset model
+$scope.updateCategory2 = function(category) {
+  var i = category._id;
+  category.name = $scope.model.name;
+  category.rank = $scope.model.rank;
+  category.action = $scope.model.action;
+  $http.get('/api/category/' + i).success(function(response) {
+        $scope.category = response;
+    });
+
+  $http.put('/api/category/' + i, category).success(function(response) {
+    refresh();
+    $scope.category.name = '';
+    $scope.category.rank = '';
+    $scope.category.action = '';
+  });
+  $scope.reset();
+}
+
+// Create model that will contain the category to edit
+$scope.model = {};
+
+// gets the template to ng-include for a table row / item
+$scope.getTemplate = function (category) {
+  var i = category._id;
+  if (i === $scope.model._id){ 
+    return 'edit';
+  }else{ 
+    return 'display';
+  }
+}
+
+$scope.editCategory2 = function (category) {
+  var i = category._id;
+  $scope.model = angular.copy(category);
+}
+
+// Reset model
+$scope.reset = function () {
+  $scope.model = {};
+}
+
+
+var Parameters = $resource('/api/parameters');
+
 //Get parameter in mongoDB
 $http.get('/api/parameters').success(function(data) {
   $scope.parameters = data;
@@ -91,27 +171,32 @@ $http.get('/api/parameters').success(function(data) {
 
 var refreshParameter = function(){
   $http.get('/api/parameters').success(function(response) {
-    console.log('I got the data I requested');
+    //console.log('I got the data I requested');
         $scope.parameters = response;
     });  
 }  
 
-//Edit parameter
-$scope.editParameter = function(parameter) {
-  var i = parameter._id;
-  console.log(i);
-  $http.get('/api/parameter/' + i).success(function(response) {
-        $scope.parameter = response;
-    });
+//Create parameter
+$scope.createParameter = function () {
+  var parameter = new Parameters();
+  parameter.credibility = 0.7;
+  parameter.$save(function (result) {
+    $scope.parameters.push(result);
+  })
 }
 
 //Then save it or update it
-$scope.updateParameter = function() {
-  console.log($scope.parameter._id);
-  $http.put('/api/parameter/' + $scope.parameter._id, $scope.parameter).success(function(response) {
-    refreshParameter();
+$scope.updateParameter = function(parameter) {
+  var i = parameter._id;
+  $http.get('/api/parameter/' + i).success(function(response) {
+        $scope.parameter = response;
+    });
+
+  $http.put('/api/parameter/' + i, parameter).success(function(response) {
+    //refreshParameter();
   });
 }
+
 
 var Profiles = $resource('/api/profiles');
 
@@ -124,9 +209,9 @@ $http.get('/api/profiles').success(function(data) {
 });
 
 var refreshProfiles = function(){
-  $http.get('/api/profiles').success(function(response) {
-    console.log('I got the data I requested');
-        $scope.profiles = response;
+  $http.get('/api/profiles').success(function(data) {
+    //console.log('I got the data I requested');
+        $scope.profiles = data;
     });  
 }  
 
@@ -184,14 +269,220 @@ $scope.updateProfile = function() {
   });
 }
 
-//Teste.... experiencia em inputs  para usar ng-change, ng-model, etc...
-$scope.myTeste = "teste!";
-$scope.teste = function() {
-    $scope.myTeste = "resultou!";
+
+// Count the profiles created
+$scope.j = 0;
+//Create all profiles
+$scope.createProfile2 = function (category, criterion, numCat, numCri) {
+  refresh();
+  refreshProfiles();
+  var x = $scope.categories.length;
+  //console.log(x);
+  var xx = $scope.criterions.length;
+  //console.log(xx);
+  // var xxx = $scope.profiles;
+  // console.log(xxx);
+  // var xxxx = $scope.profiles.length;
+  // console.log(xxxx);
+  var i = 0;
+  //See if profiles data is empty
+  if(i == $scope.profiles.length || $scope.profiles.length == 'undefined' || $scope.profiles.length == null || $scope.profiles.length == []){
+    var numExistingProfiles = i;
+  }else{
+    var numExistingProfiles = $scope.profiles.length;
+  }
+  var rightNumProfiles = x*xx;
+  console.log(rightNumProfiles); //Number of profiles that should be on the database 
+  console.log(numExistingProfiles); //Number of profiles that actual exist
+  
+  //Create profiles if profiles on mongodb is empty or with the incorrect number of elements
+  if(rightNumProfiles == numExistingProfiles){
+      console.log("Don't create profile");
+      //Nothing changed on the number of criteria and categories
+  }else{
+    if(numExistingProfiles == 0){
+        //If it's empty create all profiles
+        //Create a profile
+        console.log("Create profile");
+        $scope.j = $scope.j + 1;
+        console.log($scope.j);
+        if($scope.j > rightNumProfiles){
+            // It creates double number of rightNumProfiles for some reason because the caregories length changes for a ng-repeat
+            console.log('Stop creating more profiles...');
+            if($scope.j == rightNumProfiles*2){
+                // Update chunks
+                // $timeout( function(){ 
+                //     $scope.resetChunks();
+                //     console.log('Done slicing profiles (2 times ng-repeat)');
+                // }, 2000);
+              $scope.resetChunks();
+            }
+            return 0;
+        }
+        var profile = new Profiles();
+        profile.action = category.action;
+        profile.criterion = criterion.name;
+        profile.value = 0;
+        profile.$save(function (result) {
+            $scope.profiles.push(result);
+        })
+        // See if it's the last performance to create if it is update the performance table
+        if($scope.j == rightNumProfiles){
+            console.log('Last profile being created...');
+            refreshProfiles();
+            $scope.resetChunks();
+        }
+    }else{
+      //Delete all profiles if it's length is not equal to zero or rightNumProfiles before creating all of them
+      //deleteProfile2(); 
+    }
+  }
+}
+
+//Update the value 
+$scope.updateProfile2 = function(profile) {
+  var i = profile._id;
+  $http.get('/api/profile/' + i).success(function(response) {
+        $scope.profile = response;
+    });
+
+  $http.put('/api/profile/' + i, profile).success(function(response) {
+    refreshProfiles();
+  });
+}
+
+//Delete profiles
+$scope.deleteProfile2 = function() {
+  //Delete all profiles 
+  //Note it works but for some reason it prints the error message
+  $http.delete('/api/profiles')
+    .success(function() {
+      console.log("success");
+    })
+    .error(function() {
+      //console.log('Error: fail deletes' );
+    });
+    refreshProfiles();
+}
+
+$scope.propertyName = 'action';
+$scope.reverse = false;
+$scope.confirmProfile  = function() {
+  var numCriteria = $scope.criterions.length;
+  var numCategories = $scope.categories.length;
+  var rightNumProfiles = numCriteria * numCategories;
+  var numExistingProfiles = $scope.profiles.length;
+  console.log('Number of profiles that should exist: ' + rightNumProfiles);
+  console.log('Actual number of profiles now: ' + numExistingProfiles);
+  // Confirm size of table more than once, just to be sure that it was updated
+  //for(var i = 0; i < 2; i++){
+    if(numExistingProfiles == rightNumProfiles){
+        console.log('Performance Table is current.');
+        //Order profiles by action before slicing it
+        $scope.profiles2 = orderBy($scope.profiles, $scope.propertyName, $scope.reverse);
+        //Get all profiles to put them inside a table
+        var i, l = $scope.profiles.length;
+        var x = $scope.criterions.length;
+        // Slice the profiles results so it can be put inside a table numAlternativeXnumCriteria
+        $scope.chunks = [];
+        for ( i = 0; i < l; i += x) {
+            $scope.chunks.push( $scope.profiles2.slice(i, i + x));
+        }
+        console.log('Done slicing profiles');
+    }else{
+      //If number of criteria or alternatives was changed, update profile table
+      $scope.deleteProfile2();
+      console.log('Profile Table has been updated.');
+    }
+  //}
+}
+
+// Time to execute the profile table review 
+$timeout( function(){
+    $scope.chunksCat = [];
+    refresh();
+    refreshCriteria(); 
+    refreshProfiles();
+    $scope.chunksCat = $scope.categories;
+    //Update profile table if necessary
+    $scope.confirmProfile(); 
+    refreshProfiles();
+}, 500);
+
+// If a category is created or deleted or even updated, update profile table from 0
+
+$scope.resetProfileTable  = function() {
+    $timeout( function(){
+        $scope.j = 0;
+        $scope.deleteProfile2();
+        // Get categories updated
+        $scope.chunksCat = [];
+        refresh();
+        $scope.chunksCat = $scope.categories;
+        console.log('Profile Table has been updated.');
+    }, 800);
+}
+
+$scope.resetChunks  = function() {
+    $timeout( function(){ 
+        $scope.profiles2 = orderBy($scope.profiles, $scope.propertyName, $scope.reverse);
+        //Show all values on profile table
+        var i, l = $scope.profiles.length;
+        var x = $scope.criterions.length;
+        // Slice the profiles results so it can be put inside a table numCategoriesXnumCriteria
+        $scope.chunks = [];
+        for ( i = 0; i < l; i += x) {
+            $scope.chunks.push( $scope.profiles2.slice(i, i + x));
+        }
+        var numCriteria = $scope.criterions.length;
+        var numCategories = $scope.categories.length;
+        var rightNumProfiles = numCriteria * numCategories;
+        refreshProfiles();
+        var numExistingProfiles = $scope.profiles.length;
+        console.log('Number of profiles that should exist: ' + rightNumProfiles);
+        console.log('Actual number of profiles now: ' + numExistingProfiles);
+        console.log('Done slicing profiles');
+    }, 1800);
 }
 
 
 }]);
+
+//Export profile table into a .csv file 
+app.directive('exportProfileToCsv',function(){
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+        var el = element[0];
+          element.bind('click', function(e){
+            //var table = e.target.nextElementSibling;
+            var table = document.getElementById("profileTable");
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length;j++){ //number of columns to export
+                  // See if it's a header value or a first column value
+                  if(i == 0 || j == 0){ 
+                    csvString = csvString + rowData[j].innerHTML + ",";
+                  }else{
+                    csvString = csvString + rowData[j].children[0].value + ",";
+                  }
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+          }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'profile_table.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+          });
+      }
+    }
+});
 
 //Export weight method 1 ratio results into a .csv file 
 app.directive('exportWeightsToCsv',function(){

@@ -1,7 +1,7 @@
 <!-- decision configurations page -->
 
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-init="run();">
 <head>
     <meta charset="UTF-8">
     <base href="/">
@@ -225,9 +225,21 @@
             <div id="electreTriCMethod" class="electreTriC box">
                 <h2>Electre Tri-C</h2>
                 <br />
+                <hr style="border:1px solid #033773">
                 <h3>Category Set</h3>
                 <br />
-                <form id="categoryTable" runat="server">
+                <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
+                  <div ng-show="myForm.name.$error.required">
+                    Name is required!
+                  </div>
+                  <div ng-show="myForm.rank.$error.required">
+                    Rank is required!
+                  </div>
+                  <div ng-show="myForm.reference.$error.required">
+                    Reference action is required!
+                  </div>
+                </div>
+                <form name="myForm" id="categoryTable" runat="server" novalidate>
                 <div>
                 <table id="categoryTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                     <tr>
@@ -237,39 +249,64 @@
                         <th id="criHeader2" style="width:150px">Action</th>
                     </tr>
                     <tr>
-                        <td><input id="criBody" type="text" placeholder="Category name" ng-model="category.name"/></td>
-                        <td><input id="criBody" type="text" placeholder="Category rank" ng-model="category.rank"/></td>
-                        <td><input id="criBody" type="text" placeholder="Reference Action" ng-model="category.action"/></td>
+                        <td><input id="criBody" type="text" placeholder="Category name" name="name" ng-model="category.name" required/></td>
+                        <td><input id="criBody" type="text" placeholder="Category rank" name="rank" ng-model="category.rank" required/></td>
+                        <td><input id="criBody" type="text" placeholder="Reference Action" name="reference" ng-model="category.action" required/></td>
                         <td>
-                            <input type="button" value="Save" ng-click="createCategory()" class="btn btn-primary"/>
-                            <input type="button" value="Update" ng-click="updateCategory()" class="btn btn-info"/>
+                            <input type="button" value="Add Category" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.rank.$dirty && myForm.rank.$invalid || myForm.reference.$dirty && myForm.reference.$invalid" ng-click="submitted=true; myForm.name.$valid && createCategory(); resetProfileTable();" class="btn btn-primary"/>
+                            <!-- <input type="button" value="Update" ng-click="updateCategory(); resetProfileTable();" class="btn btn-info"/> -->
                         </td>
                     </tr>
-                    <tr ng-repeat="category in categories">
-                        <td id="criBody">{{ category.name }}</td>
+                    <tr ng-repeat="category in categories" ng-include="getTemplate(category)">
+                        <!-- <td id="criBody">{{ category.name }}</td>
                         <td id="criBody">{{ category.rank }}</td>
                         <td id="criBody">{{ category.action }}</td>
                         <td>
                             <input type="button" value="Edit" ng-click="editCategory(category)" class="btn btn-warning"/>
-                            <input type="button" value="Delete" ng-click="deleteCategory(category)" class="btn btn-danger"/> 
-                        </td>     
+                            <input type="button" value="Delete" ng-click="deleteCategory(category); resetProfileTable();" class="btn btn-danger"/> 
+                        </td>   -->   
                     </tr>
                 </table>
+                <script type="text/ng-template" id="display">
+                    <td id="criBody">{{ category.name }}</td>
+                    <td id="criBody">{{ category.rank }}</td>
+                    <td id="criBody">{{ category.action }}</td>
+                    <td>
+                        <input type="button" value="Edit" ng-click="editCategory2(category)" class="btn btn-warning"/>
+                        <input type="button" value="Delete" ng-click="deleteCategory(category); resetProfileTable();" class="btn btn-danger"/> 
+                    </td>  
+                </script>
+                <script type="text/ng-template" id="edit">
+                    <td><input id="criInput" type="text" placeholder="Category name" ng-model="model.name"/></td>
+                    <td><input id="criInput" type="text" placeholder="Category rank" ng-model="model.rank"/></td>
+                    <td><input id="criInput" type="text" placeholder="Reference Action" ng-model="model.action"/></td>
+                    <td>
+                        <input type="button" value="Save" ng-click="updateCategory2(category); resetProfileTable();" class="btn btn-success"/>
+                        <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
+                    </td>
+                </script>
                 </div>
                 </form> 
                 <br/>
+                <hr style="border:1px solid #033773">
                 <h3>Parameters</h3>
                 <br/>
-                <div ng-repeat="parameter in parameters">
-                    <label id="credibilityLambda">Credibility Lambda:</label>
-                    <input id="credibilityInput" type="text" placeholder="Credibility value" ng-model="parameter.credibility"/>
+                <table style="display:none">
+                    <tr ng-repeat="parameter in parameters | limitTo: 1">
+                        <input type="text" value="0" ng-if="parameters.length === 0" ng-init="createParameter();"/>
+                    </tr> 
+                </table>
+                <div ng-repeat="parameter in parameters | limitTo: 1">
+                    <label id="credibilityLambda">Credibility Lambda ( &lambda; ):</label>
+                    <input id="credibilityInput" type="text" value="{{ parameter.credibility }}" placeholder="Credibility value" ng-model="parameter.credibility" ng-change="updateParameter(parameter);"/>
                 </div>
                 <br/>
                 <br/>
+                <hr style="border:1px solid #033773">
                 <h3>Profiles Performance Table</h3>
                 <br/>
                 <div>
-                    <table id="profileTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                    <!-- <table id="profileTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
                             <th id="criHeader">Reference Action</th>
                             <th id="criHeader">Criterion</th>
@@ -294,7 +331,30 @@
                                 <input type="button" value="Delete" ng-click="deleteProfile(profile)" class="btn btn-danger"/> 
                             </td>     
                         </tr>
+                    </table> -->
+                    <br/>
+                    <table style="display:none">
+                        <tr ng-repeat="category in chunksCat | limitTo: chunksCat.length | orderBy: 'action' track by category.action">
+                            <td id="criHeader">{{ category.action }}</td>
+                            <td ng-repeat="criterion in criterions | limitTo: criterions.length | orderBy: 'name' track by criterion.name">
+                                <input type="text" value="0" ng-if="profiles.length === 0" ng-init="createProfile2(category, criterion, categories.length, criterions.length);"/>{{ category.action }}{{ criterion.name }}
+                            </td>
+                        </tr> 
                     </table>
+                    <table id="profileTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                        <tr>
+                            <th id="criHeader">Reference Actions\Criteria</th>
+                            <th id="criHeader" ng-repeat="criterion in criterions | orderBy: 'name' track by criterion.name">{{ criterion.name }}</th>
+                        </tr> 
+                        <tr ng-repeat="profiles in chunks | limitTo: categories.length | orderBy:['action','criterion']">
+                            <td id="criHeader" ng-repeat="profile in profiles | orderBy:['action','criterion'] | limitTo: 1">{{ profile.action }}</td>
+                            <td ng-repeat="profile in profiles | orderBy:['action','criterion']">
+                                <input id="profileInput" type="text" value="{{ profile.value }}" ng-model="profile.value" ng-change="updateProfile2(profile);"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                    <button export-profile-to-csv class="btn btn-default ng-isolate-scope" id="exportProfileBtn">Export to CSV</button> 
                 </div>
             </div>
             <!-- END of Electre Tri C method section -->

@@ -110,6 +110,7 @@
 #exportBtn,
 #exportBtn2,
 #exportBtn3,
+#exportProfileBtn,
 #exportBtnWeight,
 #exportBtnWeight2,
 #exportBtnWeight3,
@@ -222,7 +223,8 @@
 
 
 /* Performance table section */
-#performanceTable{
+#performanceTable,
+#profileTable{
     margin: auto;
     text-align: center;
     width: 97%;
@@ -239,7 +241,8 @@
     font-size: 16px;
 }
 
-#performanceInput{
+#performanceInput,
+#profileInput{
   width: 50%;
   text-align: center;
   font-size: 18px;

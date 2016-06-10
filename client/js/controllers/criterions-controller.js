@@ -87,6 +87,70 @@ $scope.updateCriterion = function() {
   });
 }
 
+//Update the value and reset model
+$scope.updateCriterion2 = function(criterion) {
+  var i = criterion._id;
+  criterion.name = $scope.model.name;
+  criterion.description = $scope.model.description;
+  criterion.direction = $scope.model.direction;
+  criterion.measure = $scope.model.measure;
+  criterion.weight = $scope.model.weight;
+  criterion.indifference = $scope.model.indifference;
+  criterion.preference = $scope.model.preference;
+  criterion.veto = $scope.model.veto;
+  $http.get('/api/criterion/' + i).success(function(response) {
+        $scope.criterion = response;
+    });
+
+  $http.put('/api/criterion/' + i, criterion).success(function(response) {
+    refresh();
+    $scope.criterion.name = '';
+    $scope.criterion.description = '';
+    $scope.criterion.direction = '';
+    $scope.criterion.measure = '';
+    $scope.criterion.weight = '';
+    $scope.criterion.indifference = '';
+    $scope.criterion.preference = '';
+    $scope.criterion.veto = '';
+  });
+  $scope.reset();
+}
+
+// Create model that will contain the criterion to edit
+$scope.model = {};
+
+// gets the template to ng-include for a table row / item
+$scope.getTemplate = function (criterion) {
+  var i = criterion._id;
+  //console.log('Do getTemplate on: '+i);
+  //console.log('Id from model criterion copied: '+$scope.model.name);
+  // if(i === null || i === 'undefined' || i === ''){
+  //   return 'display';
+  // }
+  if (i === $scope.model._id){ 
+    //console.log('Edit mode.');
+    return 'edit';
+  }else{ 
+    return 'display';
+  }
+}
+
+$scope.editCriterion2 = function (criterion) {
+  var i = criterion._id;
+  $scope.model = angular.copy(criterion);
+  //console.log('Criterion: '+i+ ' copied.');
+  //var c = angular.copy(criterion);
+  //$scope.model.push(c);
+  //$scope.model.push({id: i, name:criterion.name, description:criterion.description, direction:criterion.direction, measure:criterion.measure, weight:criterion.weight, indifference:criterion.indifference, preference:criterion.preference, veto:criterion.veto});
+  //console.log($scope.model);
+  //console.log($scope.model._id);
+}
+
+// Reset model
+$scope.reset = function () {
+  $scope.model = {};
+}
+
 }]);
 
 //Export criterion into a .csv file 

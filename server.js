@@ -83,6 +83,7 @@ app.get('/api/profile/:id', profileTableController.findById);
 app.post('/api/profiles', profileTableController.create);
 app.put('/api/profile/:id', profileTableController.edit);
 app.delete('/api/profile/:id', profileTableController.delete);
+app.delete('/api/profiles', profileTableController.deleteAll);
 
 // frontend routes =========================================================
 // route to handle all angular requests

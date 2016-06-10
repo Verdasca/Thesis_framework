@@ -19,17 +19,6 @@ $http.get('/api/alternatives').success(function(data) {
 });
 
 
-  // $scope.createAlternative = function () {
-  //   var alternative = new Alternative();
-  //   alternative.name = $scope.alternativeName;
-  //   alternative.description = $scope.alternativeDescription;
-  //   alternative.$save(function (result) {
-  //     $scope.alternatives.push(result);
-  //     $scope.alternativeName = '';
-  //     $scope.alternativeDescription = ''
-  //   });
-  // } 
-
 //Create alternative
 $scope.createAlternative = function () {
   var alternative = new Alternatives();
@@ -62,22 +51,6 @@ $scope.deleteAlternative = function(alternative) {
     });
 }
 
-  // $scope.deleteAlternative = function(alternative) {
-  //   var idx = $scope.alternatives.indexOf(alternative);
-  //   if (idx >= 0) {
-  //     $scope.alternatives.splice(idx, 1);
-  //   }
-  //   alternative.$remove('/api/alternative/' + alternative.id);
-  // };
-
-// $scope.deleteAlternative = function(idx) {
-//   var person_to_delete = $scope.alternatives[idx];
-// var Alternative2 = $resource('/api/alternative/' + person_to_delete.id);
-//   Alternative2.delete({ id: person_to_delete.id }, function (success) {
-//     $scope.alternatives.splice(idx, 1);
-//   });
-// };
-
 //Edit alternative
 $scope.editAlternative = function(alternative) {
   var i = alternative._id;
@@ -104,6 +77,46 @@ $http.get('/api/alternatives').success(function(data) {
   .error(function(data) {
     console.log('Error: ' + data);
 });
+}
+
+//Update the value and reset model
+$scope.updateAlternative2 = function(alternative) {
+  var i = alternative._id;
+  alternative.name = $scope.model.name;
+  alternative.description = $scope.model.description;
+  $http.get('/api/alternative/' + i).success(function(response) {
+        $scope.alternative = response;
+    });
+
+  $http.put('/api/alternative/' + i, alternative).success(function(response) {
+    refresh();
+    $scope.alternative.name = '';
+    $scope.alternative.description = '';
+  });
+  $scope.reset();
+}
+
+// Create model that will contain the alternative to edit
+$scope.model = {};
+
+// gets the template to ng-include for a table row / item
+$scope.getTemplate = function (alternative) {
+  var i = alternative._id;
+  if (i === $scope.model._id){ 
+    return 'edit';
+  }else{ 
+    return 'display';
+  }
+}
+
+$scope.editAlternative2 = function (alternative) {
+  var i = alternative._id;
+  $scope.model = angular.copy(alternative);
+}
+
+// Reset model
+$scope.reset = function () {
+  $scope.model = {};
 }
 
 }]);

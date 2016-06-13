@@ -409,8 +409,12 @@ $timeout( function(){
     refreshProfiles();
 }, 500);
 
-// If a category is created or deleted or even updated, update profile table from 0
+$timeout( function(){
+  console.log('Add drag and drop events...');
+    addDragDrop();
+}, 1500);
 
+// If a category is created or deleted or even updated, update profile table from 0
 $scope.resetProfileTable  = function() {
     $timeout( function(){
         $scope.j = 0;
@@ -445,6 +449,50 @@ $scope.resetChunks  = function() {
     }, 1800);
 }
 
+// Get the criterion data and update the rank and weight values
+$scope.getCriterion = function (id, weight, rank){
+  var i = id;
+  var w = weight;
+  var r = rank;
+  // Get criterion data according to the id
+  var criterio = $http.get('/api/criterion/' + i).then(function(result){
+        return result.data;
+  });
+  // Update weight and rank of the criterion
+  var update = criterio.then(function(promise) {
+    $scope.revenues = promise;
+    promise.weight = w;
+    promise.rank = r;
+    // The update is done at the end of everything
+    //console.log(promise.weight + ' ' + promise.rank);
+    // Print criteiron to see if it's ok
+    //console.log($scope.revenues);
+    $http.put('/api/criterion/' + i, promise).success(function(response) {
+      refresh();
+    });
+    return promise;
+  });
+  return update;
+}
+
+//Update rank and weight for all criteria
+$scope.updateCriterionWeights = function() {
+  $timeout( function(){
+    $scope.revenues = []; //For test purposes
+    // Get table values for the criterion
+    var updateTable = document.getElementById("updateTable").getElementsByTagName('tbody')[0];
+    var len = updateTable.rows.length;
+    for (var i = 0; i < len; i++) {
+      var criterionId = updateTable.rows[i].cells[0].innerHTML;
+      var criterionRank = updateTable.rows[i].cells[1].innerHTML;
+      var criterionWeigth = updateTable.rows[i].cells[4].innerHTML;
+      console.log('Update Criterion: '+ criterionId.toString() + ', with rank ' + criterionRank + ' and weigth ' + criterionWeigth);
+      //Get the criterion data and update the rank and weight values
+      var myDataPromise = $scope.getCriterion(criterionId, criterionWeigth, criterionRank);
+      //console.log(myDataPromise);
+    }
+  }, 1000);
+}
 
 }]);
 
@@ -1502,6 +1550,23 @@ function sortAuxiliarTable6(){
     store = null;
 }
 
+function sortUpdateTable(){
+    var tbl = document.getElementById("updateTable").tBodies[0];
+    var store = [];
+    for(var i=0, len=tbl.rows.length; i<len; i++){
+        var row = tbl.rows[i];
+        var sortnr = parseFloat(row.cells[1].textContent || row.cells[1].innerText);
+        if(!isNaN(sortnr)) store.push([sortnr, row]);
+    }
+    store.sort(function(x,y){
+        return x[0] - y[0];
+    });
+    for(var i=0, len=store.length; i<len; i++){
+        tbl.appendChild(store[i][1]);
+    }
+    store = null;
+}
+
 //Functions to increase/decrease the number of deciaml places
 var decimalPlaces = 0;
 function decreaseDecimal(){
@@ -1567,12 +1632,14 @@ function weightMethod(){
     //Eliminates previous data from the tables
     $("#auxTbl tbody tr").remove();
     $("#auxTbl2 tbody tr").remove();
+    $("#updateTable tbody tr").remove();
     totalWeights = 0.0; 
     totalEr = 0;
 
     var nodes = document.getElementById("weightMethod").getElementsByTagName("ol");
     var table = document.getElementById("auxTbl").getElementsByTagName('tbody')[0];
     var table2 = document.getElementById("auxTbl2").getElementsByTagName('tbody')[0];
+    var updateTable = document.getElementById("updateTable").getElementsByTagName('tbody')[0];
     var nRows = 0;
     var m = nodes.length;
     var len = 0;
@@ -1582,6 +1649,7 @@ function weightMethod(){
     var nWhiteCard = 0;
     var hasWhiteCard = false;
     var sumTotal = 0.00;
+    var updateNum = 0;
 
     for(i=0; i<nodes.length; i++){
         if(nodes.item(i).getAttribute("id") != "whiteSection"){
@@ -1622,35 +1690,51 @@ function weightMethod(){
                         //Save how many white cards there are between criterions to not add them to the results (ignore white cards)
                         minusWhiteCardsRows = minusWhiteCardsRows + 1;
                     }else{
-                        // Create an empty <tr> element and add it to the 1st position of the table + ignore white card rows
-                        var row = table2.insertRow(j-minusWhiteCardsRows);
-                            
-                        // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-                        var cell1 = row.insertCell(0);
-                        var cell2 = row.insertCell(1);
-                        var cell3 = row.insertCell(2);
-                        var cell4 = row.insertCell(3);
-                        var cell5 = row.insertCell(4);
-                        var cell6 = row.insertCell(5);
-                        var cell7 = row.insertCell(6);
-                            
-                        // Add some text to the new cells:
-                        cell1.innerHTML = rank;
-                        cell2.innerHTML = nodes.item(i).getElementsByTagName("li")[j].innerHTML;
-                        cell3.innerHTML = "";
-                        cell4.innerHTML = ""; 
-                        cell5.innerHTML = "";
-                        cell6.innerHTML = "";   
-                        cell7.innerHTML = "";
+                      //Update table
+                      var rowUp = updateTable.insertRow(updateNum);        
+                      // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+                      var cellUp1 = rowUp.insertCell(0);
+                      var cellUp2 = rowUp.insertCell(1);
+                      var cellUp3 = rowUp.insertCell(2);
+                      var cellUp4 = rowUp.insertCell(3);
+                      var cellUp5 = rowUp.insertCell(4);       
+                      // Add some text to the new cells:
+                      cellUp1.innerHTML = nodes.item(i).getElementsByTagName("li")[j].getAttribute("name");
+                      cellUp2.innerHTML = rank;
+                      cellUp3.innerHTML = nodes.item(i).getElementsByTagName("li")[j].innerHTML;
+                      cellUp4.innerHTML = ""; 
+                      cellUp5.innerHTML = "";
+                      updateNum = updateNum + 1;
 
-                        len2 = len2 + 1;
-                        nCriterion = nCriterion + 1.00;
+                      // Create an empty <tr> element and add it to the 1st position of the table + ignore white card rows
+                      var row = table2.insertRow(j-minusWhiteCardsRows);
+                        
+                      // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+                      var cell1 = row.insertCell(0);
+                      var cell2 = row.insertCell(1);
+                      var cell3 = row.insertCell(2);
+                      var cell4 = row.insertCell(3);
+                      var cell5 = row.insertCell(4);
+                      var cell6 = row.insertCell(5);
+                      var cell7 = row.insertCell(6);
+                            
+                      // Add some text to the new cells:
+                      cell1.innerHTML = rank;
+                      cell2.innerHTML = nodes.item(i).getElementsByTagName("li")[j].innerHTML;
+                      cell3.innerHTML = "";
+                      cell4.innerHTML = ""; 
+                      cell5.innerHTML = "";
+                      cell6.innerHTML = "";   
+                      cell7.innerHTML = "";
 
-                        if(j+1 != n){
-                            name = name + nodes.item(i).getElementsByTagName("li")[j].innerHTML + " , ";    
-                        }else{
-                            name = name + nodes.item(i).getElementsByTagName("li")[j].innerHTML;    
-                        }
+                      len2 = len2 + 1;
+                      nCriterion = nCriterion + 1.00;
+
+                      if(j+1 != n){
+                          name = name + nodes.item(i).getElementsByTagName("li")[j].innerHTML + " , ";    
+                      }else{
+                          name = name + nodes.item(i).getElementsByTagName("li")[j].innerHTML;    
+                      }
                     }
                 }
                 //alert(nodes.item(i).getElementsByTagName("li")[0].innerHTML);
@@ -1693,6 +1777,7 @@ function weightMethod(){
     }
     //Sort table
     sortAuxiliarTable();
+    sortUpdateTable();
 
     //Get total sums
     for (i = 0; i < len; i++) {
@@ -1754,6 +1839,7 @@ function weightResults(){
     var table = document.getElementById("weightTbl").getElementsByTagName('tbody')[0];
     var tblAux = document.getElementById("auxTbl").getElementsByTagName('tbody')[0];
     var tblAux2 = document.getElementById("auxTbl2").getElementsByTagName('tbody')[0];
+    var updateTable = document.getElementById("updateTable").getElementsByTagName('tbody')[0];
     var len = tblAux.rows.length; 
     var len2 = tblAux2.rows.length;  
 
@@ -1771,13 +1857,16 @@ function weightResults(){
         cell1.innerHTML = tblAux2.rows[i].cells[1].innerHTML;
         cell2.innerHTML = tblAux2.rows[i].cells[0].innerHTML;
         cell3.innerHTML = "";
-        cell4.innerHTML = tblAux2.rows[i].cells[6].innerHTML;  
+        cell4.innerHTML = tblAux2.rows[i].cells[6].innerHTML; 
+
+        updateTable.rows[i].cells[4].innerHTML = tblAux2.rows[i].cells[6].innerHTML; 
     }    
 
     for (i = 0; i < len; i++) {
         for (j = 0; j < len2; j++) {
             if(tblAux.rows[i].cells[0].innerHTML == table.rows[j].cells[1].innerHTML){
                 table.rows[j].cells[2].innerHTML = tblAux.rows[i].cells[4].innerHTML;
+                updateTable.rows[j].cells[3].innerHTML = tblAux.rows[i].cells[4].innerHTML;
             }
         }
     } 
@@ -2540,25 +2629,28 @@ function compareResults(){
     var numOptionsSelected = 0;
 
     //Get ids and number of results selected that are going to be compared
-    for (var k = 0; k < numOptions; k++) {
+    // Note: the order of the option table is reverse of the order of data tables with the respective content of each select option
+    var idTable = 0;
+    for (var k = numOptions-1; k >= 0; k--) {
         var name = optionTbl.rows[k].cells[2].getElementsByTagName('input')[0].id;
         //If this result was selected
         if(document.getElementById(name).checked){
             var rowId = document.getElementById(name).parentNode.parentNode.rowIndex - 1;   //Get row index
             resultNames[numOptionsSelected] = optionTbl.rows[rowId].cells[0].innerHTML;     //Save result name
-            ids[numOptionsSelected] = 'tbl' + k;                                            //Save table id of the select result
+            ids[numOptionsSelected] = 'tbl' + idTable;                                            //Save table id of the select result
             ratioValues[numOptionsSelected] = optionTbl.rows[rowId].cells[1].innerHTML;     //Save ratio Z value
             numOptionsSelected = numOptionsSelected + 1;                                    //Increase number of selected results
         }else{
             //Do nothing, result not selected
         }
+        idTable = idTable + 1;
     } 
 
     if(numOptionsSelected == 0){
         document.getElementById("errorCompare").style.display = '';
     }else{
         document.getElementById("errorCompare").style.display = 'none';       
-
+        //Content for the first column
         //Make header for the table according to the number of options chosen
         var row = table.insertRow(0);
         for (var i = 0; i <= numOptionsSelected; i++) {

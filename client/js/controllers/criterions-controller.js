@@ -1,6 +1,6 @@
 var app = angular.module("criterions-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('criterionsController', ['$scope', '$http', '$resource', function ($scope, $http, $resource) {
+app.controller('criterionsController', ['$scope', '$http', '$resource', '$timeout', function ($scope, $http, $resource, $timeout) {
 
 var Criterions = $resource('/api/criterions');
 
@@ -151,7 +151,38 @@ $scope.reset = function () {
   $scope.model = {};
 }
 
+
+$timeout( function(){ 
+  $scope.criterionCopy = [];
+  $scope.criterionCopy = $scope.criterions;
+  var fixHelperModified = function(e, tr) {
+    var $originals = tr.children();
+    var $helper = tr.clone();
+    $helper.children().each(function(index)
+    {
+      $(this).width($originals.eq(index).width())
+    });
+    return $helper;
+};
+
+$("#sort2 tbody").sortable({
+    helper: fixHelperModified 
+    
+}).disableSelection();
+}, 900);
+
 }]);
+
+function addRow(){
+  var table = document.getElementById("sort2").getElementsByTagName('tbody')[0];
+  var row = table.insertRow(0);
+  var cell1 = row.insertCell(0);
+  var cell2 = row.insertCell(1);
+  var cell3 = row.insertCell(2);
+  cell1.innerHTML = "";
+  cell2.innerHTML = 0;
+  cell3.innerHTML = 'White Card';
+}
 
 //Export criterion into a .csv file 
 app.directive('exportCriterionToCsv',function(){
@@ -257,3 +288,4 @@ app.directive('exportCriterionToCsvWithoutWeight',function(){
       }
     }
 });
+

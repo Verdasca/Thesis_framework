@@ -41,7 +41,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         //Execute refresh function after some time, so the drag/drop function work nicely (time is set in milliseconds)
-        setTimeout(addDragDrop, 100);
+        //setTimeout(addDragDrop, 100);
         document.getElementById("electreTriCMethod").style.display = 'none';
         document.getElementById("weightMethod").style.display = 'none';
         document.getElementById("compareWeightMethod").style.display = 'none';
@@ -59,6 +59,7 @@
         document.getElementById("exportBtnWeight3").style.display = 'none';
         document.getElementById("error").style.display = 'none';
         document.getElementById("errorCompare").style.display = 'none';
+        document.getElementById("updateTable").style.display = 'none';
         document.getElementById("auxTbl").style.display = 'none';
         document.getElementById("auxTbl2").style.display = 'none';
         document.getElementById("auxTbl3").style.display = 'none';
@@ -400,7 +401,7 @@
                         <td ROWSPAN=2>
                             <!-- Upload all the criterion -->
                             <ol ng-repeat="criterion in criterions" data-draggable="target">
-                                <li id="cardCriterion" data-draggable="item">{{criterion.name}}</li>
+                                <li id="cardCriterion" data-draggable="item" name="{{ criterion._id }}">{{criterion.name}}</li>
                             </ol>
                         </td>
                     </tr>
@@ -535,7 +536,7 @@
                   </p>
                 </div>
                 <br/>
-                <h3><input id="executeWeightsBtn" type="button" value="Execute" onclick="weightMethod()" class="btn btn-success"/></h3>
+                <h3><input id="executeWeightsBtn" type="button" value="Execute" onclick="weightMethod()" ng-click="updateCriterionWeights()" class="btn btn-success"/></h3>
                 <br/>
                 <h3 id="error">Ratio Z not defined!</h3>
                 <button export-weights-to-csv export-two-weights-to-csv export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnAll">Export all to CSV</button> 
@@ -600,6 +601,17 @@
 
             <!-- Auxiliar tables to calculate all the results for the weight method section -->
             <div>
+                <table id="updateTable" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">ID</th>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. Weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
                 <table id="auxTbl" class="table table-bordered horizontal">
                     <thead>
                         <th id="configHeader">Rank r</th>

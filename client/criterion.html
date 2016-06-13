@@ -80,35 +80,6 @@
             </div>
             <form name="myForm" id="criterionTable" runat="server" novalidate>
                 <div>
-                    <!--<label id="criLabel">Name</label>
-                    <input id="criInput" type="text" placeholder="Criterion name" ng-model="criterion.name"/>
-                    <label id="criLabel">Description</label>
-                    <input id="criInput" type="text" placeholder="Criterion description" ng-model="criterion.description"/>
-                    <input type="button" value="Save" ng-click="createCriterion()" class="btn btn-primary"/>
-                    <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/>
-                    <br />
-                    <br />
-                    <label id="criLabel">Direction</label>
-                    <select id="criInput3" type="text" placeholder="Criterion direction" ng-model="criterion.direction">
-                        <option value="max">max</option>
-                        <option value="min">min</option>
-                    </select>
-                    <label id="criLabel">Measure</label>
-                    <select id="criInput3" type="text" placeholder="Criterion measure" ng-model="criterion.measure">
-                        <option value="ordinal">Ordinal</option>
-                        <option value="cardinal">Cardinal</option>
-                    </select>
-                    <label id="criLabel">Weight</label>
-                    <input id="criInput2" type="text" placeholder="Criterion weight" ng-model="criterion.weight"/>
-                    <br />
-                    <br />
-                    <label id="criLabel">Indifference</label>
-                    <input id="criInput2" type="text" placeholder="Indifference" ng-model="criterion.indifference"/>
-                    <label id="criLabel">Preference</label>
-                    <input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/>
-                    <label id="criLabel">Veto</label>
-                    <input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/>
-                    <br />-->
                     <table id="criterionTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
                             <th id="criHeader">Name</th>
@@ -146,18 +117,7 @@
                             </td>
                         </tr>
                         <tr ng-repeat="criterion in criterions" ng-include="getTemplate(criterion)">
-                            <!-- <td id="criBody">{{ criterion.name }}</td>
-                            <td id="criBody">{{ criterion.description }}</td>
-                            <td id="criBody">{{ criterion.direction }}</td>
-                            <td id="criBody">{{ criterion.measure }}</td>
-                            <td id="criBody">{{ criterion.weight }}</td>
-                            <td id="criBody">{{ criterion.indifference }}</td>
-                            <td id="criBody">{{ criterion.preference }}</td>
-                            <td id="criBody">{{ criterion.veto }}</td>
-                            <td>
-                                <input type="button" value="Edit" ng-click="editCriterion(criterion)" class="btn btn-warning"/>
-                                <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
-                            </td>    -->  
+                            <!-- Get template -->  
                         </tr>
                     </table>
                     <script type="text/ng-template" id="display">
@@ -203,24 +163,57 @@
             <button export-criterion-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>  
             <button export-criterion-to-csv-without-thresholds class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without thresholds</button> 
             <button export-criterion-to-csv-without-weight class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without thresholds and weight</button> 
+            <br/><br/><br/><br/>
+            <!-- <button onclick="addRow();">Add White Card</button> -->
+            <input style="margin:auto;" type="button" value="Add White Card" onclick="addRow();" class="btn btn-info"/>
+            <br/><br/>
+            <table id="sort2" style="width:50%; margin:auto;" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        <th>Rank</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng:repeat="criterion in criterionCopy | orderBy: 'rank'" class="item" style="cursor: move;">
+                        <td>{{$index+1}}</td>
+                        <td>{{criterion.rank}}</td>
+                        <td>{{criterion.name}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/><br/><br/>
+            <!-- <table id="sort2" class="grid" title="Kurt Vonnegut novels" style="margin:auto;">
+                <thead>
+                    <tr><th>Year</th><th>Title</th><th>Grade</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1969</td><td>Slaughterhouse-Five</td><td>A+</td></tr>
+                    <tr><td>1952</td><td>Player Piano</td><td>B</td></tr>
+                    <tr><td>1963</td><td>Cat's Cradle</td><td>A+</td></tr>
+                    <tr><td>1973</td><td>Breakfast of Champions</td><td>C</td></tr>
+                    <tr><td>1965</td><td>God Bless You, Mr. Rosewater</td><td>A</td></tr>
+                </tbody>
+            </table> -->
+            <!-- <table style="width:50%; margin:auto;" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        <th>Rank</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody ui:sortable ng:model="criterionCopy">
+                    <tr ng:repeat="criterion in criterionCopy | orderBy: 'rank'" class="item" style="cursor: move;">
+                        <td>{{$index+1}}</td>
+                        <td>{{criterion.rank}}</td>
+                        <td>{{criterion.name}}</td>
+                    </tr>
+                </tbody>
+            </table> -->
         </div>
     </div>
 </body>
-</html>
- 
-<!--     <table id="criterionTable" style="width:auto;" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Index</th>
-                <th>Count</th>
-            </tr>
-        </thead>
-        <tbody ui:sortable ng:model="list">
-            <tr ng:repeat="item in list" class="item" style="cursor: move;">
-                <td>{{$index}}</td>
-                <td>{{item}}</td>
-            </tr>
-        </tbody>{{list}}
-        <hr>
-   </table> -->        
+</html>    
 

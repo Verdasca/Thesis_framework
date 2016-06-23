@@ -3,16 +3,19 @@ var app = angular.module("alternatives-controller", ['ngRoute', 'ngResource', 'n
 app.controller('alternativesController', ['$scope', '$http', '$resource', function ($scope, $http, $resource) {
 
 var Alternatives = $resource('/api/alternatives');
+//var Projects = $resource('/getProjectData/alternatives');
 
 var refresh = function(){
   $http.get('/api/alternatives').success(function(response) {
     console.log('I got the data I requested');
-        $scope.alternatives = response;
+      $scope.project = response;
+      $scope.alternatives = response.alternatives;
     });  
 }
 
 $http.get('/api/alternatives').success(function(data) {
-  $scope.alternatives = data;
+  $scope.project = data;
+  $scope.alternatives = data.alternatives;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -21,14 +24,38 @@ $http.get('/api/alternatives').success(function(data) {
 
 //Create alternative
 $scope.createAlternative = function () {
+  // var alternative = new Alternatives();
+  // alternative.name = $scope.alternative.name;
+  // alternative.description = $scope.alternative.description;
+  // alternative.$save(function (result) {
+  //   $scope.alternatives.push(result);
+  //   $scope.alternative.name = '';
+  //   $scope.alternative.description = '';
+  // })
+  var i = $scope.project._id;
   var alternative = new Alternatives();
   alternative.name = $scope.alternative.name;
   alternative.description = $scope.alternative.description;
-  alternative.$save(function (result) {
-    $scope.alternatives.push(result);
+  $http.post('/api/alternatives/'+i, alternative).success(function(response) {
+    //$scope.project.alternatives.push(alternative);
+    //$scope.alternatives.push(alternative);
+    refresh();
     $scope.alternative.name = '';
     $scope.alternative.description = '';
-  })
+  });
+
+  //$scope.project.alternatives.push(alternative);
+  //$scope.project.save();
+  // var i = $scope.project._id;
+  // $http.post('/getProjectData/'+ i, alternative).success(function(response) {
+  //   $scope.project.alternatives.push(alternative);
+  // });
+
+  // var project = new Projects();
+  // //project.alternatives.push(alternative);
+  // project.$save(function (result) {
+  //   $scope.project.alternatives.push(alternative);
+  // })
 }
 
 //Delete alternative
@@ -68,15 +95,6 @@ $scope.updateAlternative = function() {
     $scope.alternative.name = '';
     $scope.alternative.description = '';
   });
-}
-
-$scope.getAlternatives = function(){
-$http.get('/api/alternatives').success(function(data) {
-  $scope.alternatives = data;
-  })
-  .error(function(data) {
-    console.log('Error: ' + data);
-});
 }
 
 //Update the value and reset model

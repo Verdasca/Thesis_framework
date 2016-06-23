@@ -6,7 +6,8 @@ app.controller('performancesController', ['$scope', '$http', '$resource', '$time
 $scope.run = function () {
   //Get the data from criterions in mongoDB
   $http.get('/api/criterions').success(function(data) {
-    $scope.criterions = data;
+    $scope.project = data;
+    $scope.criterions = data.criteria;
     })
     .error(function(data) {
       console.log('Error: ' + data);
@@ -14,7 +15,8 @@ $scope.run = function () {
 
   //Get the data from alternatives in mongoDB
   $http.get('/api/alternatives').success(function(data) {
-    $scope.alternatives = data;
+    $scope.project = data;
+    $scope.alternatives = data.alternatives;
     })
     .error(function(data) {
       console.log('Error: ' + data);
@@ -22,16 +24,19 @@ $scope.run = function () {
 
   //Get the data from performances in mongoDB
   $http.get('/api/performances').success(function(data) {
-    $scope.performances = data;
+    $scope.project = data;
+    $scope.performances = data.performancetables;
     })
     .error(function(data) {
       console.log('Error: ' + data);
   });
+
 }
 
 //Get the data from criterions in mongoDB
 $http.get('/api/criterions').success(function(data) {
-  $scope.criterions = data;
+  $scope.project = data;
+  $scope.criterions = data.criteria;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -39,7 +44,8 @@ $http.get('/api/criterions').success(function(data) {
 
 //Get the data from alternatives in mongoDB
 $http.get('/api/alternatives').success(function(data) {
-  $scope.alternatives = data;
+  $scope.project = data;
+  $scope.alternatives = data.alternatives;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -49,7 +55,8 @@ var Performances = $resource('/api/performances');
 
 //Get the data from performances in mongoDB
 $http.get('/api/performances').success(function(data) {
-  $scope.performances = data;
+  $scope.project = data;
+  $scope.performances = data.performancetables;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -58,22 +65,34 @@ $http.get('/api/performances').success(function(data) {
 var refresh = function(){
   $http.get('/api/performances').success(function(response) {
     console.log('I got the data I requested');
-        $scope.performances = response;
+      $scope.project = response;
+      $scope.performances = response.performancetables;
     });  
 }  
 
 //Create performance
 $scope.createPerformance = function () {
+  // var performance = new Performances();
+  // performance.alternative = $scope.performance.alternative;
+  // performance.criterion = $scope.performance.criterion;
+  // performance.value = $scope.performance.value;
+  // performance.$save(function (result) {
+  //   $scope.performances.push(result);
+  //   $scope.performance.alternative = '';
+  //   $scope.performance.criterion = '';
+  //   $scope.performance.value = '';
+  // })
+  var i = $scope.project._id;
   var performance = new Performances();
   performance.alternative = $scope.performance.alternative;
   performance.criterion = $scope.performance.criterion;
   performance.value = $scope.performance.value;
-  performance.$save(function (result) {
-    $scope.performances.push(result);
+  $http.post('/api/performances/'+i, performance).success(function(response) {
+    refresh();
     $scope.performance.alternative = '';
     $scope.performance.criterion = '';
     $scope.performance.value = '';
-  })
+  });
 }
 
 //Delete performance
@@ -148,7 +167,7 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
       //Nothing changed on the number of criteria and alternatives
   }else{
     if(numExistingPerformances == 0){
-      //If it's empty create all perfomances
+      //If it's empty create all performances
       //Create a performance
       console.log("Create performance");
       $scope.j = $scope.j + 1;
@@ -159,15 +178,24 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
         if($scope.j == rightNumPerformances*2){
           $scope.resetChunks();
         }
+        refresh();
         return 0;
       }
+      // var performance = new Performances();
+      // performance.alternative = alternative.name;
+      // performance.criterion = criterion.name;
+      // performance.value = 0;
+      // performance.$save(function (result) {
+      //   $scope.performances.push(result);
+      // })
+      var i = $scope.project._id;
       var performance = new Performances();
       performance.alternative = alternative.name;
       performance.criterion = criterion.name;
       performance.value = 0;
-      performance.$save(function (result) {
-        $scope.performances.push(result);
-      })
+      $http.post('/api/performances/' + i, performance).success(function(response) {
+        //refresh();
+      });
       // See if it's the last performance to create if it is update the performance table
       if($scope.j == rightNumPerformances){
         console.log('Last performance being created...');
@@ -183,16 +211,18 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
 
 //Delete performance
 $scope.deletePerformance2 = function() {
+  var i = $scope.project._id;
   //Delete all performances 
   //Note it works but for some reason it prints the error message
-  $http.delete('/api/performances')
+  $http.delete('/api/performances/' + i)
     .success(function() {
       console.log("success");
+      refresh();
     })
     .error(function() {
       //console.log('Error: fail deletes' );
-    });
-    refresh();
+  });
+  refresh();
 }
 
 // At the beginning see if alternatives or criteria where change to update the performance table 
@@ -219,8 +249,12 @@ $scope.confirmPerformance  = function() {
         }
         console.log('Done slicing performances');
     }else{
-      //If number of criteria or alternatives was changed, update performance table
-      $scope.deletePerformance2();
+      if(numExistingPerformances == 0){
+
+      }else{
+        //If number of criteria or alternatives was changed, update performance table
+        $scope.deletePerformance2();
+      }
       console.log('Performance Table has been updated.');
     }
   //}
@@ -230,7 +264,8 @@ $scope.confirmPerformance  = function() {
 $timeout( function(){ 
   refresh();
   //Update performance table if necessary
-  $scope.confirmPerformance(); 
+  $scope.confirmPerformance();
+  //$timeout( function(){ $scope.confirmPerformance(); }, 1000);
   refresh();
 }, 500);
 
@@ -281,25 +316,25 @@ $scope.resetChunks  = function() {
 // When importing data, update performances on mongodb
 $scope.uploadfile = function(scope, element) {
   $timeout( function(){ 
-                      var performanceTable = document.getElementById("performanceTable");
-                      var rows = performanceTable.rows;
-                      //console.log(rows.length);
-                      for (var i = 0; i < rows.length; i++) {
-                          var cells = rows[0].cells;
-                          //console.log(cells.length);
-                          for (var j = 0; j < cells.length; j++) {
-                                    if(i == 0 | j == 0){
-                                        //Ignore
-                                    }else{
-                                        //performanceTable.rows[i].cells[j].children[0].value = cells[j]; 
-                                        var item = performanceTable.rows[i].cells[j].children[0];
-                                        //console.log(item);
-                                        angular.element(item).trigger('change');
-                                    }
-                          }
-                      }
-                    }, 500);
+    var performanceTable = document.getElementById("performanceTable");
+    var rows = performanceTable.rows;
+    //console.log(rows.length);
+    for (var i = 0; i < rows.length; i++) {
+      var cells = rows[0].cells;
+      //console.log(cells.length);
+      for (var j = 0; j < cells.length; j++) {
+        if(i == 0 | j == 0){
+          //Ignore
+        }else{
+          //performanceTable.rows[i].cells[j].children[0].value = cells[j]; 
+          var item = performanceTable.rows[i].cells[j].children[0];
+          //console.log(item);
+          angular.element(item).trigger('change');
+        }
       }
+    }
+  }, 500);
+}
 
 }]);
 

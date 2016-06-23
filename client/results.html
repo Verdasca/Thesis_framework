@@ -39,29 +39,29 @@
 
     <!--<script src='https://services.sapo.pt/Codebits/listbadges?callback=myCallbackFunction'></script>-->
     <script>
-        function myCallbackFunction(data){
-            // var jsonText = JSON.stringify(xmlToJson(data));
-            // $('body').text(data.response);
-            var d = data.find_all("ARTIST")[0].text();
-            document.getElementById("demo").innerHTML = d;
-        }
+//         function myCallbackFunction(data){
+//             // var jsonText = JSON.stringify(xmlToJson(data));
+//             // $('body').text(data.response);
+//             var d = data.find_all("ARTIST")[0].text();
+//             document.getElementById("demo").innerHTML = d;
+//         }
 
-function novoJogo(){
-    var my_awesome_script = document.createElement('script');
-    //my_awesome_script.setAttribute('src','https://services.sapo.pt/Codebits/listbadges?callback=meuCallback');
-    my_awesome_script.setAttribute('src','http://localhost:8000/cd_catalog.json?callback=meuCallback');
-    document.head.appendChild(my_awesome_script);
-}
+// function novoJogo(){
+//     var my_awesome_script = document.createElement('script');
+//     //my_awesome_script.setAttribute('src','https://services.sapo.pt/Codebits/listbadges?callback=meuCallback');
+//     my_awesome_script.setAttribute('src','http://localhost:8000/cd_catalog.json?callback=meuCallback');
+//     document.head.appendChild(my_awesome_script);
+// }
 
-function meuCallback(dataViaJsonp){
-    //(p = primeiro, s = segundo)
-    var primeiro = "p";
-    var segundo = "s";
-    var text = '';
-    var len = dataViaJsonp.length -1;
-    badge = dataViaJsonp[1];
-    document.getElementById("demo").innerHTML = badge.CD;
-}
+// function meuCallback(dataViaJsonp){
+//     //(p = primeiro, s = segundo)
+//     var primeiro = "p";
+//     var segundo = "s";
+//     var text = '';
+//     var len = dataViaJsonp.length -1;
+//     badge = dataViaJsonp[1];
+//     document.getElementById("demo").innerHTML = badge.CD;
+// }
     </script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
@@ -88,7 +88,7 @@ function meuCallback(dataViaJsonp){
                         <li id="sections"><a id="aSections" href="" onclick="window.location = '/alternative.html'">Alternative Set</a></li>
                         <li id="sections"><a id="aSections" href="" onclick="window.location = '/performance.html'">Performance Table</a></li>
                         <li id="sections"><a id="aSections" href="" onclick="window.location = '/configurations.html'">Decision Configurations</a></li>
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = 'http://localhost:5000'">MCDA Methods</a></li>
+                        <li id="sections"><a id="aSections" href="" onclick="window.location = 'http://vps288667.ovh.net:5010'">MCDA Methods</a></li>
                         <li id="sections"><a id="aSections" class="active" href="" onclick="window.location = '/results.html'">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
@@ -98,41 +98,37 @@ function meuCallback(dataViaJsonp){
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
 		<div id="content" class="jumbotron text-center">
-		    <h2>Results</h2>
-            <button type="button" onclick="loadXMLDoc()">Get alternatives</button>
-            <button type="button" onclick="novoJogo()">Get novo jogo</button>
-            <p id="demo">lol</p>
-            <h1>Customers</h1>
-            <div id="id01"></div>
+		    <h2>Electre Tri-C Results</h2>
+            <br/>
+            <!-- <button type="button" onclick="loadXMLDoc()">Show Results</button> -->
+            <!-- <button type="button" onclick="novoJogo()">Get novo jogo</button> -->
+            <table id="resultsTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <thead>
+                    <th id="criHeader">Alternative</th>
+                    <th id="criHeader">Minimum</th>
+                    <th id="criHeader">Maximum</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <br/>
+            <button export-results-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button> 
+            <br/><br/><br/>
+            <!-- <div>
+                <button ng-click="reset()">Reset</button>
+                <button ng-click="create()">Create</button>
+            </div> -->
+            <button ng-click="create()">Create User</button>
+            <button ng-click="get()">Get</button>
 		</div>
+        <div id="zoneExists"></div>
     </div>
-<script type="text/javascript">
-function loadXMLDoc() {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        myFunction(xmlhttp);
-    }
-  };
-  xmlhttp.open("GET", "./out/assignments.xml", true);  
-  //xmlhttp.open("GET", "http://localhost:5000", true); 
-  xmlhttp.send();
-}
-
-function myFunction(xml) {
-  var x, i, xmlDoc, txt;
-  xmlDoc = xml.responseXML;
-  txt = "";
-  x = xmlDoc.getElementsByTagName("alternativeID");
-  for (i = 0; i< x.length; i++) {
-    txt += x[i].childNodes[0].nodeValue + "<br>";
-  }
-  document.getElementById("demo").innerHTML = txt;
-}
-loadXMLDoc(); 
-</script>  
-
-
+    <script type="text/javascript">
+        $(document).ready(function(){
+            loadXMLDoc();
+        });
+    </script>    
+</body>
+</html>
 <script>
 // var xmlhttp = new XMLHttpRequest();
 // var url = "http://www.w3schools.com/website/Customers_MYSQL.php";
@@ -163,5 +159,3 @@ loadXMLDoc();
 //     document.getElementById("id01").innerHTML = out;
 // }
 </script> 
-</body>
-</html>

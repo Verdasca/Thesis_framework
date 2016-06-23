@@ -4,34 +4,38 @@ app.controller('configurationsController', ['$scope', '$http', '$resource', '$ti
 
 //Get all data when loading body
 $scope.run = function () {
-    //Get the data from criterions in mongoDB
-    $http.get('/api/criterions').success(function(data) {
-    $scope.criterions = data;
+  //Get the data from criterions in mongoDB
+  $http.get('/api/criterions').success(function(data) {
+    $scope.project = data;
+    $scope.criterions = data.criteria;
     })
     .error(function(data) {
-        console.log('Error: ' + data);
-    }); 
+      console.log('Error: ' + data);
+  }); 
 
-    //Get the data from categories in mongoDB
-    $http.get('/api/categories').success(function(data) {
-      $scope.categories = data;
-      })
-      .error(function(data) {
-        console.log('Error: ' + data);
-    });  
+  //Get the data from categories in mongoDB
+  $http.get('/api/categories').success(function(data) {
+    $scope.project = data;
+    $scope.categories = data.categories;
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  });  
 
-    //Get the data from profiles in mongoDB
-    $http.get('/api/profiles').success(function(data) {
-      $scope.profiles = data;
-      })
-      .error(function(data) {
-        console.log('Error: ' + data);
-    });
+  //Get the data from profiles in mongoDB
+  $http.get('/api/profiles').success(function(data) {
+    $scope.project = data;
+    $scope.profiles = data.profiletables;
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  });
 }
 
 //Get the data from criterions in mongoDB
 $http.get('/api/criterions').success(function(data) {
-  $scope.criterions = data;
+  $scope.project = data;
+  $scope.criterions = data.criteria;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -40,15 +44,17 @@ $http.get('/api/criterions').success(function(data) {
 var refreshCriteria = function(){
   $http.get('/api/criterions').success(function(data) {
     //console.log('I got the data I requested');
-        $scope.criterions = data;
-    });  
+    $scope.project = data;
+    $scope.criterions = data.criteria;
+  });  
 }  
 
 var Categories = $resource('/api/categories');
 
 //Get the data from categories in mongoDB
 $http.get('/api/categories').success(function(data) {
-  $scope.categories = data;
+  $scope.project = data;
+  $scope.categories = data.categories;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -56,23 +62,35 @@ $http.get('/api/categories').success(function(data) {
 
 var refresh = function(){
   $http.get('/api/categories').success(function(data) {
-    //console.log('I got the data I requested');
-        $scope.categories = data;
-    });  
+    $scope.project = data;
+    $scope.categories = data.categories;
+  });  
 }  
 
 //Create category
 $scope.createCategory = function () {
+  // var category = new Categories();
+  // category.name = $scope.category.name;
+  // category.rank = $scope.category.rank;
+  // category.action = $scope.category.action;
+  // category.$save(function (result) {
+  //   $scope.categories.push(result);
+  //   $scope.category.name = '';
+  //   $scope.category.rank = '';
+  //   $scope.category.action = '';
+  // })
+
+  var i = $scope.project._id;
   var category = new Categories();
   category.name = $scope.category.name;
   category.rank = $scope.category.rank;
   category.action = $scope.category.action;
-  category.$save(function (result) {
-    $scope.categories.push(result);
+  $http.post('/api/categories/' + i, category).success(function(response) {
+    refresh();
     $scope.category.name = '';
     $scope.category.rank = '';
     $scope.category.action = '';
-  })
+  });
 }
 
 //Delete category
@@ -163,7 +181,8 @@ var Parameters = $resource('/api/parameters');
 
 //Get parameter in mongoDB
 $http.get('/api/parameters').success(function(data) {
-  $scope.parameters = data;
+  $scope.project = data;
+  $scope.parameters = data.parameters;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -171,18 +190,25 @@ $http.get('/api/parameters').success(function(data) {
 
 var refreshParameter = function(){
   $http.get('/api/parameters').success(function(response) {
-    //console.log('I got the data I requested');
-        $scope.parameters = response;
-    });  
+    $scope.project = response;
+    $scope.parameters = response.parameters;
+  });  
 }  
 
 //Create parameter
 $scope.createParameter = function () {
+  // var parameter = new Parameters();
+  // parameter.credibility = 0.7;
+  // parameter.$save(function (result) {
+  //   $scope.parameters.push(result);
+  // })
+
+  var i = $scope.project._id;
   var parameter = new Parameters();
   parameter.credibility = 0.7;
-  parameter.$save(function (result) {
-    $scope.parameters.push(result);
-  })
+  $http.post('/api/parameters/' + i, parameter).success(function(response) {
+    refreshParameter();
+  });
 }
 
 //Then save it or update it
@@ -202,7 +228,8 @@ var Profiles = $resource('/api/profiles');
 
 //Get the data from profiles in mongoDB
 $http.get('/api/profiles').success(function(data) {
-  $scope.profiles = data;
+    $scope.project = data;
+    $scope.profiles = data.profiletables;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -210,23 +237,35 @@ $http.get('/api/profiles').success(function(data) {
 
 var refreshProfiles = function(){
   $http.get('/api/profiles').success(function(data) {
-    //console.log('I got the data I requested');
-        $scope.profiles = data;
-    });  
+    $scope.project = data;
+    $scope.profiles = data.profiletables;
+  });  
 }  
 
 //Create profile
 $scope.createProfile = function () {
+  // var profile = new Profiles();
+  // profile.action = $scope.profile.action;
+  // profile.criterion = $scope.profile.criterion;
+  // profile.value = $scope.profile.value;
+  // profile.$save(function (result) {
+  //   $scope.profiles.push(result);
+  //   $scope.profile.action = '';
+  //   $scope.profile.criterion = '';
+  //   $scope.profile.value = '';
+  // })
+
+  var i = $scope.project._id;
   var profile = new Profiles();
   profile.action = $scope.profile.action;
   profile.criterion = $scope.profile.criterion;
   profile.value = $scope.profile.value;
-  profile.$save(function (result) {
-    $scope.profiles.push(result);
+  $http.post('/api/profiles/' + i, profile).success(function(response) {
+    refreshProfiles();
     $scope.profile.action = '';
     $scope.profile.criterion = '';
     $scope.profile.value = '';
-  })
+  });
 }
 
 //Delete profile
@@ -319,13 +358,15 @@ $scope.createProfile2 = function (category, criterion, numCat, numCri) {
             }
             return 0;
         }
+
+        var i = $scope.project._id;
         var profile = new Profiles();
         profile.action = category.action;
         profile.criterion = criterion.name;
         profile.value = 0;
-        profile.$save(function (result) {
-            $scope.profiles.push(result);
-        })
+        $http.post('/api/profiles/' + i, profile).success(function(response) {
+          //refreshProfiles();
+        });
         // See if it's the last performance to create if it is update the performance table
         if($scope.j == rightNumProfiles){
             console.log('Last profile being created...');
@@ -353,9 +394,10 @@ $scope.updateProfile2 = function(profile) {
 
 //Delete profiles
 $scope.deleteProfile2 = function() {
+  var i = $scope.project._id;
   //Delete all profiles 
   //Note it works but for some reason it prints the error message
-  $http.delete('/api/profiles')
+  $http.delete('/api/profiles/' + i)
     .success(function() {
       console.log("success");
     })
@@ -390,8 +432,12 @@ $scope.confirmProfile  = function() {
         }
         console.log('Done slicing profiles');
     }else{
-      //If number of criteria or alternatives was changed, update profile table
-      $scope.deleteProfile2();
+      if(numExistingProfiles == 0){
+
+      }else{
+        //If number of criteria or alternatives was changed, update profile table
+        $scope.deleteProfile2();
+      }
       console.log('Profile Table has been updated.');
     }
   //}
@@ -422,6 +468,7 @@ $scope.resetProfileTable  = function() {
         // Get categories updated
         $scope.chunksCat = [];
         refresh();
+        refreshProfiles();
         $scope.chunksCat = $scope.categories;
         console.log('Profile Table has been updated.');
     }, 800);

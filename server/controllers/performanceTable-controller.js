@@ -1,22 +1,47 @@
 var PerformanceTable = require('../models/performanceTable');
+var mongoose = require( 'mongoose' );
+var Project = mongoose.model('Project');
 
 //Create a performanceTable
 module.exports.create = function (req, res) {
 	var performance = new PerformanceTable(req.body);
 	performance.save(function (err, result) {
-	    res.json(result);
+	    //res.json(result);
 	});
+    // Associate/save the new performance to the project
+    Project.findOne({ _id:req.params.id })
+    .populate('performancetables')
+    .exec(function (err, project) {
+      if (err){
+        res.send(err);
+      }
+      // First push then save to do the association
+      project.performancetables.push(performance);
+      project.save();
+      res.send('Create performance complete.');
+    });
 }
 
 //Get all performances
 module.exports.get = function (req, res) {
     // use mongoose to get all performances in the database
-    PerformanceTable.find(function(err, performances) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err){
-            res.send(err);    
-        }
-        res.json(performances); // return all performances in JSON format
+    // PerformanceTable.find(function(err, performances) {
+    //     // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    //     if (err){
+    //         res.send(err);    
+    //     }
+    //     res.json(performances); // return all performances in JSON format
+    // });
+
+    Project
+        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .populate('performancetables') // only works if we pushed refs to children
+        .exec(function (err, project) {
+          if (err){
+            res.send(err);
+          }
+          console.log(project);
+          res.json(project);
     });
 }
 
@@ -62,10 +87,38 @@ module.exports.delete = function(req, res){
 
 //Delete all performances
 exports.deleteAll = function(req, res) {
-        PerformanceTable.remove({}, function(err, performance) {
-            if (err) {
-                throw new Error(err);
+    // PerformanceTable.remove({}, function(err, performance) {
+    //     if (err) {
+    //         throw new Error(err);
+    //     }
+    //     res.send(performance);
+    // });
+    Project.findOne({ _id:req.params.id })
+        .populate('performancetables')
+        .exec(function (err, project) {
+            if (err){
+                res.send(err);
             }
-            res.send(performance);
-        });
+            //var i = project.performancetables[0]._id;
+            var performances = project.performancetables;
+            //console.log(project.performancetables[0]._id);
+            //project.performancetables[0].remove();
+            // PerformanceTable.remove({
+            //     _id : i
+            // }, function(err, performance) {
+            //     if (err) {
+            //         //throw new Error(err);
+            //     }
+            //     //res.send(performance);
+
+            // });
+        
+            Project.update({ _id:req.params.id }, {'$pullAll': {performancetables: performances }})
+              .exec(function(err) {
+                PerformanceTable.remove({ _id: { $in: performances }}, function(err, numberRemoved) {
+                  // The identified performances are now removed.
+                });
+              });
+            res.send('Delete all performances complete.');
+    });
 }

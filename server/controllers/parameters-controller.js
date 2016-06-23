@@ -1,22 +1,48 @@
 var Parameter = require('../models/parameter');
+var mongoose = require( 'mongoose' );
+var Project = mongoose.model('Project');
 
 //Create a parameter
 module.exports.create = function (req, res) {
 	var parameter = new Parameter(req.body);
 	parameter.save(function (err, result) {
-	    res.json(result);
+	    //res.json(result);
 	});
+
+    // Associate/save the new parameter to the project
+    Project.findOne({ _id:req.params.id})
+    .populate('parameters')
+    .exec(function (err, project) {
+      if (err){
+        res.send(err);
+      }
+      // First push then save to do the association
+      project.parameters.push(parameter);
+      project.save();
+      res.send('Create parameter complete.');
+    });
 }
 
 //Get all parameters
 module.exports.get = function (req, res) {
     // use mongoose to get all parameters in the database
-    Parameter.find(function(err, parameters) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err){
-            res.send(err);    
-        }
-        res.json(parameters); // return all parameters in JSON format
+    // Parameter.find(function(err, parameters) {
+    //     // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    //     if (err){
+    //         res.send(err);    
+    //     }
+    //     res.json(parameters); // return all parameters in JSON format
+    // });
+
+    Project
+        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .populate('parameters') // only works if we pushed refs to children
+        .exec(function (err, project) {
+          if (err){
+            res.send(err);
+          }
+          console.log(project);
+          res.json(project);
     });
 }
 

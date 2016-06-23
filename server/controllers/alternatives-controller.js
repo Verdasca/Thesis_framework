@@ -1,28 +1,56 @@
 var Alternative = require('../models/alternative');
+var mongoose = require( 'mongoose' );
+var Project = mongoose.model('Project');
 
 //Create an alternative
 module.exports.create = function (req, res) {
 	var alternative = new Alternative(req.body);
 	alternative.save(function (err, result) {
-	    res.json(result);
-	});
+	 //res.json(result);
+  });
+  // Associate/save the new alternative to the project
+  Project.findOne({ _id:req.params.id})
+  .populate('alternatives')
+  .exec(function (err, project) {
+    if (err){
+      res.send(err);
+    }
+    // console.log('Alt: '+alternative);
+    // console.log('ID: '+ req.params.id);
+    // console.log('-------------------------');
+    // console.log('Project: ' + project);
+    // First push then save to do the association
+    project.alternatives.push(alternative);
+    project.save();
+    // console.log('-------------------------');
+    // console.log(project.alternatives);
+    // console.log('-------------------------');
+    res.send('Create alternative complete.');
+  });
 }
-
-// module.exports.list = function (req, res) {
-// 	Alternative.find({}, function (err, results) {
-//     	res.json(results);
-//   	});
-// }
 
 //Get all alternatives
 module.exports.get = function (req, res) {
     // use mongoose to get all alternatives in the database
-    Alternative.find(function(err, alternatives) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err){
-            res.send(err);    
-        }
-        res.json(alternatives); // return all alternatives in JSON format
+    // Alternative.find(function(err, alternatives) {
+    //     // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    //     if (err){
+    //         res.send(err);    
+    //     }
+    //     res.json(alternatives); // return all alternatives in JSON format
+    // });
+
+    Project
+        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .populate('alternatives') // only works if we pushed refs to children
+        .exec(function (err, project) {
+          if (err){
+            res.send(err);
+          }
+          //console.log(project._id);
+          console.log(project);
+          //console.log(project.alternatives);
+          res.json(project);
     });
 }
 
@@ -52,22 +80,6 @@ module.exports.edit = function (req, res) {
             }       
     });
 }
-
-
-// module.exports.delete = function(req, res){
-//   Alternative.findByIdAndRemove(req.params.id, function(err, alternative) {
-//     if (err) {
-//       throw new Error(err);
-//     }
-//     res.send(alternative);
-//   });
-// }
-
-// module.exports.delete = function(req, res){
-//     Alternative.remove({_id: req.params.id}, function(err){
-//         res.json({result: err ? 'error' : 'ok'});
-//     })
-// }
 
 //Delete an alternative
 module.exports.delete = function(req, res){

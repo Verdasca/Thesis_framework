@@ -7,13 +7,15 @@ var Criterions = $resource('/api/criterions');
 var refresh = function(){
   $http.get('/api/criterions').success(function(response) {
     console.log('I got the data I requested');
-        $scope.criterions = response;
+      $scope.project = response;
+      $scope.criterions = response.criteria;
     });  
 }
 
 //Get the data from criterions in mongoDB
 $http.get('/api/criterions').success(function(data) {
-  $scope.criterions = data;
+  $scope.project = data;
+  $scope.criterions = data.criteria;
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -21,6 +23,27 @@ $http.get('/api/criterions').success(function(data) {
 
 //Create criterion
 $scope.createCriterion = function () {
+  // var criterion = new Criterions();
+  // criterion.name = $scope.criterion.name;
+  // criterion.description = $scope.criterion.description;
+  // criterion.direction = $scope.criterion.direction;
+  // criterion.measure = $scope.criterion.measure;
+  // criterion.weight = $scope.criterion.weight;
+  // criterion.indifference = $scope.criterion.indifference;
+  // criterion.preference = $scope.criterion.preference;
+  // criterion.veto = $scope.criterion.veto;
+  // criterion.$save(function (result) {
+  //   $scope.criterions.push(result);
+  //   $scope.criterion.name = '';
+  //   $scope.criterion.description = '';
+  //   $scope.criterion.direction = '';
+  //   $scope.criterion.measure = '';
+  //   $scope.criterion.weight = '';
+  //   $scope.criterion.indifference = '';
+  //   $scope.criterion.preference = '';
+  //   $scope.criterion.veto = '';
+  // })
+  var i = $scope.project._id;
   var criterion = new Criterions();
   criterion.name = $scope.criterion.name;
   criterion.description = $scope.criterion.description;
@@ -30,8 +53,8 @@ $scope.createCriterion = function () {
   criterion.indifference = $scope.criterion.indifference;
   criterion.preference = $scope.criterion.preference;
   criterion.veto = $scope.criterion.veto;
-  criterion.$save(function (result) {
-    $scope.criterions.push(result);
+  $http.post('/api/criterions/' + i, criterion).success(function(response) {
+    refresh();
     $scope.criterion.name = '';
     $scope.criterion.description = '';
     $scope.criterion.direction = '';
@@ -40,7 +63,8 @@ $scope.createCriterion = function () {
     $scope.criterion.indifference = '';
     $scope.criterion.preference = '';
     $scope.criterion.veto = '';
-  })
+    refresh();
+  });
 }  
 
 //Delete criterion
@@ -151,38 +175,39 @@ $scope.reset = function () {
   $scope.model = {};
 }
 
+// Used for drag/drop criteria order... to do the weight thing
+// $timeout( function(){ 
+//   $scope.criterionCopy = [];
+//   $scope.criterionCopy = $scope.criterions;
+//   var fixHelperModified = function(e, tr) {
+//     var $originals = tr.children();
+//     var $helper = tr.clone();
+//     $helper.children().each(function(index)
+//     {
+//       $(this).width($originals.eq(index).width())
+//     });
+//     return $helper;
+// };
 
-$timeout( function(){ 
-  $scope.criterionCopy = [];
-  $scope.criterionCopy = $scope.criterions;
-  var fixHelperModified = function(e, tr) {
-    var $originals = tr.children();
-    var $helper = tr.clone();
-    $helper.children().each(function(index)
-    {
-      $(this).width($originals.eq(index).width())
-    });
-    return $helper;
-};
-
-$("#sort2 tbody").sortable({
-    helper: fixHelperModified 
+// $("#sort2 tbody").sortable({
+//     helper: fixHelperModified 
     
-}).disableSelection();
-}, 900);
+// }).disableSelection();
+// }, 900);
 
 }]);
 
-function addRow(){
-  var table = document.getElementById("sort2").getElementsByTagName('tbody')[0];
-  var row = table.insertRow(0);
-  var cell1 = row.insertCell(0);
-  var cell2 = row.insertCell(1);
-  var cell3 = row.insertCell(2);
-  cell1.innerHTML = "";
-  cell2.innerHTML = 0;
-  cell3.innerHTML = 'White Card';
-}
+// function addWhiteCard(){
+//   var table = document.getElementById("sort2").getElementsByTagName('tbody')[0];
+//   var row = table.insertRow(0);
+//   row.setAttribute("style", "cursor: move;");
+//   var cell1 = row.insertCell(0);
+//   var cell2 = row.insertCell(1);
+//   var cell3 = row.insertCell(2);
+//   cell1.innerHTML = "";
+//   cell2.innerHTML = 0;
+//   cell3.innerHTML = 'White Card';
+// }
 
 //Export criterion into a .csv file 
 app.directive('exportCriterionToCsv',function(){

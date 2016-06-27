@@ -1,11 +1,13 @@
-var app = angular.module("criterions-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("criterions-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('criterionsController', ['$scope', '$http', '$resource', '$timeout', function ($scope, $http, $resource, $timeout) {
+app.controller('criterionsController', ['$scope', '$http', '$resource', '$timeout', '$location', '$window', function ($scope, $http, $resource, $timeout, $location, $window) {
 
 var Criterions = $resource('/api/criterions');
 
+$scope.projectID = $location.search().projectId;
+
 var refresh = function(){
-  $http.get('/api/criterions').success(function(response) {
+  $http.get('/api/criterions/' + $scope.projectID).success(function(response) {
     console.log('I got the data I requested');
       $scope.project = response;
       $scope.criterions = response.criteria;
@@ -13,7 +15,7 @@ var refresh = function(){
 }
 
 //Get the data from criterions in mongoDB
-$http.get('/api/criterions').success(function(data) {
+$http.get('/api/criterions/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.criterions = data.criteria;
   })
@@ -69,20 +71,22 @@ $scope.createCriterion = function () {
 
 //Delete criterion
 $scope.deleteCriterion = function(criterion) {
-  var i = criterion._id;
-  $http.delete('/api/criterion/' + i)
+  var i = $scope.project._id;
+  var id = criterion._id;
+  $http.delete('/api/criterion/' + i + '/' + id)
     .success(function(data) {
       var idx = $scope.criterions.indexOf(criterion);
       if (idx >= 0) {
         $scope.criterions.splice(idx, 1);
       }
+      refresh();
     })
     .error(function(data) {
-      //console.log('Error: ' + data);
       var idx = $scope.criterions.indexOf(criterion);
       if (idx >= 0) {
         $scope.criterions.splice(idx, 1);
       }
+      refresh();
     });
 }
 
@@ -173,6 +177,17 @@ $scope.editCriterion2 = function (criterion) {
 // Reset model
 $scope.reset = function () {
   $scope.model = {};
+}
+
+// Change section and give the project id as argument
+$scope.changeSection = function(name){
+  var id = $scope.projectID;
+  var sectionName = name;
+  if(sectionName == 'divizServer'){
+    $window.location.href = 'http://vps288667.ovh.net:5010?projectId='+id;   
+  }else{
+    $window.location.href = '/'+sectionName+'.html?projectId='+id; 
+  }
 }
 
 // Used for drag/drop criteria order... to do the weight thing

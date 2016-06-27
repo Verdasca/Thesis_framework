@@ -1,5 +1,5 @@
 //routes for the workspace page
-angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '$stateProvider', '$urlRouterProvider', function($routeProvider, $locationProvider, $stateProvider, $urlRouterProvider) {
 
     $routeProvider
             //.otherwise('/home')
@@ -39,5 +39,25 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             // });
             
     $locationProvider.html5Mode(true);
+
+    // $stateProvider
+    // .state('alternative', {
+    //     url: "alternative/:id",
+    //     templateUrl: 'alternative.html',
+    //     controller: 'alternativesController'
+    // })
+    // .state('projects.html', {
+    //     url: "projects.html",
+    //     params: {
+    //         id: null
+    //     },
+    //     templateUrl: 'projects.html',  
+    //     controller: 'projectsController'
+    // })
+    // .state('criterion.html', {
+    //     url: "criterion.html/project/:id",
+    //     templateUrl: 'criterion.html',
+    //     controller: 'criterionsController'
+    // });
 
 }]);

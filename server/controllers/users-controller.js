@@ -26,6 +26,7 @@ module.exports.findById = function (req, res) {
             res.jsonp(user);
       } else {
             console.log(err);
+            res.send(err);
       }
     });
 }
@@ -36,7 +37,8 @@ module.exports.delete = function(req, res){
             _id : req.params.id
         }, function(err, user) {
             if (err) {
-                throw new Error(err);
+                res.send(err);
+                //throw new Error(err);
             }
             res.send(user);
 

@@ -34,14 +34,14 @@ module.exports.get = function (req, res) {
     // });
 
     Project
-        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .findOne({ _id: req.params.id })
         .populate('criteria') // only works if we pushed refs to children
         .exec(function (err, project) {
           if (err){
             res.send(err);
           }
           //console.log(project._id);
-          console.log(project);
+          //console.log(project);
           //console.log(project.alternatives);
           res.json(project);
     });
@@ -53,6 +53,7 @@ module.exports.findById = function (req, res) {
             res.jsonp(criterion);
       } else {
             console.log(err);
+            res.send(err);
       }
     });
 }
@@ -67,8 +68,9 @@ module.exports.edit = function (req, res) {
         function(err,criterion){
             if(err){
                 console.log('error occured');
+                res.send(err);
             }else{
-                console.log(criterion);
+                //console.log(criterion);
                 res.send(criterion);
             }       
     });
@@ -76,13 +78,21 @@ module.exports.edit = function (req, res) {
 
 //Delete an criterion
 module.exports.delete = function(req, res){
-        Criterion.remove({
-            _id : req.params.id
-        }, function(err, criterion) {
-            if (err) {
-                throw new Error(err);
-            }
-            res.send(criterion);
+  // Criterion.remove({
+  //   _id : req.params.id
+  // }, function(err, criterion) {
+  // if (err) {
+  //   throw new Error(err);
+  // }
+  // res.send(criterion);
+  // });
 
-        });
+  var criterion = req.params.criterionId;
+  Project.update({ '_id' :req.params.id }, {$pull: { criteria: criterion }} )
+    .exec(function(err) {
+      Criterion.remove({ '_id' : criterion }, function(err, numberRemoved) {
+          // The identified criterion is now removed.
+      });
+  });
+  res.send('Delete criterion complete.');
 }

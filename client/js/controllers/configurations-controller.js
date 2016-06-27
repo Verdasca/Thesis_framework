@@ -1,11 +1,13 @@
-var app = angular.module("configurations-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("configurations-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('configurationsController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $timeout, orderBy) {
+app.controller('configurationsController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', '$location', '$window', function ($scope, $http, $resource, $timeout, orderBy, $location, $window) {
+
+$scope.projectID = $location.search().projectId;
 
 //Get all data when loading body
 $scope.run = function () {
   //Get the data from criterions in mongoDB
-  $http.get('/api/criterions').success(function(data) {
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.criterions = data.criteria;
     })
@@ -14,7 +16,7 @@ $scope.run = function () {
   }); 
 
   //Get the data from categories in mongoDB
-  $http.get('/api/categories').success(function(data) {
+  $http.get('/api/categories/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.categories = data.categories;
     })
@@ -23,7 +25,7 @@ $scope.run = function () {
   });  
 
   //Get the data from profiles in mongoDB
-  $http.get('/api/profiles').success(function(data) {
+  $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.profiles = data.profiletables;
     })
@@ -33,7 +35,7 @@ $scope.run = function () {
 }
 
 //Get the data from criterions in mongoDB
-$http.get('/api/criterions').success(function(data) {
+$http.get('/api/criterions/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.criterions = data.criteria;
   })
@@ -42,7 +44,7 @@ $http.get('/api/criterions').success(function(data) {
 });    
 
 var refreshCriteria = function(){
-  $http.get('/api/criterions').success(function(data) {
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
     //console.log('I got the data I requested');
     $scope.project = data;
     $scope.criterions = data.criteria;
@@ -52,7 +54,7 @@ var refreshCriteria = function(){
 var Categories = $resource('/api/categories');
 
 //Get the data from categories in mongoDB
-$http.get('/api/categories').success(function(data) {
+$http.get('/api/categories/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.categories = data.categories;
   })
@@ -61,7 +63,7 @@ $http.get('/api/categories').success(function(data) {
 });
 
 var refresh = function(){
-  $http.get('/api/categories').success(function(data) {
+  $http.get('/api/categories/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.categories = data.categories;
   });  
@@ -95,14 +97,16 @@ $scope.createCategory = function () {
 
 //Delete category
 $scope.deleteCategory = function(category) {
-  var i = category._id;
-  $http.delete('/api/category/' + i)
+  var i = $scope.project._id;
+  var id = category._id;
+  $http.delete('/api/category/' + i + '/' + id)
     .success(function() {
       console.log("success");
       var idx = $scope.categories.indexOf(category);
       if (idx >= 0) {
         $scope.categories.splice(idx, 1);
       }
+    refresh();
     })
     .error(function() {
       //console.log('Error: ' + i);
@@ -110,6 +114,7 @@ $scope.deleteCategory = function(category) {
       if (idx >= 0) {
         $scope.categories.splice(idx, 1);
       }
+    refresh();
     });
 }
 
@@ -180,7 +185,7 @@ $scope.reset = function () {
 var Parameters = $resource('/api/parameters');
 
 //Get parameter in mongoDB
-$http.get('/api/parameters').success(function(data) {
+$http.get('/api/parameters/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.parameters = data.parameters;
   })
@@ -189,7 +194,7 @@ $http.get('/api/parameters').success(function(data) {
 }); 
 
 var refreshParameter = function(){
-  $http.get('/api/parameters').success(function(response) {
+  $http.get('/api/parameters/' + $scope.projectID).success(function(response) {
     $scope.project = response;
     $scope.parameters = response.parameters;
   });  
@@ -227,7 +232,7 @@ $scope.updateParameter = function(parameter) {
 var Profiles = $resource('/api/profiles');
 
 //Get the data from profiles in mongoDB
-$http.get('/api/profiles').success(function(data) {
+$http.get('/api/profiles/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.profiles = data.profiletables;
   })
@@ -236,7 +241,7 @@ $http.get('/api/profiles').success(function(data) {
 });
 
 var refreshProfiles = function(){
-  $http.get('/api/profiles').success(function(data) {
+  $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.profiles = data.profiletables;
   });  
@@ -400,11 +405,12 @@ $scope.deleteProfile2 = function() {
   $http.delete('/api/profiles/' + i)
     .success(function() {
       console.log("success");
+      refreshProfiles();
     })
     .error(function() {
       //console.log('Error: fail deletes' );
+      refreshProfiles();
     });
-    refreshProfiles();
 }
 
 $scope.propertyName = 'action';
@@ -539,6 +545,17 @@ $scope.updateCriterionWeights = function() {
       //console.log(myDataPromise);
     }
   }, 1000);
+}
+
+// Change section and give the project id as argument
+$scope.changeSection = function(name){
+  var id = $scope.projectID;
+  var sectionName = name;
+  if(sectionName == 'divizServer'){
+    $window.location.href = 'http://vps288667.ovh.net:5010?projectId='+id;   
+  }else{
+    $window.location.href = '/'+sectionName+'.html?projectId='+id; 
+  }
 }
 
 }]);

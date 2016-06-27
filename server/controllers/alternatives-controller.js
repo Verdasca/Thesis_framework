@@ -9,7 +9,7 @@ module.exports.create = function (req, res) {
 	 //res.json(result);
   });
   // Associate/save the new alternative to the project
-  Project.findOne({ _id:req.params.id})
+  Project.findOne({ _id:req.params.id })
   .populate('alternatives')
   .exec(function (err, project) {
     if (err){
@@ -41,14 +41,14 @@ module.exports.get = function (req, res) {
     // });
 
     Project
-        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .findOne({ _id: req.params.id })
         .populate('alternatives') // only works if we pushed refs to children
         .exec(function (err, project) {
           if (err){
             res.send(err);
           }
           //console.log(project._id);
-          console.log(project);
+          //console.log(project);
           //console.log(project.alternatives);
           res.json(project);
     });
@@ -60,6 +60,7 @@ module.exports.findById = function (req, res) {
             res.jsonp(alternative);
       } else {
             console.log(err);
+            res.send(err);
       }
     });
 }
@@ -74,8 +75,9 @@ module.exports.edit = function (req, res) {
         function(err,alternative){
             if(err){
                 console.log('error occured');
+                res.send(err);
             }else{
-                console.log(alternative);
+                //console.log(alternative);
                 res.send(alternative);
             }       
     });
@@ -83,13 +85,22 @@ module.exports.edit = function (req, res) {
 
 //Delete an alternative
 module.exports.delete = function(req, res){
-        Alternative.remove({
-            _id : req.params.id
-        }, function(err, alternative) {
-            if (err) {
-                throw new Error(err);
-            }
-            res.send(alternative);
+        // Alternative.remove({
+        //     _id : req.params.id
+        // }, function(err, alternative) {
+        //     if (err) {
+        //         throw new Error(err);
+        //     }
+        //     res.send(alternative);
 
-        });
+        // });
+
+  var alternative = req.params.alternativeId;
+  Project.update({ '_id' :req.params.id }, {$pull: { alternatives: alternative }} )
+    .exec(function(err) {
+      Alternative.remove({ '_id' : alternative }, function(err, numberRemoved) {
+      // The identified alternative is now removed.
+    });
+  });
+  res.send('Delete alternative complete.');        
 }

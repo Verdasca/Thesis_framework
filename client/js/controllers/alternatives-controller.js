@@ -1,19 +1,20 @@
-var app = angular.module("alternatives-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("alternatives-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('alternativesController', ['$scope', '$http', '$resource', function ($scope, $http, $resource) {
+app.controller('alternativesController', ['$scope', '$http', '$resource', '$location', '$window', function ($scope, $http, $resource, $location, $window) {
 
 var Alternatives = $resource('/api/alternatives');
-//var Projects = $resource('/getProjectData/alternatives');
+
+$scope.projectID = $location.search().projectId;
 
 var refresh = function(){
-  $http.get('/api/alternatives').success(function(response) {
+  $http.get('/api/alternatives/' + $scope.projectID).success(function(response) {
     console.log('I got the data I requested');
       $scope.project = response;
       $scope.alternatives = response.alternatives;
     });  
 }
 
-$http.get('/api/alternatives').success(function(data) {
+$http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.alternatives = data.alternatives;
   })
@@ -42,6 +43,7 @@ $scope.createAlternative = function () {
     refresh();
     $scope.alternative.name = '';
     $scope.alternative.description = '';
+    refresh();
   });
 
   //$scope.project.alternatives.push(alternative);
@@ -60,14 +62,16 @@ $scope.createAlternative = function () {
 
 //Delete alternative
 $scope.deleteAlternative = function(alternative) {
-  var i = alternative._id;
-  $http.delete('/api/alternative/' + i)
+  var i = $scope.project._id;
+  var id = alternative._id;
+  $http.delete('/api/alternative/' + i + '/' + id)
     .success(function() {
       console.log("success");
       var idx = $scope.alternatives.indexOf(alternative);
       if (idx >= 0) {
         $scope.alternatives.splice(idx, 1);
       }
+      refresh();
     })
     .error(function() {
       //console.log('Error: ' + i);
@@ -75,6 +79,7 @@ $scope.deleteAlternative = function(alternative) {
       if (idx >= 0) {
         $scope.alternatives.splice(idx, 1);
       }
+      refresh();
     });
 }
 
@@ -135,6 +140,17 @@ $scope.editAlternative2 = function (alternative) {
 // Reset model
 $scope.reset = function () {
   $scope.model = {};
+}
+
+// Change section and give the project id as argument
+$scope.changeSection = function(name){
+  var id = $scope.projectID;
+  var sectionName = name;
+  if(sectionName == 'divizServer'){
+    $window.location.href = 'http://vps288667.ovh.net:5010?projectId='+id;   
+  }else{
+    $window.location.href = '/'+sectionName+'.html?projectId='+id; 
+  }
 }
 
 }]);

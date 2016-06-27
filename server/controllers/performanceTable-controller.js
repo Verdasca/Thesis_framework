@@ -34,13 +34,13 @@ module.exports.get = function (req, res) {
     // });
 
     Project
-        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .findOne({ _id: req.params.id })
         .populate('performancetables') // only works if we pushed refs to children
         .exec(function (err, project) {
           if (err){
             res.send(err);
           }
-          console.log(project);
+          //console.log(project);
           res.json(project);
     });
 }
@@ -66,7 +66,7 @@ module.exports.edit = function (req, res) {
             if(err){
                 console.log('error occured');
             }else{
-                console.log(performance);
+                //console.log(performance);
                 res.send(performance);
             }       
     });
@@ -118,7 +118,7 @@ exports.deleteAll = function(req, res) {
                 PerformanceTable.remove({ _id: { $in: performances }}, function(err, numberRemoved) {
                   // The identified performances are now removed.
                 });
-              });
+            });
             res.send('Delete all performances complete.');
     });
 }

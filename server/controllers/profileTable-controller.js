@@ -35,13 +35,13 @@ module.exports.get = function (req, res) {
     // });
 
     Project
-        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .findOne({ _id: req.params.id })
         .populate('profiletables') // only works if we pushed refs to children
         .exec(function (err, project) {
           if (err){
             res.send(err);
           }
-          console.log(project);
+          //console.log(project);
           res.json(project);
     });
 }
@@ -52,6 +52,7 @@ module.exports.findById = function (req, res) {
             res.jsonp(profile);
       } else {
             console.log(err);
+            res.send(err);
       }
     });
 }
@@ -66,8 +67,9 @@ module.exports.edit = function (req, res) {
         function(err,profile){
             if(err){
                 console.log('error occured');
+                res.send(err);
             }else{
-                console.log(profile);
+                //console.log(profile);
                 res.send(profile);
             }       
     });

@@ -1,11 +1,13 @@
-var app = angular.module("performances-controller", ['ngRoute', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("performances-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('performancesController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $timeout, orderBy) {
+app.controller('performancesController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', '$location', '$window', function ($scope, $http, $resource, $timeout, orderBy, $location, $window) {
+
+$scope.projectID = $location.search().projectId;
 
 //Get all data when loading body
 $scope.run = function () {
   //Get the data from criterions in mongoDB
-  $http.get('/api/criterions').success(function(data) {
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.criterions = data.criteria;
     })
@@ -14,7 +16,7 @@ $scope.run = function () {
   }); 
 
   //Get the data from alternatives in mongoDB
-  $http.get('/api/alternatives').success(function(data) {
+  $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.alternatives = data.alternatives;
     })
@@ -23,7 +25,7 @@ $scope.run = function () {
   });   
 
   //Get the data from performances in mongoDB
-  $http.get('/api/performances').success(function(data) {
+  $http.get('/api/performances/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.performances = data.performancetables;
     })
@@ -34,7 +36,7 @@ $scope.run = function () {
 }
 
 //Get the data from criterions in mongoDB
-$http.get('/api/criterions').success(function(data) {
+$http.get('/api/criterions/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.criterions = data.criteria;
   })
@@ -43,7 +45,7 @@ $http.get('/api/criterions').success(function(data) {
 }); 
 
 //Get the data from alternatives in mongoDB
-$http.get('/api/alternatives').success(function(data) {
+$http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.alternatives = data.alternatives;
   })
@@ -54,7 +56,7 @@ $http.get('/api/alternatives').success(function(data) {
 var Performances = $resource('/api/performances');
 
 //Get the data from performances in mongoDB
-$http.get('/api/performances').success(function(data) {
+$http.get('/api/performances/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.performances = data.performancetables;
   })
@@ -63,7 +65,7 @@ $http.get('/api/performances').success(function(data) {
 });
 
 var refresh = function(){
-  $http.get('/api/performances').success(function(response) {
+  $http.get('/api/performances/' + $scope.projectID).success(function(response) {
     console.log('I got the data I requested');
       $scope.project = response;
       $scope.performances = response.performancetables;
@@ -222,7 +224,7 @@ $scope.deletePerformance2 = function() {
     .error(function() {
       //console.log('Error: fail deletes' );
   });
-  refresh();
+  //refresh();
 }
 
 // At the beginning see if alternatives or criteria where change to update the performance table 
@@ -296,6 +298,7 @@ $scope.resetChunks  = function() {
     for ( i = 0; i < l; i += x) {
       $scope.chunks.push( $scope.performances2.slice(i, i + x));
     }
+    refresh();
     var numCriteria = $scope.criterions.length;
     var numAlternatives = $scope.alternatives.length;
     var rightNumPerformances = numCriteria * numAlternatives;
@@ -334,6 +337,17 @@ $scope.uploadfile = function(scope, element) {
       }
     }
   }, 500);
+}
+
+// Change section and give the project id as argument
+$scope.changeSection = function(name){
+  var id = $scope.projectID;
+  var sectionName = name;
+  if(sectionName == 'divizServer'){
+    $window.location.href = 'http://vps288667.ovh.net:5010?projectId='+id;   
+  }else{
+    $window.location.href = '/'+sectionName+'.html?projectId='+id; 
+  }
 }
 
 }]);

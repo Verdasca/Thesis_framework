@@ -7,5 +7,3 @@ module.exports = mongoose.model('User', {
   projects : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }]
 });
 
-
-//db.users.insert( { username: "admin", password: "admin", name: "User Example Test", projects: { name: "Project 1 Test"} } )

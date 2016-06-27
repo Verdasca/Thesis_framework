@@ -14,6 +14,7 @@
 
     <!-- JS -->
     <script src="libs/angular/angular.min.js"></script>
+    <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="libs/angular-route/angular-route.min.js"></script>
 
     <!-- ANGULAR CUSTOM -->
@@ -50,10 +51,10 @@
             <form>
                 <input id="loginForm" type="text" placeholder="username" ng-model="username" required/><br>
                 <input id="loginForm" type="password" placeholder="password" ng-model="password" required/><br>
-                <input id="btnSubmit" type="submit" placeholder="login!" ng-click="submit()" value="Login"/>
+                <input id="btnSubmit" type="submit" placeholder="login!" ng-click="authenticate();" value="Login"/>
                 <a id="account" href="/register.html">Create account</a>
             </form>
-            <br>
+            <br><br>
             <p id="loginError">{{errorMessage}}</p>
         </div>
     </div>

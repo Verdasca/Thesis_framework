@@ -36,6 +36,15 @@
     padding-top: 30px;
 }
 
+#contentRegister{
+    height: 600px;
+    margin: auto;
+    width: 90%;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 30px;
+}
+
 footer{
     color: #033773; 
     font-size: 14px;
@@ -122,4 +131,62 @@ footer{
 #loginError{
     color: red;
     font-size: 20px;
+}
+
+/* Ok message*/
+#okRegister{
+    color: green;
+    font-size: 20px;
+}
+
+
+/* Projects section */
+#projectsTable{
+    margin: auto;
+    text-align: center;
+    width: 70%;
+}
+
+#projectsTbl{
+  background-color: white;
+  border-radius: 5px;
+}
+
+#projectLabel{
+    font-size: 18px;  
+    margin-right: 10px;
+}
+
+#projectInput{
+    vertical-align: middle;
+    padding-right: 80px;
+    padding-left: 80px;
+    text-align: center;  
+    margin-right: 10px;
+    height: 35px;
+    font-size: 16px;
+}
+
+#projectInput2{
+    vertical-align: text-top;
+    padding-right: 80px;
+    padding-left: 80px;
+    text-align: center;  
+}
+
+#projectHeader{
+    text-align: left;  
+    font-size: 18px;  
+}
+
+#projectHeader2{
+    text-align: center;   
+    font-size: 18px;   
+}
+
+#projectBody{
+    text-align: left;  
+    font-size: 15px;  
+    padding-left: 10px;  
+    vertical-align: middle;
 }

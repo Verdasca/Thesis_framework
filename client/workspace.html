@@ -13,18 +13,19 @@
     <link rel="stylesheet" type="text/css" href="css/workspace.css"> <!-- custom styles -->
 
     <!-- JS -->
-    <script src="libs/jquery/dist/jquery.min.js"></script>
-    <script src="libs/jquery-ui/jquery-ui.min.js"></script>
-    <script src="libs/angular/angular.js"></script>
-    <!-- <script src="libs/angular-route/angular-route.js"></script>-->
-    <script src="libs/angular-route/angular-route.min.js"></script>
-    <script src="libs/angular-resource/angular-resource.js"></script>
-    <script src="libs/angular-ui/build/angular-ui.min.js"></script>
-    <script src="libs/angular-bootstrap/ui-bootstrap.min.js"></script>
-    <script src="libs/angular-sanitize/angular-sanitize.min.js"></script>
-    <script src="libs/ng-csv/build/ng-csv.min.js"></script>
+    <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="libs/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="libs/angular/angular.js" type="text/javascript"></script>
+    <script src="libs/angular-route/angular-route.min.js" type="text/javascript"></script>
+    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
+    <script src="libs/angular-ui/build/angular-ui.min.js" type="text/javascript"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
+    <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
+    <script src="libs/ng-csv/build/ng-csv.min.js" type="text/javascript"></script>
+    <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
     
     <!-- ANGULAR CUSTOM -->
+    <script src="js/controllers/workspaceCtrl.js"></script>
     <script src="js/controllers/mainCtrl.js"></script>
     <script src="js/appRoutes.js"></script>
     <script src="js/app.js"></script>
@@ -34,7 +35,7 @@
     <script src="js/amcharts_3/amcharts/plugins/export/export.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
-<body ng-app="sampleApp">
+<body ng-app="workspaceCtrl" ng-controller="workspaceController">
 <!-- HEADER AND NAVBAR -->
     <header>
         <nav id="navigationBar" class="navbar navbar-default">
@@ -53,12 +54,12 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/criterion.html'">Criterion Set</a></li>
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/alternative.html'">Alternative Set</a></li>
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/performance.html'">Performance Table</a></li>
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/configurations.html'">Decision Configurations</a></li>
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = 'http://vps288667.ovh.net:5010'">MCDA Methods</a></li>
-                        <li id="sections"><a id="aSections" href="" onclick="window.location = '/results.html'">Results</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('divizServer');">MCDA Methods</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>

@@ -34,13 +34,13 @@ module.exports.get = function (req, res) {
     // });
 
     Project
-        .findOne({ _id: '576b2f353b4de674060fd245' })
+        .findOne({ _id: req.params.id })
         .populate('categories') // only works if we pushed refs to children
         .exec(function (err, project) {
           if (err){
             res.send(err);
           }
-          console.log(project);
+          //console.log(project);
           res.json(project);
     });
 }
@@ -51,6 +51,7 @@ module.exports.findById = function (req, res) {
             res.jsonp(category);
       } else {
             console.log(err);
+            res.send(err);
       }
     });
 }
@@ -65,8 +66,9 @@ module.exports.edit = function (req, res) {
         function(err,category){
             if(err){
                 console.log('error occured');
+                res.send(err);
             }else{
-                console.log(category);
+                //console.log(category);
                 res.send(category);
             }       
     });
@@ -74,13 +76,22 @@ module.exports.edit = function (req, res) {
 
 //Delete a category
 module.exports.delete = function(req, res){
-        Category.remove({
-            _id : req.params.id
-        }, function(err, category) {
-            if (err) {
-                throw new Error(err);
-            }
-            res.send(category);
+        // Category.remove({
+        //     _id : req.params.id
+        // }, function(err, category) {
+        //     if (err) {
+        //         throw new Error(err);
+        //     }
+        //     res.send(category);
 
-        });
+        // });
+
+  var category = req.params.categoryId;
+  Project.update({ '_id' :req.params.id }, {$pull: { categories: category }} )
+    .exec(function(err) {
+      Category.remove({ '_id' : category }, function(err, numberRemoved) {
+      // The identified category is now removed.
+    });
+  });
+  res.send('Delete category complete.');   
 }

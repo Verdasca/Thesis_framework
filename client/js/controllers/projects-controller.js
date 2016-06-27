@@ -1,18 +1,20 @@
 var app = angular.module("projects-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('projectsController', ['$scope', '$http', '$resource', '$state', '$stateParams', '$window', function ($scope, $http, $resource, $state, $stateParams, $window) {
+app.controller('projectsController', ['$scope', '$http', '$resource', '$state', '$stateParams', '$window', '$location', function ($scope, $http, $resource, $state, $stateParams, $window, $location) {
 
 var Projects = $resource('/api/projects');
 
+$scope.userId = $location.search().userId;
+
 var refresh = function(){
-  $http.get('/api/projects').success(function(response) {
+  $http.get('/api/projects/' + $scope.userId ).success(function(response) {
     console.log('I got the data I requested');
       $scope.user = response;
       $scope.projects = response.projects;
     });  
 }
 
-$http.get('/api/projects').success(function(data) {
+$http.get('/api/projects/' + $scope.userId ).success(function(data) {
   $scope.user = data;
   $scope.projects = data.projects;
   })

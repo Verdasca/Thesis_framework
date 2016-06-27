@@ -25,7 +25,7 @@ app.controller('loginController', [ '$scope', '$http', function($scope, $http) {
             console.log(data);
             if(data.success){
                 //window.location = '/projects.html?token='+data.token;
-                window.location = '/projects.html';
+                window.location = '/projects.html?userId=' + data.userId;
             }else{
                 $scope.errorMessage = data.message;
             }

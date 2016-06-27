@@ -36,7 +36,7 @@ module.exports.get = function (req, res) {
     // });
 
     User
-        .findOne({ _id: '57705e60126e53aa0405ced2' })
+        .findOne({ _id: req.params.id })
         .populate('projects') // only works if we pushed refs to children
         .exec(function (err, user) {
           if (err){

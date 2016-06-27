@@ -4,12 +4,11 @@
 var express        = require('express');
 var app            = express();
 var bodyParser     = require('body-parser');
-var morgan		   = require('morgan');
+var morgan		     = require('morgan');
 var methodOverride = require('method-override');
 var mongoose       = require('mongoose');
-
-var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var User   = require('./server/models/user'); // get our mongoose model
+var jwt            = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var User           = require('./server/models/user'); // get our mongoose model
 
 var usersController = require('./server/controllers/users-controller');
 var projectsController = require('./server/controllers/projects-controller');
@@ -22,8 +21,8 @@ var profileTableController = require('./server/controllers/profileTable-controll
 
 // Function to reset DB and get the correct data + create/delete folders and projects 
 //var importData = require('./importData.js');
-var createUserProject = require('./createUserProject.js');
-var getProjectData = require('./getProjectData.js');
+//var createUserProject = require('./createUserProject.js');
+//var getProjectData = require('./getProjectData.js');
 
 // configuration ===========================================
 var node_env = process.env.NODE_ENV;
@@ -57,6 +56,13 @@ app.use(bodyParser.json());
 // override with the X-HTTP-Method-Override header in the request. simulate DELETE/PUT
 app.use(methodOverride('X-HTTP-Method-Override')); 
 
+app.use(function(req, res, next) {
+res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    next();
+});
+
 // set the static files location /client/img will be /img for users
 app.use(express.static(__dirname + '/client')); 
 //app.use(express.static(__dirname + '/templates/client')); 
@@ -68,7 +74,7 @@ app.get('/api/user/:id', usersController.findById);
 app.post('/api/users', usersController.create);
 app.delete('/api/user/:id', usersController.delete);
 //Project 
-app.get('/api/projects', projectsController.get);
+app.get('/api/projects/:id', projectsController.get);
 app.get('/api/project/:id', projectsController.findById);
 app.post('/api/projects/:id', projectsController.create);
 app.put('/api/project/:id', projectsController.edit);
@@ -178,6 +184,8 @@ apiRoutes.post('/authenticate', function(req, res) {
         // return the information including token as JSON
         res.json({
           success: true,
+          data: user,
+          userId: user._id,
           message: 'Enjoy your token!',
           token: token
         });

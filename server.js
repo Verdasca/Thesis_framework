@@ -71,6 +71,7 @@ app.use(express.static(__dirname + '/client'));
 //User 
 //app.get('/api/users', usersController.get);
 app.get('/api/user/:id', usersController.findById);
+app.get('/api/userFind/:username', usersController.findByUsername);
 app.post('/api/users', usersController.create);
 app.delete('/api/user/:id', usersController.delete);
 //Project 

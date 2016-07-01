@@ -47,6 +47,8 @@
                 <a id="textNav" class="navbar-brand" style="font-size:18px">MCDA Framework</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
+                <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
+                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
         </div>
@@ -57,12 +59,13 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('alternative');">Alternative Set</a></li>
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('divizServer');">MCDA Methods</a></li>
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('results');">Results</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sectionsAlternatives"><a id="aSections" href="" class="active" ng-click="changeSection('alternative');">Alternative Set</a></li>
+                        <li id="sectionsPerformances"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
+                        <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
+                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
+                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>

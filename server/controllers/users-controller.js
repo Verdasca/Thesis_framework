@@ -25,13 +25,25 @@ module.exports.findById = function (req, res) {
       if (!err) {
             res.jsonp(user);
       } else {
-            console.log(err);
+            //console.log(err);
             res.send(err);
       }
     });
 }
 
+module.exports.findByUsername = function (req, res) {
+    User.findOne({ username: req.params.username }, function(err, user) {
+        if (!err) {
+            res.jsonp(user);
+        } else {
+            res.send(err);
+        }
+    });
+}
+
 //Delete an user
+// TODO (don't forget): deleting users is not implemented on the framework yet, but when it is:
+// all projects related to the user need to be deleted (see delete project example)
 module.exports.delete = function(req, res){
         User.remove({
             _id : req.params.id

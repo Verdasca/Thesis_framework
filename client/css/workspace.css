@@ -85,7 +85,11 @@
     font-size: 16px;
 }
 
-#sections:hover{
+#sections:hover,
+#sectionsCriteria:hover,
+#sectionsAlternatives:hover,
+#sectionsPerformances:hover,
+#sectionsConfigurations:hover{
     background-color: #033773;
 }
 
@@ -128,6 +132,54 @@
     margin: 5px;
     text-align: center;
     margin-bottom: -18px;
+}
+
+#buttonDiviz {
+    width: 90%;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    display: table;
+    margin: 5px auto;
+}
+
+/* Description sections */
+#descriptionTable{
+  margin: auto;
+  text-align: left;
+  width: 70%;
+}
+
+#descriptionTd{
+    font-size: 18px;  
+    vertical-align: middle;
+}
+
+#tutorial{
+    text-align: left;
+    margin: 0px 150px;
+    font-size: 17px;
+}
+
+#tutorial li{
+  margin-bottom: 5px;
+}
+
+#step1,
+#step2,
+#step3,
+#step4{
+    font-weight: bold;
+}
+
+#step1 ul,
+#step1 ol,
+#step4 ul,
+#step4 ol{
+    font-weight: normal;
 }
 
 /* Criterion section */

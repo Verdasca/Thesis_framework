@@ -2,6 +2,11 @@ var Project = require('../models/project');
 var mongoose = require( 'mongoose' );
 var User = mongoose.model('User');
 var Parameter = require('../models/parameter');
+var Alternative = require('../models/alternative');
+var Criterion = require('../models/criterion');
+var Category = require('../models/category');
+var Performance = require('../models/performanceTable');
+var Profile = require('../models/profileTable');
 
 //Create a project
 module.exports.create = function (req, res) {
@@ -89,7 +94,7 @@ module.exports.delete = function(req, res){
         // });
 
     var project = req.params.projectId;
-
+    // Before deleting the project, all the data associated with the project must be deleted as well
     //Delete all associated parameters
     Project.findOne({ _id: project })
         .populate('parameters')
@@ -102,6 +107,81 @@ module.exports.delete = function(req, res){
               .exec(function(err) {
                 Parameter.remove({ _id: { $in: parameter }}, function(err, numberRemoved) {
                   // The identified parameter are now removed.
+                });
+            });
+    });
+    //Delete all associated alternatives
+    Project.findOne({ _id: project })
+        .populate('alternatives')
+        .exec(function (err, project) {
+            if (err){
+                //res.send(err);
+            }
+            var alternative = project.alternatives;
+            Project.update({ _id: project }, {'$pullAll': {alternatives: alternative }})
+              .exec(function(err) {
+                Alternative.remove({ _id: { $in: alternative }}, function(err, numberRemoved) {
+                  // The identified alternative are now removed.
+                });
+            });
+    });
+    //Delete all associated criteria
+    Project.findOne({ _id: project })
+        .populate('criteria')
+        .exec(function (err, project) {
+            if (err){
+                //res.send(err);
+            }
+            var criterion = project.criteria;
+            Project.update({ _id: project }, {'$pullAll': {criteria: criterion }})
+              .exec(function(err) {
+                Criterion.remove({ _id: { $in: criterion }}, function(err, numberRemoved) {
+                  // The identified criterion are now removed.
+                });
+            });
+    });
+    //Delete all associated categories
+    Project.findOne({ _id: project })
+        .populate('categories')
+        .exec(function (err, project) {
+            if (err){
+                //res.send(err);
+            }
+            var category = project.categories;
+            Project.update({ _id: project }, {'$pullAll': {categories: category }})
+              .exec(function(err) {
+                Category.remove({ _id: { $in: category }}, function(err, numberRemoved) {
+                  // The identified category are now removed.
+                });
+            });
+    });
+    //Delete all associated performances
+    Project.findOne({ _id: project })
+        .populate('performancetables')
+        .exec(function (err, project) {
+            if (err){
+                //res.send(err);
+            }
+            var performance = project.performancetables;
+            Project.update({ _id: project }, {'$pullAll': {performancetables: performance }})
+              .exec(function(err) {
+                Performance.remove({ _id: { $in: performance }}, function(err, numberRemoved) {
+                  // The identified performance are now removed.
+                });
+            });
+    });
+    //Delete all associated profiles
+    Project.findOne({ _id: project })
+        .populate('profiletables')
+        .exec(function (err, project) {
+            if (err){
+                //res.send(err);
+            }
+            var profile = project.profiletables;
+            Project.update({ _id: project }, {'$pullAll': {profiletables: profile }})
+              .exec(function(err) {
+                Profile.remove({ _id: { $in: profile }}, function(err, numberRemoved) {
+                  // The identified profile are now removed.
                 });
             });
     });

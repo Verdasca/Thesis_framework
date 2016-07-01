@@ -1,11 +1,11 @@
-<!-- results page -->
+<!-- description page -->
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <base href="/">
 
-    <title>Results Page</title>
+    <title>Description Page</title>
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
@@ -20,25 +20,17 @@
     <script src="libs/angular-ui/build/angular-ui.min.js" type="text/javascript"></script>
     <script src="libs/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
     <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
-    <script src="libs/ng-csv/build/ng-csv.min.js" type="text/javascript"></script>
     <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
     
     <!-- ANGULAR CUSTOM -->
     <script src="js/appRoutes.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
-    <script src="js/amcharts_3/amcharts/amcharts.js" type="text/javascript"></script>
-    <script src="js/amcharts_3/amcharts/serial.js" type="text/javascript"></script>
-    <script src="js/amcharts_3/amcharts/plugins/export/export.js" type="text/javascript"></script>
-    <script src="js/controllers/criterions-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/alternatives-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/performances-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/configurations-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/results-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/description-controller.js" type="text/javascript"></script>
     <script src="js/controllers/mainCtrl.js" type="text/javascript"></script>
     <script src="js/sortable.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
-<body ng-app="results-controller" ng-controller="resultsController">
+<body ng-app="description-controller" ng-controller="descriptionController">
 <!-- HEADER AND NAVBAR -->
     <header>
         <nav id="navigationBar" class="navbar navbar-default">
@@ -59,7 +51,7 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
                         <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
                         <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set</a></li>
                         <li id="sectionsPerformances"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
@@ -74,62 +66,40 @@
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
 		<div id="content" class="jumbotron text-center">
-		    <h2>Results</h2>
+		    <h2>Description</h2>
             <br/>
-            <!-- <table id="resultsTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
-                <thead>
-                    <th id="criHeader">Alternative</th>
-                    <th id="criHeader">Minimum</th>
-                    <th id="criHeader">Maximum</th>
-                </thead>
-                <tbody></tbody>
+            <table id="descriptionTable" class="table table-bordered horizontal">
+                <tr>
+                    <td colspan="2" id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
+                    <td id="descriptionTd"><label>Creation Date: </label> {{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                </tr>
+                <tr>
+                    <td id="descriptionTd"><label>Method: </label> {{ project.methodChosen }}</td>
+                    <td id="descriptionTd"><label>Nº of executions: </label> {{ project.numExecutions }}</td>
+                    <td id="descriptionTd"><label>Last update: </label> {{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                </tr>
             </table>
             <br/>
-            <button export-results-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button> 
-            <br/><br/><br/> -->
-            <!-- <div>
-                <button ng-click="reset()">Reset</button>
-                <button ng-click="create()">Create</button>
-            </div> -->
-            <!-- <button ng-click="create()">Create User</button>
-            <button ng-click="get()">Get</button> -->
+            <h3>The following steps are required to run the Electre Tri-C method correctly:</h3>
+            <br/>
+            <ol type="1" id="tutorial">
+                <li id="step1">Define criteria (Criterion Set).
+                  <ul style="list-style-type:disc">
+                    <li>Mandatory set: name, direction, weight, indifference, preference and veto;</li>
+                    <li>Weight can be defined: in Criterion Set or in Decision Configurations using the method "determining weights of criteria".</li>
+                  </ul>
+                </li>
+                <li id="step2">Define alternatives (Alternative Set).</li>
+                <li id="step3">Fill the performance table (Performance Table).</li>
+                <li id="step4">In Decision Configurations:
+                  <ol type="a">
+                    <li id="step5">Define categories;</li>
+                    <li id="step6">Give a value for the Credibility Lambda ( λ ) between [0.5 ; 1.0];</li>
+                    <li id="step7">Fill the Profiles Performance Table.</li>
+                  </ol>
+                </li>
+            </ol>
 		</div>
-        <div id="zoneExists"></div>
-    </div>
-    <script type="text/javascript">
-        // $(document).ready(function(){
-        //     loadXMLDoc();
-        // });
-    </script>    
+    </div>   
 </body>
 </html>
-<script>
-// var xmlhttp = new XMLHttpRequest();
-// var url = "http://www.w3schools.com/website/Customers_MYSQL.php";
-// //var url = "http://localhost:8000/catalog.xml";
-// xmlhttp.onreadystatechange=function() {
-//     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-//         myFunction(xmlhttp.responseText);
-//     }
-// }
-// xmlhttp.open("GET", url, true);
-// xmlhttp.send();
-
-// function myFunction(response) {
-//     var arr = JSON.parse(response);
-//     var i;
-//     var out = "<table>";
-
-//     for(i = 0; i < arr.length; i++) {
-//         out += "<tr><td>" + 
-//         arr[i].note +
-//         "</td><td>" +
-//         arr[i].CD +
-//         "</td><td>" +
-//         arr[i].COUNTRY +
-//         "</td></tr>";
-//     }
-//     out += "</table>";
-//     document.getElementById("id01").innerHTML = out;
-// }
-</script> 

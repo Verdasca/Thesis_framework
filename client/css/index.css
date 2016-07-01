@@ -144,7 +144,7 @@ footer{
 #projectsTable{
     margin: auto;
     text-align: center;
-    width: 70%;
+    width: 95%;
 }
 
 #projectsTbl{
@@ -165,6 +165,7 @@ footer{
     margin-right: 10px;
     height: 35px;
     font-size: 16px;
+    width: 100%;
 }
 
 #projectInput2{
@@ -186,6 +187,13 @@ footer{
 
 #projectBody{
     text-align: left;  
+    font-size: 15px;  
+    padding-left: 10px;  
+    vertical-align: middle;
+}
+
+#projectBody2{
+    text-align: center;  
     font-size: 15px;  
     padding-left: 10px;  
     vertical-align: middle;

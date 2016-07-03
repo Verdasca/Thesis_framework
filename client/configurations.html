@@ -258,7 +258,7 @@
                         <td><input id="criBody" type="text" placeholder="Category rank" name="rank" ng-model="category.rank" required/></td>
                         <td><input id="criBody" type="text" placeholder="Reference Action" name="reference" ng-model="category.action" required/></td>
                         <td>
-                            <input type="button" value="Add Category" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.rank.$dirty && myForm.rank.$invalid || myForm.reference.$dirty && myForm.reference.$invalid" ng-click="submitted=true; myForm.name.$valid && createCategory(); resetProfileTable();" class="btn btn-primary"/>
+                            <input type="button" value="Add Category" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.rank.$dirty && myForm.rank.$invalid || myForm.reference.$dirty && myForm.reference.$invalid" ng-click="submitted=true; myForm.name.$valid && myForm.rank.$valid && myForm.reference.$valid && createCategory(); resetProfileTable();" class="btn btn-primary"/>
                             <!-- <input type="button" value="Update" ng-click="updateCategory(); resetProfileTable();" class="btn btn-info"/> -->
                         </td>
                     </tr>

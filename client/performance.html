@@ -102,8 +102,9 @@
                 </tr> 
             </table> -->
             <br/>
-            <input type="file" id="fileUpload" />
-            <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Upload" onclick = "Upload()" ng-click="uploadfile()"/>
+            <p id="explanation">It's possible to import data for the performance table. Choose a CSV file with the data and click on the "Import" button.<br> The CSV file must be well strutured (correct nº of lines and columns, as well as, a header with the criteria and alternatives on the first column just like the table bellow) and with a simple name.</p>
+            <input type="file" id="fileUpload"/>
+            <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" onclick = "Upload()" ng-click="uploadfile()"/>
             <br/>
             <div>
                 <!-- <div ng-model="numPerform">{{performances.length}}</div> -->

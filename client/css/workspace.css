@@ -283,6 +283,13 @@
     width: 97%;
 }
 
+#explanation{
+    width: 85%;
+    font-size: 16px;
+    text-align: center;
+    margin: auto;
+}
+
 #weightTbl,
 #weightTbl2,
 #weightTbl3{

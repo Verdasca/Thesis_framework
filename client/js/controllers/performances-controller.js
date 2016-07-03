@@ -229,7 +229,7 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
       // See if it's the last performance to create if it is update the performance table
       if($scope.j == rightNumPerformances){
         console.log('Last performance being created...');
-          refresh();
+          //refresh();
           $scope.resetChunks();
       }
     }else{
@@ -330,7 +330,7 @@ $scope.resetChunks  = function() {
     var numCriteria = $scope.criterions.length;
     var numAlternatives = $scope.alternatives.length;
     var rightNumPerformances = numCriteria * numAlternatives;
-    refresh();
+    //refresh();
     var numExistingPerformances = $scope.performances.length;
     console.log('Number of performances that should exist: ' + rightNumPerformances);
     console.log('Actual number of performances now: ' + numExistingPerformances);

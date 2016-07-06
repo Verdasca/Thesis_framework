@@ -80,6 +80,7 @@ app.get('/api/project/:id', projectsController.findById);
 app.post('/api/projects/:id', projectsController.create);
 app.put('/api/project/:id', projectsController.edit);
 app.delete('/api/project/:id/:projectId', projectsController.delete);
+app.delete('/api/projects/:projectId/:id', projectsController.deleteResult);
 //Alternative 
 app.get('/api/alternatives/:id', alternativesController.get);
 app.get('/api/alternative/:id', alternativesController.findById);

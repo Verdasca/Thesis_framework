@@ -121,6 +121,7 @@ $scope.createCategory = function () {
     $scope.category.rank = '';
     $scope.category.action = '';
   });
+  $scope.updateProject();
 }
 
 //Delete category
@@ -134,7 +135,8 @@ $scope.deleteCategory = function(category) {
       if (idx >= 0) {
         $scope.categories.splice(idx, 1);
       }
-    refresh();
+      $scope.updateProject();
+      refresh();
     })
     .error(function() {
       //console.log('Error: ' + i);
@@ -142,7 +144,8 @@ $scope.deleteCategory = function(category) {
       if (idx >= 0) {
         $scope.categories.splice(idx, 1);
       }
-    refresh();
+      $scope.updateProject();
+      refresh();
     });
 }
 
@@ -183,6 +186,7 @@ $scope.updateCategory2 = function(category) {
     $scope.category.rank = '';
     $scope.category.action = '';
   });
+  $scope.updateProject();
   $scope.reset();
 }
 
@@ -243,6 +247,7 @@ $scope.createParameter = function () {
     refreshParameter();
     refreshParameter();
   });
+  $scope.updateProject();
   refreshParameter();
 }
 
@@ -256,6 +261,7 @@ $scope.updateParameter = function(parameter) {
   $http.put('/api/parameter/' + i, parameter).success(function(response) {
     //refreshParameter();
   });
+  $scope.updateProject();
 }
 
 
@@ -425,6 +431,7 @@ $scope.updateProfile2 = function(profile) {
   $http.put('/api/profile/' + i, profile).success(function(response) {
     refreshProfiles();
   });
+  $scope.updateProject();
 }
 
 //Delete profiles
@@ -594,6 +601,17 @@ $scope.changeSection = function(name){
 $scope.projectSection = function(){
   var id = $scope.user._id;
   $window.location.href = '/projects.html?userId='+id;  
+}
+
+//Update dateSet of the project when there are changes
+$scope.updateProject = function() {
+  $scope.project.dateSet = new Date();
+  var project = $scope.project
+  var i = $scope.project._id;
+
+  $http.put('/api/project/' + i, project).success(function(response) {
+
+  });
 }
 
 }]);

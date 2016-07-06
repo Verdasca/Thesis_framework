@@ -74,8 +74,149 @@
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
 		<div id="content" class="jumbotron text-center">
-		    <h2>Results</h2>
+		    <h2>Result Set</h2>
             <br/>
+            <!-- <table id="resultsTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <tbody>
+                    <tr ng-repeat="result in results">
+                        <td>{{ result.result }}</td>
+                        <td>
+                            <input type="button" value="Open" ng-click="" class="btn btn-success"/> 
+                            <input type="button" value="Delete" ng-click="" class="btn btn-danger"/> 
+                        </td> 
+                    </tr>
+                </tbody>
+            </table> -->
+            <div ng:repeat="res in results" class="jumbotron text-center" style="width: 95%; margin:auto; border-radius:5px; border: 1px solid #aaa; padding-top:0px; padding-bottom:0px;">
+                <br/>
+                <div ng:repeat="values in res.result" style="width: 95%; margin:auto;">
+                    <div style="background-color:#eee;">
+                        <h3>Result nº {{ values.identifier }}</h3> 
+                        <button ng-click="showResult = ! showResult" class="btn btn-success">Open</button>
+                        <button ng-click="deleteResult(res, values.identifier)" class="btn btn-danger">Delete</button>
+                        <input type="button" export-results-to-csv values="values.identifier" value="Export results to CSV" class="btn btn-default"></input> 
+                    </div>
+                    <h3 ng-show="showResult">Result</h3>
+                    <table ng-show="showResult" id="resultsTable{{ values.identifier }}" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Alternative</th>
+                            <th id="criHeader">Minimum</th>
+                            <th id="criHeader">Maximum</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="value in res.resultValues">
+                            <td>{{ value.alternativeID }}</td>
+                            <td>{{ value.minCategory }}</td>
+                            <td>{{ value.maxCategory }}</td>
+                        </tr> 
+                        </tbody>
+                    </table> 
+                    <div ng-show="showResult" style="margin-bottom:5px;">
+                        <button ng-click="showCriteria = ! showCriteria" class="btn btn-default">Criteria</button>
+                        <button ng-click="showAlternatives = ! showAlternatives" class="btn btn-default">Alternatives</button>
+                        <button ng-click="showCategories = ! showCategories" class="btn btn-default">Categories</button>
+                        <button ng-click="showParameters = ! showParameters" class="btn btn-default">Parameters</button>
+                        <button ng-click="showPerformances = ! showPerformances" class="btn btn-default">Performance Table</button>
+                        <button ng-click="showProfiles = ! showProfiles" class="btn btn-default">Profiles Performance Table</button>
+                    </div>
+                    <br/>
+                    <h3 ng-show="showCriteria" style="margin-top:0px;">Criteria</h3>
+                    <table ng-show="showCriteria" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Criterion</th>
+                            <th id="criHeader">Description</th>
+                            <th id="criHeader">Direction</th>
+                            <th id="criHeader">Measure</th>
+                            <th id="criHeader">Weight</th>
+                            <th id="criHeader">Indifference</th>
+                            <th id="criHeader">Preference</th>
+                            <th id="criHeader">Veto</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="criterion in res.criterionValues" class="table table-bordered horizontal">
+                            <td>{{ criterion.name }}</td>
+                            <td>{{ criterion.description }}</td>
+                            <td>{{ criterion.direction }}</td>
+                            <td>{{ criterion.measure }}</td>
+                            <td>{{ criterion.weight }}</td>
+                            <td>{{ criterion.indifference }}</td>
+                            <td>{{ criterion.preference }}</td>
+                            <td>{{ criterion.veto }}</td>
+                        </tr> 
+                        </tbody>
+                    </table>
+                    <h3 ng-show="showAlternatives" style="margin-top:0px;">Alternatives</h3>
+                    <table ng-show="showAlternatives" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Alternative</th>
+                            <th id="criHeader">Description</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="alternative in res.alternativeValues">
+                            <td>{{ alternative.name }}</td>
+                            <td>{{ alternative.description }}</td>
+                        </tr> 
+                        </tbody>
+                    </table>
+                    <h3 ng-show="showCategories" style="margin-top:0px;">Categories</h3>
+                    <table ng-show="showCategories" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Category Name</th>
+                            <th id="criHeader">Category Rank</th>
+                            <th id="criHeader">Reference Action</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="category in res.categoryValues">
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.rank }}</td>
+                            <td>{{ category.action }}</td>
+                        </tr> 
+                        </tbody>
+                    </table>
+                    <h3 ng-show="showParameters" style="margin-top:0px;">Parameters</h3>
+                    <table ng-show="showParameters" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Parameter: Credibility</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="parameter in res.parameterValues">
+                            <td>{{ parameter.credibility }}</td>
+                        </tr> 
+                        </tbody>
+                    </table>
+                    <h3 ng-show="showPerformances" style="margin-top:0px;">Performance Table</h3>
+                    <table ng-show="showPerformances" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Alternative</th>
+                            <th id="criHeader">Criterion</th>
+                            <th id="criHeader">Value</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="performance in res.performanceValues">
+                            <td>{{ performance.alternative }}</td>
+                            <td>{{ performance.criterion }}</td>
+                            <td>{{ performance.value }}</td>
+                        </tr> 
+                        </tbody>
+                    </table>
+                    <h3 ng-show="showProfiles" style="margin-top:0px;">Profiles Performance Table</h3>
+                    <table ng-show="showProfiles" style="background-color:white;" class="table table-bordered horizontal">
+                        <thead>
+                            <th id="criHeader">Reference Action</th>
+                            <th id="criHeader">Criterion</th>
+                            <th id="criHeader">Value</th>
+                        </thead>
+                        <tbody>
+                        <tr ng:repeat="profile in res.profileValues">
+                            <td>{{ profile.action }}</td>
+                            <td>{{ profile.criterion }}</td>
+                            <td>{{ profile.value }}</td>
+                        </tr> 
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+            </div>
             <!-- <table id="resultsTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                 <thead>
                     <th id="criHeader">Alternative</th>

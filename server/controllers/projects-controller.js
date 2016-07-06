@@ -68,7 +68,7 @@ module.exports.edit = function (req, res) {
     Project.findOneAndUpdate({
             _id:req.params.id
         },
-        {$set:{ name:req.body.name }},
+        {$set:{ dateSet:req.body.dateSet }},
         {upsert:true},
         function(err,project){
             if(err){
@@ -79,6 +79,24 @@ module.exports.edit = function (req, res) {
                 res.send(project);
             }       
     });
+}
+
+//Delete a result from the project
+module.exports.deleteResult = function (req, res) {
+    console.log('Deleting result...');
+    var projectID = req.params.projectId;
+    var resultID = req.params.id;
+    console.log('Project: '+projectID +' ResultId: '+resultID);
+    Project.update( 
+      { '_id': projectID },
+      { $pull: { results : { result : {identifier : resultID} } } },
+      { safe: true },
+      function removeConnectionsCB(err, obj) {
+            if(err){
+                res.send(err);
+            }
+            res.send('Delete result complete.');
+      });
 }
 
 //Delete a project

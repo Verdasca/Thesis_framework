@@ -95,6 +95,7 @@ $scope.createCriterion = function () {
     $scope.criterion.veto = '';
     refresh();
   });
+  $scope.updateProject();
 }  
 
 //Delete criterion
@@ -107,6 +108,7 @@ $scope.deleteCriterion = function(criterion) {
       if (idx >= 0) {
         $scope.criterions.splice(idx, 1);
       }
+      $scope.updateProject();
       refresh();
     })
     .error(function(data) {
@@ -114,6 +116,7 @@ $scope.deleteCriterion = function(criterion) {
       if (idx >= 0) {
         $scope.criterions.splice(idx, 1);
       }
+      $scope.updateProject();
       refresh();
     });
 }
@@ -141,6 +144,7 @@ $scope.updateCriterion = function() {
     $scope.criterion.preference = '';
     $scope.criterion.veto = '';
   });
+  $scope.updateProject();
 }
 
 //Update the value and reset model
@@ -169,6 +173,7 @@ $scope.updateCriterion2 = function(criterion) {
     $scope.criterion.preference = '';
     $scope.criterion.veto = '';
   });
+  $scope.updateProject();
   $scope.reset();
 }
 
@@ -224,6 +229,17 @@ $scope.changeSection = function(name){
 $scope.projectSection = function(){
   var id = $scope.user._id;
   $window.location.href = '/projects.html?userId='+id;  
+}
+
+//Update dateSet of the project when there are changes
+$scope.updateProject = function() {
+  $scope.project.dateSet = new Date();
+  var project = $scope.project
+  var i = $scope.project._id;
+
+  $http.put('/api/project/' + i, project).success(function(response) {
+
+  });
 }
 
 // Used for drag/drop criteria order... to do the weight thing

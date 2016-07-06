@@ -123,6 +123,7 @@ $scope.createPerformance = function () {
     $scope.performance.criterion = '';
     $scope.performance.value = '';
   });
+  $scope.updateProject();
 }
 
 //Delete performance
@@ -230,6 +231,7 @@ $scope.createPerformance2 = function (alternative, criterion, numAlt, numCri) {
       if($scope.j == rightNumPerformances){
         console.log('Last performance being created...');
           //refresh();
+          $scope.updateProject();
           $scope.resetChunks();
       }
     }else{
@@ -312,6 +314,7 @@ $scope.updatePerformance2 = function(performance) {
   $http.put('/api/performance/' + i, performance).success(function(response) {
     refresh();
   });
+  $scope.updateProject();
 }
 
 $scope.resetChunks  = function() {
@@ -384,6 +387,17 @@ $scope.changeSection = function(name){
 $scope.projectSection = function(){
   var id = $scope.user._id;
   $window.location.href = '/projects.html?userId='+id;  
+}
+
+//Update dateSet of the project when there are changes
+$scope.updateProject = function() {
+  $scope.project.dateSet = new Date();
+  var project = $scope.project
+  var i = $scope.project._id;
+
+  $http.put('/api/project/' + i, project).success(function(response) {
+
+  });
 }
 
 }]);

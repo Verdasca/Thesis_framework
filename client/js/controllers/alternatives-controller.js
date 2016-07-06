@@ -73,6 +73,8 @@ $scope.createAlternative = function () {
     refresh();
   });
 
+  $scope.updateProject();
+
   //$scope.project.alternatives.push(alternative);
   //$scope.project.save();
   // var i = $scope.project._id;
@@ -98,6 +100,7 @@ $scope.deleteAlternative = function(alternative) {
       if (idx >= 0) {
         $scope.alternatives.splice(idx, 1);
       }
+      $scope.updateProject();
       refresh();
     })
     .error(function() {
@@ -106,6 +109,7 @@ $scope.deleteAlternative = function(alternative) {
       if (idx >= 0) {
         $scope.alternatives.splice(idx, 1);
       }
+      $scope.updateProject();
       refresh();
     });
 }
@@ -116,7 +120,7 @@ $scope.editAlternative = function(alternative) {
   console.log(i);
   $http.get('/api/alternative/' + i).success(function(response) {
         $scope.alternative = response;
-    });
+  });
 }
 
 //Then save it or update it
@@ -127,6 +131,7 @@ $scope.updateAlternative = function() {
     $scope.alternative.name = '';
     $scope.alternative.description = '';
   });
+  $scope.updateProject();
 }
 
 //Update the value and reset model
@@ -143,6 +148,7 @@ $scope.updateAlternative2 = function(alternative) {
     $scope.alternative.name = '';
     $scope.alternative.description = '';
   });
+  $scope.updateProject();
   $scope.reset();
 }
 
@@ -186,6 +192,17 @@ $scope.changeSection = function(name){
 $scope.projectSection = function(){
   var id = $scope.user._id;
   $window.location.href = '/projects.html?userId='+id;  
+}
+
+//Update dateSet of the project when there are changes
+$scope.updateProject = function() {
+  $scope.project.dateSet = new Date();
+  var project = $scope.project
+  var i = $scope.project._id;
+
+  $http.put('/api/project/' + i, project).success(function(response) {
+
+  });
 }
 
 }]);

@@ -11,6 +11,49 @@ module.exports = mongoose.model('Project', {
   	categories : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
   	parameters : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Parameter' }],
   	performancetables : [{ type: mongoose.Schema.Types.ObjectId, ref: 'PerformanceTable' }],
-	profiletables : [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProfileTable' }]
+	profiletables : [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProfileTable' }],
+	results: [{
+		result: [{ 
+			identifier : Number,
+			resultValues: [{ 
+				alternativeID: String, 
+  				minCategory: String,
+  				maxCategory: String
+			}],
+			criterionValues: [{ 
+				criterionName: String, 
+				criterionDescription: {type : String, default: ''}, 
+				direction: String, 
+				measure: {type : String, default: ''},
+  				weight: Number,
+  				criterionRank: {type : Number, default: ''},
+  				indifference: Number, 
+  				preference: Number,
+  				veto: Number	 
+  			}],
+			alternativeValues: [{ 
+				alternativeName : String, 
+				alternativeDescription : {type : String, default: ''} 
+			}],
+			categoryValues: [{  
+				categoryName: String, 
+  				categoryRank: Number, 
+  				categoryAction: String	
+			}],
+			parameterValues: [{  
+				credibility: Number
+			}],
+			performanceValues: [{ 
+				performanceAlternative: String,
+  				performanceCriterion: String, 
+  				performanceValue: Number
+			}],
+			profileValues: [{  
+				profileAction: String, 
+  				profileCriterion: String, 
+  				profileValue: Number
+			}]
+		}]
+	}]
 });
 

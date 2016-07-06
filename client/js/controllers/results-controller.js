@@ -46,6 +46,7 @@ $http.get('/api/userFind/' + $scope.username).success(function(data) {
 
 $http.get('/api/project/' + $scope.projectID).success(function(data) {
   $scope.project = data;
+  $scope.results = data.results; 
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
     }else{
@@ -71,6 +72,16 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
     console.log('Error: ' + data);
 });
 
+var refresh = function(){
+  $http.get('/api/project/' + $scope.projectID).success(function(data) {
+    $scope.project = data;
+    $scope.results = data.results; 
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  });
+}
+
 // Change section and give the project id as argument
 $scope.changeSection = function(name){
   var id = $scope.projectID;
@@ -90,17 +101,56 @@ $scope.projectSection = function(){
   $window.location.href = '/projects.html?userId='+id;  
 }
 
+//Update dateSet of the project when there are changes
+$scope.updateProject = function() {
+  $scope.project.dateSet = new Date();
+  var project = $scope.project
+  var i = $scope.project._id;
+
+  $http.put('/api/project/' + i, project).success(function(response) {
+
+  });
+}
+
+//Delete result
+$scope.deleteResult = function(result, identifier) {
+  var i = $scope.project._id;
+  var id = identifier;
+  $http.delete('/api/projects/' + i + '/' + id)
+    .success(function() {
+      console.log("success");
+      var idx = $scope.results.indexOf(result);
+      if (idx >= 0) {
+        $scope.results.splice(idx, 1);
+      }
+      $scope.updateProject();
+      refresh();
+    })
+    .error(function() {
+      var idx = $scope.results.indexOf(result);
+      if (idx >= 0) {
+        $scope.results.splice(idx, 1);
+      }
+      $scope.updateProject();
+      refresh();
+    });
+}
+
 }]);
 
 //Export results into a .csv file 
 app.directive('exportResultsToCsv',function(){
     return {
       restrict: 'A',
+      // Get the id of the result table to be exported
+      scope: {
+        values: '=values'
+      },
       link: function (scope, element, attrs) {
         var el = element[0];
           element.bind('click', function(e){
             //var table = e.target.nextElementSibling;
-            var table = document.getElementById("resultsTable");
+            var table = document.getElementById("resultsTable"+scope.values);
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
                 var rowData = table.rows[i].cells;

@@ -104,3 +104,22 @@ module.exports.delete = function(req, res){
   });
   res.send('Delete alternative complete.');        
 }
+
+//Delete all alternatives
+exports.deleteAll = function(req, res) {
+    Project.findOne({ _id:req.params.id })
+        .populate('alternatives')
+        .exec(function (err, project) {
+            if (err){
+                res.send(err);
+            }
+            var alternative = project.alternatives;
+            Project.update({ _id:req.params.id }, {'$pullAll': {alternatives: alternative }})
+              .exec(function(err) {
+                Alternative.remove({ _id: { $in: alternative }}, function(err, numberRemoved) {
+                  // The identified alternatives are now removed.
+                });
+            });
+            res.send('Delete all alternatives complete.');
+    });
+}

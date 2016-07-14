@@ -16,10 +16,10 @@ $scope.data = {
 };
 
 var refresh = function(){
-  $http.get('/api/projects/' + $scope.userId ).success(function(response) {
+  $http.get('/api/projects/' + $scope.userId ).success(function(data) {
     console.log('I got the data I requested');
-      $scope.user = response;
-      $scope.projects = response.projects;
+      $scope.user = data;
+      $scope.projects = data.projects;
     });  
 }
 
@@ -63,7 +63,6 @@ $scope.deleteProject = function(project) {
   var id = project._id;
   $http.delete('/api/project/' + i + '/' + id)
     .success(function() {
-      refresh();
       console.log("success");
       var idx = $scope.projects.indexOf(project);
       if (idx >= 0) {
@@ -72,7 +71,6 @@ $scope.deleteProject = function(project) {
       refresh();
     })
     .error(function() {
-      refresh();
       var idx = $scope.projects.indexOf(project);
       if (idx >= 0) {
         $scope.projects.splice(idx, 1);
@@ -85,6 +83,7 @@ $scope.deleteProject = function(project) {
 $scope.updateProject2 = function(project) {
   var i = project._id;
   project.name = $scope.model.name;
+  project.dateSet = new Date();
   $http.get('/api/project/' + i).success(function(response) {
         $scope.project = response;
     });
@@ -138,6 +137,19 @@ $scope.openProject = function (project){
       break;
   }
   //$window.location.href = '/description.html?projectId='+id+'&n='+username; 
+}
+
+// Clone/duplicate a project with a different name but with the same data
+$scope.cloneProject = function(project){
+  var i = $scope.user._id;
+  var id = project._id;
+  $http.get('/api/cloneproject/' + i + '/' + id).success(function(data) {
+    refresh();
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+      refresh();
+  });
 }
 
 }]);

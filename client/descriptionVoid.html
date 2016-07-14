@@ -53,7 +53,7 @@
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('descriptionVoid');"> {{ project.name }}<br>Description</a></li>
                         <li><button id="buttonDiviz" class="btn btn-success" ng-click="">Execute</button></li>
-                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="">Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -66,12 +66,11 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <td colspan="2" id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
+                    <td id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
                     <td id="descriptionTd"><label>Creation Date: </label> {{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </tr>
                 <tr>
                     <td id="descriptionTd"><label>Method: </label> {{ project.methodChosen }}</td>
-                    <td id="descriptionTd"><label>Nº of executions: </label> {{ project.numExecutions }}</td>
                     <td id="descriptionTd"><label>Last update: </label> {{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </tr>
             </table>

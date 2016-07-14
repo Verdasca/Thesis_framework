@@ -68,7 +68,7 @@ module.exports.edit = function (req, res) {
     Project.findOneAndUpdate({
             _id:req.params.id
         },
-        {$set:{ dateSet:req.body.dateSet }},
+        {$set:{ name:req.body.name, dateSet:req.body.dateSet }},
         {upsert:true},
         function(err,project){
             if(err){
@@ -213,4 +213,273 @@ module.exports.delete = function(req, res){
 
     res.send('Delete project plus respective parameters complete.');
 
+}
+
+//Duplicate a project
+module.exports.duplicate = function(req, res){
+    var projectID = req.params.projectId;
+
+    // Project.findOne({ _id: projectID })
+    //     .exec(function (err, project) {
+    //         if (err){
+    //             res.send(err);
+    //         }
+    //         project._id = mongoose.Types.ObjectId();
+    //         var id = project._id;
+    //         project.name = project.name + '_2';
+    //         project.creationDate = new Date();
+    //         project.dateSet = new Date();
+    //         project.isNew = true; 
+    //         //var alternatives = project.alternatives;
+    //         project.save(function (err, result) {
+    //             //res.json(result);
+    //         });
+    //         // Save alternatives with a new id so they don't have the same alternatives
+    //         Project.findOne({ _id: projectID })
+    //             .populate('alternatives')
+    //             .exec(function (err, project) {
+    //                 if (err){
+    //                     //res.send(err);
+    //                 }
+    //                 var alternative = project.alternatives;
+    //                 Alternative.update({'$pushAll': {alternatives: alternative }})
+    //                   .exec(function(err, alts) {
+    //                     Project.findOne({ _id: id })
+    //                         .exec(function (err, project) {
+    //                             if (err){
+    //                                 res.send(err);
+    //                             }
+    //                             // First push then save to do the association
+    //                             project.alternatives.push(alts);
+    //                             project.save();
+    //                         });
+    //                 });
+    //         });
+    //         // Associate/save the new project to the user
+    //         User.findOne({ _id:req.params.id })
+    //             .populate('projects')
+    //             .exec(function (err, user) {
+    //             if (err){
+    //               res.send(err);
+    //             }
+    //             // First push then save to do the association
+    //             user.projects.push(project);
+    //             user.save();
+    //             //res.send('Clone project complete.');
+    //             res.send('Cloning project plus respective parameters complete.');
+    //         });
+    // });
+
+    Project.findOne({ _id: projectID })
+        .exec(function (err, project) {
+            if (err){
+                res.send(err);
+            }
+            project._id = mongoose.Types.ObjectId();
+            var newId = project._id;
+            console.log(newId);
+            project.name = project.name + '_2';
+            project.creationDate = new Date();
+            project.dateSet = new Date();
+            project.numExecutions = 0;
+            project.alternatives = [];
+            project.criteria = [];
+            project.categories = [];
+            project.parameters = [];
+            project.performancetables = [];
+            project.profiletables = [];
+            project.results = [];
+            project.isNew = true; 
+            //var alternatives = project.alternatives;
+            project.save(function (err, result) {
+                //res.json(result);
+            });
+            // Save alternatives with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('alternatives')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var alternative = project.alternatives;
+                    var alts = [];
+                    var alt = {
+                        name: "",
+                        description: ""
+                    };
+                    for (var i = 0; i < alternative.length; i++) {
+                        alt.name = alternative[i].name;
+                        alt.description = alternative[i].description;
+                        var newalt = new Alternative(alt);
+                        newalt.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        alts.push(newalt);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {alternatives: alts}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone alternatives.");
+                        }
+                    });
+            });
+            // Save criteria with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('criteria')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var criterion = project.criteria;
+                    var cris = [];
+                    var cri = { name: "", description: "", direction: "", measure: "", weight: 0, rank: 0, indifference: 0, name: 0, name: 0};
+                    for (var i = 0; i < criterion.length; i++) {
+                        cri.name = criterion[i].name;
+                        cri.description = criterion[i].description;
+                        cri.direction = criterion[i].direction;
+                        cri.measure = criterion[i].measure;
+                        cri.weight = criterion[i].weight;
+                        cri.rank = criterion[i].rank;
+                        cri.indifference = criterion[i].indifference;
+                        cri.preference = criterion[i].preference;
+                        cri.veto = criterion[i].veto;
+                        var newcri = new Criterion(cri);
+                        newcri.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        cris.push(newcri);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {criteria: cris}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone criteria.");
+                        }
+                    });
+            });
+            // Save parameters with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('parameters')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var parameter = project.parameters;
+                    var pars = [];
+                    var par = { credibility: 0 };
+                    for (var i = 0; i < parameter.length; i++) {
+                        par.credibility = parameter[i].credibility;
+                        var newpar = new Parameter(par);
+                        newpar.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        pars.push(newpar);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {parameters: pars}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone parameters.");
+                        }
+                    });
+            });
+            // Save categories with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('categories')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var category = project.categories;
+                    var cats = [];
+                    var cat = { name: "", rank: 0, action: "" };
+                    for (var i = 0; i < category.length; i++) {
+                        cat.name = category[i].name;
+                        cat.rank = category[i].rank;
+                        cat.action = category[i].action;
+                        var newcat = new Category(cat);
+                        newcat.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        cats.push(newcat);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {categories: cats}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone categories.");
+                        }
+                    });
+            });
+            // Save performances with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('performancetables')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var performance = project.performancetables;
+                    var perfs = [];
+                    var perf = { alternative: "", criterion: "", value: 0 };
+                    for (var i = 0; i < performance.length; i++) {
+                        perf.alternative = performance[i].alternative;
+                        perf.criterion = performance[i].criterion;
+                        perf.value = performance[i].value;
+                        var newperf = new Performance(perf);
+                        newperf.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        perfs.push(newperf);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {performancetables: perfs}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone performances.");
+                        }
+                    });
+            });
+            // Save profiles with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('profiletables')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var profile = project.profiletables;
+                    var pros = [];
+                    var pro = { action: "", criterion: "", value: 0 };
+                    for (var i = 0; i < profile.length; i++) {
+                        pro.action = profile[i].action;
+                        pro.criterion = profile[i].criterion;
+                        pro.value = profile[i].value;
+                        var newpro = new Profile(pro);
+                        newpro.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        pros.push(newpro);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {profiletables: pros}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone profiles.");
+                        }
+                    });
+            });
+            // Associate/save the new project to the user
+            User.findOne({ _id:req.params.id })
+                .populate('projects')
+                .exec(function (err, user) {
+                if (err){
+                  res.send(err);
+                }
+                // First push then save to do the association
+                user.projects.push(project);
+                user.save();
+                //res.send('Clone project complete.');
+                res.send('Cloning project plus respective parameters complete.');
+            });
+    });
 }

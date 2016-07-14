@@ -60,12 +60,11 @@
                 <br />
                 <table id="projectsTbl" border="0" bordercolor="#033773" class="table horizontal">
                     <tr>
-                        <th id="projectHeader2" style="width:150px"></th>
-                        <th id="projectHeader">Project Name</th>
-                        <th id="projectHeader">Creation Date</th>
-                        <th id="projectHeader2">Method</th>
-                        <th id="projectHeader2">Nº of executions</th>
-                        <th id="projectHeader">Updated</th>
+                        <th id="projectHeader2" style="width:30%"></th>
+                        <th id="projectHeader" style="width:22%">Project Name</th>
+                        <th id="projectHeader" style="width:16%">Creation Date</th>
+                        <th id="projectHeader2" style="width:16%">Method</th>
+                        <th id="projectHeader" style="width:16%">Updated</th>
                         <!-- <th id="projectHeader2" style="width:150px">Action</th> -->
                     </tr>
                     <!-- <tr>
@@ -98,21 +97,22 @@
                 <script type="text/ng-template" id="display">
                     <td>
                         <input type="button" value="Open" ng-click="openProject(project)" class="btn btn-success"/> 
+                        <input type="button" value="Edit" ng-click="editProject2(project)" class="btn btn-warning"/>
+                        <input type="button" value="Duplicate" ng-click="cloneProject(project)" class="btn btn-primary"/>
                         <input type="button" value="Delete" ng-click="deleteProject(project)" class="btn btn-danger"/> 
                     </td> 
                     <td id="projectBody">{{ project.name }}</td>
                     <td id="projectBody">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td id="projectBody2">{{ project.methodChosen }}</td>
-                    <td id="projectBody2">{{ project.numExecutions }}</td>
                     <td id="projectBody">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </script>
                 <script type="text/ng-template" id="edit">
-                    <td></td>
-                    <td><input id="projectInput2" type="text" placeholder="Project name" ng-model="model.name"/></td>
                     <td>
                         <input type="button" value="Save" ng-click="updateProject2(project)" class="btn btn-success"/>
                         <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
                     </td>
+                    <td colspan="2"><input id="projectInput2" type="text" placeholder="Project name" ng-model="model.name"/></td>
+                    <td td colspan="2" id="projectBody2">{{ project.methodChosen }}</td>
                 </script>
             </form>
         </div>

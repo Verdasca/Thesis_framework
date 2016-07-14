@@ -65,7 +65,7 @@
                         <li id="sectionsPerformances"><a id="aSections" href="" class="active" ng-click="changeSection('performance');">Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -102,7 +102,7 @@
                 </tr> 
             </table> -->
             <br/>
-            <p id="explanation">It's possible to import data for the performance table. Choose a CSV file with the data and click on the "Import" button.<br> The CSV file must be well strutured (correct nº of lines and columns, as well as, a header with the criteria and alternatives on the first column just like the table bellow) and with a simple name.</p>
+            <li id="explanation" style="list-style-type: none;">It's possible to import data for the performance table. Choose a CSV file with the data and click on the "Import" button.<br> The CSV file must be well strutured (correct nº of lines and columns, as well as, a header with the criteria and alternatives on the first column just like the table bellow) and with a simple name.</li>
             <input type="file" id="fileUpload"/>
             <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" onclick = "Upload()" ng-click="uploadfile()"/>
             <br/>
@@ -138,7 +138,7 @@
                     <!-- <td ng-repeat="performance in performances.slice($index, ($index+criterions.length > criterions.length ? criterions.length : $index+criterions.length)) | limitTo: criterions.length | orderBy:['alternative','criterion']">
                         <input id="performanceInput" type="text" value="{{ performance.value }}" ng-model="performance.value" ng-change="updatePerformance2(performance);"/> -->
                     <tr ng-repeat="performances in chunks | limitTo: alternatives.length | orderBy:['alternative','criterion']">
-                        <td id="criHeader" ng-repeat="performance in performances | limitTo: 1 | orderBy:['alternative','criterion']">{{ performance.alternative }}</td>
+                        <td id="altBody" ng-repeat="performance in performances | limitTo: 1 | orderBy:['alternative','criterion']">{{ performance.alternative }}</td>
                         <td ng-repeat="performance in performances | orderBy:['alternative','criterion']">
                             <input id="performanceInput" type="text" value="{{ performance.value }}" ng-model="performance.value" ng-change="updatePerformance2(performance);"/>
                         </td>
@@ -222,6 +222,10 @@
 			<div id="dvCSV" style="display:none">
 			</div>
 		</div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
+        </div>
     </div>
 </body>
 </html>

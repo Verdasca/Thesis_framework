@@ -56,6 +56,22 @@ module.exports.findById = function (req, res) {
     });
 }
 
+// Find category by rank
+module.exports.findByRank = function (req, res) {  
+  var categoryRank = req.params.rank;
+  Project.findOne({ _id: req.params.id })
+    .populate({path:'categories', match: { 'rank': categoryRank }})
+      .exec(function(err, project) {
+          //console.log(project.categories);
+          //console.log(project.categories[0]._id);
+          if (err){
+            res.send(err);
+          }
+          res.send(project.categories);
+  });
+  //res.send('Got category requested.');   
+}
+
 //Edit a category
 module.exports.edit = function (req, res) {
 	Category.findOneAndUpdate({

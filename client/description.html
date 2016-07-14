@@ -53,11 +53,10 @@
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
                         <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set</a></li>
-                        <li id="sectionsPerformances"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
+                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -70,12 +69,11 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <td colspan="2" id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
+                    <td id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
                     <td id="descriptionTd"><label>Creation Date: </label> {{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </tr>
                 <tr>
                     <td id="descriptionTd"><label>Method: </label> {{ project.methodChosen }}</td>
-                    <td id="descriptionTd"><label>Nº of executions: </label> {{ project.numExecutions }}</td>
                     <td id="descriptionTd"><label>Last update: </label> {{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </tr>
             </table>
@@ -83,15 +81,14 @@
             <h3>The following steps are required to run the Electre Tri-C method correctly:</h3>
             <br/>
             <ol type="1" id="tutorial">
-                <li id="step1">Define criteria (Criterion Set).
+                <li id="step1">Define criteria set.
                   <ul style="list-style-type:disc">
                     <li>Mandatory set: name, direction, weight, indifference, preference and veto;</li>
                     <li>Weight can be defined: in Criterion Set or in Decision Configurations using the method "determining weights of criteria".</li>
                   </ul>
                 </li>
-                <li id="step2">Define alternatives (Alternative Set).</li>
-                <li id="step3">Fill the performance table (Performance Table).</li>
-                <li id="step4">In Decision Configurations:
+                <li id="step2">Define alternatives set and fill the performance table.</li>
+                <li id="step3">In Decision Configurations:
                   <ol type="a">
                     <li id="step5">Define categories;</li>
                     <li id="step6">Give a value for the Credibility Lambda ( λ ) between [0.5 ; 1.0];</li>
@@ -100,6 +97,10 @@
                 </li>
             </ol>
 		</div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
+        </div>
     </div>   
 </body>
 </html>

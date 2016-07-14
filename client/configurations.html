@@ -1,5 +1,4 @@
 <!-- decision configurations page -->
-
 <!doctype html>
 <html lang="en" ng-init="run();">
 <head>
@@ -115,7 +114,7 @@
       });
 
       $('a#helpWhiteCard').mousemove(function(e) {
-        $("div#pop-up-help-whiteCard").css('top', e.pageY + 20).css('left', e.pageX - 670);
+        $("div#pop-up-help-whiteCard").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
       });
 
       $('a#helpRatioZ').hover(function(e) {
@@ -184,11 +183,10 @@
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
                         <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set</a></li>
-                        <li id="sectionsPerformances"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
+                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" class="active" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -214,13 +212,13 @@
             <table id="methodsTable">
                 <tr>
                     <td id="selectionTitle">
-                        <label id="selectLabel">Select method for configuration so it can be executed:</label>
+                        <label id="selectLabel">Select which section you want to go:</label>
                     </td>
                     <td>
                         <form id='methods-form'>
                             <input id="weightFunction" name='method' type='radio' value="weightR"><label for="weightFunction" id="ratioLabel" class="radio"> Determining weights of criteria</label> 
                             <br/>
-                            <input id="electreTriCFunction" name='method' type='radio' value="electreTriCR"><label for="electreTriCFunction" id="ratioLabel" class="radio"> Electre Tri-C</label>  
+                            <input id="electreTriCFunction" name='method' type='radio' value="electreTriCR"><label for="electreTriCFunction" id="ratioLabel" class="radio">Configurations (Electre Tri-C method)</label>  
                         </form>
                     </td>
                 </tr>
@@ -228,8 +226,7 @@
             <br/>
             <!-- Electre Tri C method section -->
             <div id="electreTriCMethod" class="electreTriC box">
-                <h2>Electre Tri-C</h2>
-                <br />
+                <h3>Electre Tri-C Configurations</h3>
                 <hr style="border:1px solid #033773">
                 <h3>Category Set</h3>
                 <br />
@@ -237,33 +234,35 @@
                   <div ng-show="myForm.name.$error.required">
                     Name is required!
                   </div>
-                  <div ng-show="myForm.rank.$error.required">
+                  <!-- <div ng-show="myForm.rank.$error.required">
                     Rank is required!
-                  </div>
+                  </div> -->
                   <div ng-show="myForm.reference.$error.required">
                     Reference action is required!
                   </div>
                 </div>
-                <small style="font-size:14px;">Rank the categories from best (1) to worst (n). Each category is unique.</small>
+                <small style="font-size:14px; color:#999;">Rank the categories from best (1) to worst (n) using the arrow buttons.</small>
                 <form name="myForm" id="categoryTable" runat="server" novalidate>
                 <div>
                 <table id="categoryTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                     <tr>
-                        <th id="criHeader">Category Name</th>
-                        <th id="criHeader">Category Rank</th>
-                        <th id="criHeader">Reference Action</th>
+                        <th style="width:90px"></th>
+                        <th id="altHeader" style="width:10%">Rank</th>
+                        <th id="altHeader" style="width:30%">Category Name</th>
+                        <th id="altHeader" style="width:30%">Reference Action</th>
                         <th id="criHeader2" style="width:150px">Action</th>
                     </tr>
                     <tr>
-                        <td><input id="criBody" type="text" placeholder="Category name" name="name" ng-model="category.name" required/></td>
-                        <td><input id="criBody" type="text" placeholder="Category rank" name="rank" ng-model="category.rank" required/></td>
-                        <td><input id="criBody" type="text" placeholder="Reference Action" name="reference" ng-model="category.action" required/></td>
+                        <td></td>
+                        <td><!-- <input id="criBody" type="text" placeholder="Category rank" name="rank" ng-model="category.rank" required/> --></td>
+                        <td id="criBody2"><input id="criBody3" type="text" placeholder="Category name" name="name" ng-model="category.name" required/></td>
+                        <td id="criBody2"><input id="criBody3" type="text" placeholder="Reference Action" name="reference" ng-model="category.action" required/></td>
                         <td>
-                            <input type="button" value="Add Category" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.rank.$dirty && myForm.rank.$invalid || myForm.reference.$dirty && myForm.reference.$invalid" ng-click="submitted=true; myForm.name.$valid && myForm.rank.$valid && myForm.reference.$valid && createCategory(); resetProfileTable();" class="btn btn-primary"/>
+                            <input type="button" value="Add Category" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.reference.$dirty && myForm.reference.$invalid" ng-click="submitted=true; myForm.name.$valid && myForm.reference.$valid && createCategory();" class="btn btn-primary"/>
                             <!-- <input type="button" value="Update" ng-click="updateCategory(); resetProfileTable();" class="btn btn-info"/> -->
                         </td>
                     </tr>
-                    <tr ng-repeat="category in categories" ng-include="getTemplate(category)">
+                    <tr ng-repeat="category in categories | orderBy: 'rank'" ng-include="getTemplate(category)">
                         <!-- <td id="criBody">{{ category.name }}</td>
                         <td id="criBody">{{ category.rank }}</td>
                         <td id="criBody">{{ category.action }}</td>
@@ -274,18 +273,24 @@
                     </tr>
                 </table>
                 <script type="text/ng-template" id="display">
-                    <td id="criBody">{{ category.name }}</td>
-                    <td id="criBody">{{ category.rank }}</td>
-                    <td id="criBody">{{ category.action }}</td>
+                    <td>
+                        <button ng-click="upRank(category);" class="btn btn-default">&#8593;</button>
+                        <button ng-click="downRank(category);" class="btn btn-default">&#8595;</button>
+                    </td>
+                    <td id="criBody2">{{ category.rank }}</td>
+                    <td id="criBody2">{{ category.name }}</td>
+                    <td id="criBody2">{{ category.action }}</td>
                     <td>
                         <input type="button" value="Edit" ng-click="editCategory2(category)" class="btn btn-warning"/>
                         <input type="button" value="Delete" ng-click="deleteCategory(category); resetProfileTable();" class="btn btn-danger"/> 
                     </td>  
                 </script>
                 <script type="text/ng-template" id="edit">
-                    <td><input id="criInput" type="text" placeholder="Category name" ng-model="model.name"/></td>
-                    <td><input id="criInput" type="text" placeholder="Category rank" ng-model="model.rank"/></td>
-                    <td><input id="criInput" type="text" placeholder="Reference Action" ng-model="model.action"/></td>
+                    <!--//<td><input id="criInput" type="text" placeholder="Category name" ng-model="model.name"/></td>-->
+                    <td></td>
+                    <td></td>
+                    <td id="criBody2"><input id="criBody3" type="text" placeholder="Category name" ng-model="model.name"/></td>
+                    <td id="criBody2"><input id="criBody3" type="text" placeholder="Reference Action" ng-model="model.action"/></td>
                     <td>
                         <input type="button" value="Save" ng-click="updateCategory2(category); resetProfileTable();" class="btn btn-success"/>
                         <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
@@ -305,8 +310,9 @@
                 <div ng-repeat="parameter in parameters | limitTo: 1">
                     <label id="credibilityLambda">Credibility Lambda ( &lambda; ):</label>
                     <input id="credibilityInput" type="text" value="{{ parameter.credibility }}" placeholder="Credibility value" ng-model="parameter.credibility" ng-change="updateParameter(parameter);"/>
+                    <br/><br/>
+                    <small style="font-size:14px; color:#999;">&lambda; should have a value between [0 ; 1.0].</small>
                 </div>
-                <br/>
                 <br/>
                 <hr style="border:1px solid #033773">
                 <h3>Profiles Performance Table</h3>
@@ -353,7 +359,7 @@
                             <th id="criHeader" ng-repeat="criterion in criterions | orderBy: 'name' track by criterion.name">{{ criterion.name }}</th>
                         </tr> 
                         <tr ng-repeat="profiles in chunks | limitTo: categories.length | orderBy:['action','criterion']">
-                            <td id="criHeader" ng-repeat="profile in profiles | orderBy:['action','criterion'] | limitTo: 1">{{ profile.action }}</td>
+                            <td id="altBody" ng-repeat="profile in profiles | orderBy:['action','criterion'] | limitTo: 1">{{ profile.action }}</td>
                             <td ng-repeat="profile in profiles | orderBy:['action','criterion']">
                                 <input id="profileInput" type="text" value="{{ profile.value }}" ng-model="profile.value" ng-change="updateProfile2(profile);"/>
                             </td>
@@ -368,11 +374,12 @@
             <!-- Weight method section -->
             <div id="weightMethod" class="weight box">
                 <h3>Determining weights of criteria</h3>
-                <br/>
+                <hr style="border:1px solid #033773">
                 <!-- Instructions section -->
                 <ul id="instructionsSection">
-                    <li id="stepOne"><b><a href="#" id="helpRank">Step 1)</a></b> Order the criteria from most important (top) to the least important (bottom).</li>
-                    <li><small id="note"><b>Note:</b> Criteria can have the same importance.</small></li>
+                    <li id="stepOne"><b><a href="#" id="helpRank">Step 1)</a></b> Order the criteria from most important (top) to the least important (bottom). Criteria can have the same importance.
+                    <br>After that, add <b><a href="#" id="helpWhiteCard">white cards</a></b> to detach the importance between criteria if you find it necessary.
+                    </li>
                 </ul>
                 <!-- HIDDEN / POP-UP DIV -->
                 <div id="pop-up-help-rank">
@@ -397,8 +404,8 @@
                   </p>
                 </div>
                 <table id="rankingTable">
-                    <col width="30%">
-                    <col width="70%">
+                    <col width="15%">
+                    <col width="85%">
                     <tr>
                         <td>
                             <p id="importance">Most Important</p>
@@ -415,35 +422,85 @@
                             <p id="importance">Least Important</p>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <hr style="border:1px dashed #033773; width:100%; vertical-align: top;">
+                            <p id="importance" style="margin-top: 40px;">White Cards</p>
+                        </td>
+                        <td ROWSPAN=2>
+                            <hr style="border:1px dashed #033773; width:100%;">
+                            <!-- White card section -->
+                            <ol id="whiteSection" data-draggable="target">
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                            </ol>
+                        </td>
+                    </tr>
                 </table>
-                <br/>
-                <li id="steptwo"><b><a href="#" id="helpWhiteCard">Step 2)</a></b> Add a white card to detach the importance between criteria.</li>
-                <!-- White cards section -->
-                <ol id="whiteSection" data-draggable="target">
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                    <li id="card" data-draggable="item">White Card</li>
-                </ol>
-                <br/>
+                <hr style="border:1px solid #033773">
                 <!-- Ratio Z section -->
-                <h3 id="ratioTitle"><a href="#" id="helpRatioZ">Step 3)</a> Define Ratio Z</h3>
+                <ul id="instructionsSection">
+                    <li id="stepOne"><b><a href="#" id="helpRatioZ">Step 2)</a></b> Choose a option to define ratio Z.</li>
+                </ul>
+                <div id="ratioOptions">
+                    <div style="margin-left: 50px;">
+                        <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
+                            <input type="checkbox" id="oneValue"/> 
+                            1 value = 
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ')"></input>
+                            <input id="ratioZ" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ')"></input>
+                        </p>
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
+                            <input type="checkbox" id="interval" style="vertical-align:middle;"/>
+                            <a href="#" id="helpInterval">Interval</a> =
+                            <big style="font-size: 33px; vertical-align: middle;">[</big>
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMin')"></input>
+                            <input id="ratioZIntervalMin" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMin')"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMax')"></input>
+                            <input id="ratioZIntervalMax" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMax')"></input>
+                            <big style="font-size: 33px; vertical-align: middle;">]</big>
+                            <input id="getRandomN1" type="button" value="<" onclick="decreaseIntervalResult()"></input>
+                            <input id="ratioZIntervalResult" min="1" value="1"></input>
+                            <input id="getRandomN2" type="button" value=">" onclick="increaseIntervalResult()"></input>
+                        </p>
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
+                            <input type="checkbox" id="threeValues"/>
+                            <a href="#" id="helpValues">3 values</a> =
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ1')"></input>
+                            <input id="ratioZ1" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ1')"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ2')"></input>
+                            <input id="ratioZ2" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ2')"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ3')"></input>
+                            <input id="ratioZ3" type="text" min="1" value="1"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ3')"></input>
+                        </p>
+                        <small style="font-size:14px; color:#999; margin-left:50px;">In 3 values choice, the weight results from the first box (from the left) will be set to the criteria.</small>
+                    </div>
+                </div>
+                <br/>
                 <!-- HIDDEN / POP-UP DIV -->
                 <div id="pop-up-help-ratioZ">
                     <h3 id="pop-up-header">Define Ratio Z</h3>
@@ -462,56 +519,6 @@
                     });
                 });    
                 </script>
-                <div id="ratioOptions">
-                    <div>
-                        <br/>
-                        <p>
-                            <input type="checkbox" id="oneValue"/> 
-                            1 value = 
-                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ')"></input>
-                            <input id="ratioZ" type="text" min="1" value="1"></input>
-                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ')"></input>
-                        </p>
-                    </div>
-                    <div>
-                        <br/>
-                        <p>
-                            <input type="checkbox" id="interval"/>
-                            <a href="#" id="helpInterval">Interval</a> =
-                            [
-                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMin')"></input>
-                            <input id="ratioZIntervalMin" type="text" min="1" value="1"></input>
-                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMin')"></input>
-                            ,
-                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMax')"></input>
-                            <input id="ratioZIntervalMax" ype="text" min="1" value="1"></input>
-                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMax')"></input>
-                            ]
-                            <input id="getRandomN" type="button" value="<" onclick="decreaseIntervalResult()"></input>
-                            <input id="getRandomN" type="button" value=">" onclick="increaseIntervalResult()"></input>
-                            <input id="ratioZIntervalResult" value="1"></input>
-                        </p>
-                    </div>
-                    <div>
-                        <br/>
-                        <p>
-                            <input type="checkbox" id="threeValues"/>
-                            <a href="#" id="helpValues">3 values</a> =
-                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ1')"></input>
-                            <input id="ratioZ1" type="text" min="1" value="1"></input>
-                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ1')"></input>
-                            ,
-                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ2')"></input>
-                            <input id="ratioZ2" type="text" min="1" value="1"></input>
-                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ2')"></input>
-                            ,
-                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ3')"></input>
-                            <input id="ratioZ3" type="text" min="1" value="1"></input>
-                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ3')"></input>
-                        </p>
-                    </div>
-                </div>
-                <br/>
                 <!-- HIDDEN / POP-UP DIV -->
                 <div id="pop-up-help-interval">
                     <h3 id="pop-up-header">Define Interval</h3>
@@ -527,12 +534,14 @@
                     </p>
                 </div>
                 <!-- Choose the number of decimals -->
-                <h3 id="ratioTitle">
-                <a href="#" id="helpDecimals">Step 4)</a> Nº of decimal places =
-                <input id="decimalBtn" type="button" value="-" onclick="decreaseDecimal()"></input>
-                <div id="nDecimals">x</div>
-                <input id="decimalBtn" type="button" value="+" onclick="increaseDecimal()"></input>
-                </h3>
+                <hr style="border:1px solid #033773">
+                <ul id="instructionsSection">
+                    <li id="stepOne"><b><a href="#" id="helpDecimals">Step 3)</a></b> Nº of decimal places = 
+                        <input id="decimalBtn" type="button" value="-" onclick="decreaseDecimal()"></input>
+                        <div id="nDecimals">x</div>
+                        <input id="decimalBtn" type="button" value="+" onclick="increaseDecimal()"></input>
+                    </li>
+                </ul>
                 <!-- HIDDEN / POP-UP DIV -->
                 <div id="pop-up-help-decimals">
                   <h3 id="pop-up-header">Number of decimals to apply</h3>
@@ -540,7 +549,6 @@
                     Choose how many decimal places you want to apply on the final results.
                   </p>
                 </div>
-                <br/>
                 <h3><input id="executeWeightsBtn" type="button" value="Execute" onclick="weightMethod()" ng-click="updateCriterionWeights()" class="btn btn-success"/></h3>
                 <br/>
                 <h3 id="error">Ratio Z not defined!</h3>
@@ -735,6 +743,10 @@
             <br/>
         </div>
         <!-- END of COMPARE SECTION - Weight method -->
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
+        </div>
     </div>
 </body>
 </html>

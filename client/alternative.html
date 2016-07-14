@@ -1,6 +1,6 @@
 <!-- alternative set page -->
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-init="run();">
 <head>
     <meta charset="UTF-8">
     <base href="/">
@@ -61,11 +61,10 @@
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
                         <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" class="active" ng-click="changeSection('alternative');">Alternative Set</a></li>
-                        <li id="sectionsPerformances"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
+                        <li id="sectionsAlternatives"><a id="aSections" href="" class="active" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -91,10 +90,10 @@
                             <th id="altHeader2" style="width:150px">Action</th>
                         </tr>
                         <tr>
-                            <td style="text-align:left;"><input id="altInput" type="text" placeholder="Alternative name" name="name" ng-model="alternative.name" required/></td>
-                            <td style="text-align:left;"><input id="altInput" type="text" placeholder="Alternative description" ng-model="alternative.description"/></td>
+                            <td style="text-align:left;" id="criBody2"><input id="altInput" type="text" placeholder="Alternative name" name="name" ng-model="alternative.name" required/></td>
+                            <td style="text-align:left;" id="criBody2"><input id="altInput" type="text" placeholder="Alternative description" ng-model="alternative.description"/></td>
                             <td>
-                                <input type="button" value="Add Alternative" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createAlternative()" class="btn btn-primary"/>
+                                <input type="button" value="Add Alternative" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createAlternative();" class="btn btn-primary"/>
                                 <!-- <input type="button" value="Update" ng-click="updateAlternative()" class="btn btn-info"/> -->
                             </td>
                         </tr>
@@ -112,14 +111,14 @@
                         <td id="altBody">{{ alternative.description }}</td>
                         <td>
                             <input type="button" value="Edit" ng-click="editAlternative2(alternative)" class="btn btn-warning"/>
-                            <input type="button" value="Delete" ng-click="deleteAlternative(alternative)" class="btn btn-danger"/> 
+                            <input type="button" value="Delete" ng-click="deleteAlternative(alternative); resetPerformanceTable();" class="btn btn-danger"/> 
                         </td> 
                     </script>
                     <script type="text/ng-template" id="edit">
-                        <td><input id="altInput" type="text" placeholder="Alternative name" ng-model="model.name"/></td>
-                        <td><input id="altInput" type="text" placeholder="Alternative description" ng-model="model.description"/></td>
+                        <td id="altBody"><input id="altInput" type="text" placeholder="Alternative name" ng-model="model.name"/></td>
+                        <td id="altBody"><input id="altInput" type="text" placeholder="Alternative description" ng-model="model.description"/></td>
                         <td>
-                            <input type="button" value="Save" ng-click="updateAlternative2(alternative)" class="btn btn-success"/>
+                            <input type="button" value="Save" ng-click="updateAlternative2(alternative); resetPerformanceTable();" class="btn btn-success"/>
                             <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
                         </td>
                     </script>
@@ -127,6 +126,109 @@
             </form>
             <button export-alternatives-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>
             <button export-alternatives-to-csv-without-description class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without description</button>
+            <br/> <br/>
+            <hr style="border:1px solid #033773">
+            <h2>Performance Table</h2>
+            <br/>
+            <li id="explanation" style="list-style-type: none; text-align:left;">It's possible to import data for the performance table. Choose a CSV file with the data and click on the "Import values" button to import only the values or click on the "Import values and alternatives" button to import the values and alternatives.<br> The CSV file must be well strutured (correct nº of lines and columns, as well as, a header with the criteria and alternatives on the first column just like the table bellow) and with a simple name. Be careful with empty lines, they count as a row.</li>
+            <input type="file" id="fileUpload"/>
+            <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import values" onclick = "Upload()" ng-click="uploadfile()"/>
+            <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import values and alternatives" ng-click="deleteAlternatives();"/>
+            <br/>
+            <div>
+                <table style="display:none">
+                    <tr ng-repeat="alternative in chunksCat | limitTo: chunksCat.length | orderBy: 'name' track by alternative.name">
+                        <td id="criHeader">{{ alternative.name }}</td>
+                        <td ng-repeat="criterion in criterions | limitTo: criterions.length | orderBy: 'name' track by criterion.name">
+                            <input type="text" value="0" ng-if="performances.length === 0" ng-init="createPerformance2(alternative, criterion, alternatives.length, criterions.length);"/>{{ alternative.name }}{{ criterion.name }}
+                        </td>
+                    </tr> 
+                </table>
+                <br/>
+                <table id="performanceTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                    <tr>
+                        <th id="criHeader">Alternatives\Criteria</th>
+                        <th id="criHeader" ng-repeat="criterion in criterions | orderBy: 'name' track by criterion.name">{{ criterion.name }}</th>
+                    </tr> 
+                    <tr ng-repeat="performances in chunks | limitTo: alternatives.length | orderBy:['alternative','criterion']">
+                        <td id="altBody" ng-repeat="performance in performances | orderBy:['alternative','criterion'] | limitTo: 1 ">{{ performance.alternative }}</td>
+                        <td ng-repeat="performance in performances | orderBy:['alternative','criterion']">
+                            <input id="performanceInput" type="text" value="{{ performance.value }}" ng-model="performance.value" ng-change="updatePerformance2(performance);"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br/>
+            <button export-performance-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button> 
+            <script type="text/javascript">
+            // Upload file to get the perfomance values
+            function Upload() {
+                var fileUpload = document.getElementById("fileUpload");
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+                if (regex.test(fileUpload.value.toLowerCase())) {
+                    if (typeof (FileReader) != "undefined") {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var table = document.createElement("table");
+                            var performanceTable = document.getElementById("performanceTable");
+                            var numAlternatives = performanceTable.rows.length;
+                            var rows = e.target.result.split("\n");
+                            //Check number of rows
+                            var numRows = rows.length;
+                            //console.log('CSV row size: ' + numRows);
+                            if(numRows != numAlternatives){
+                                console.log('Number of rows are incorrect or do not correspond to the actual number of alternatives.');
+                                alert("CSV file was rejected: number of rows are incorrect.\n\nNumber of rows = 1 header line for criteria names + total number of alternatives. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...\n Also be careful with empty lines, they count as a row.");
+                                return 0;
+                            }
+                            //Check number of columns
+                            var numCriteria = performanceTable.rows[0].cells.length;
+                            var c = rows[1].split(",");
+                            var numCells = c.length;
+                            //console.log('CSV cell size: ' + numCells);
+                            if(numCells != numCriteria){
+                                console.log('Number of columns are incorrect or do not correspond to the actual number of criteria.');
+                                alert("CSV file was rejected: number of columns are incorrect.\n\nNumber of columns = 1 header column for alternative names + total number of criteria. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...");
+                                return 0;    
+                            }
+                            for (var i = 0; i < rows.length; i++) {
+                                var row = table.insertRow(-1);
+                                var cells = rows[i].split(",");
+                                for (var j = 0; j < cells.length; j++) {
+                                    if(i == 0 | j == 0){
+                                        //Ignore headers
+                                    }else{
+                                        performanceTable.rows[i].cells[j].children[0].value = cells[j]; 
+                                    }
+                                    var cell = row.insertCell(-1);
+                                    cell.innerHTML = cells[j];
+                                }
+                            }
+                            table.className = 'table table-bordered horizontal';
+                            table.id = 'performanceTable';
+                            var dvCSV = document.getElementById("dvCSV");
+                            dvCSV.innerHTML = "";
+                            dvCSV.appendChild(table);
+                        }
+                        reader.readAsText(fileUpload.files[0]);
+                    } else {
+                        alert("This browser does not support HTML5.");
+                    }
+                } else {
+                    alert("Please upload a valid CSV file.");
+                }
+            }
+            </script>
+            <div id="dvCSV" style="display:none">
+            </div>
+        </div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
+        </div>
+        <div id="importing">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Importing...</p>
         </div>
     </div>
 </body>

@@ -76,13 +76,14 @@
 }
 
 #verticalNav{
-    background-color: #eee;
-    border-radius: 0px;
-    height: 100%;
-    position: fixed;
-    margin-top: 52px;
-    border: none;
-    font-size: 16px;
+  background-color: #eee;
+  border-radius: 0px;
+  height: 100%;
+  position: fixed;
+  margin-top: 52px;
+  border: none;
+  font-size: 16px;
+  width: 16%;
 }
 
 #sections:hover,
@@ -91,6 +92,14 @@
 #sectionsPerformances:hover,
 #sectionsConfigurations:hover{
     background-color: #033773;
+}     
+
+#sections,
+#sectionsCriteria,
+#sectionsAlternatives,
+#sectionsPerformances,
+#sectionsConfigurations{
+    margin-bottom: 5px;
 }
 
 #aSections{
@@ -134,7 +143,8 @@
     margin-bottom: -18px;
 }
 
-#buttonDiviz {
+#buttonDiviz,
+#buttonResults{
     width: 90%;
     padding: 10px;
     text-align: center;
@@ -150,7 +160,7 @@
 #descriptionTable{
   margin: auto;
   text-align: left;
-  width: 70%;
+  width: 80%;
 }
 
 #descriptionTd{
@@ -170,15 +180,14 @@
 
 #step1,
 #step2,
-#step3,
-#step4{
+#step3{
     font-weight: bold;
 }
 
 #step1 ul,
 #step1 ol,
-#step4 ul,
-#step4 ol{
+#step3 ul,
+#step3 ol{
     font-weight: normal;
 }
 
@@ -223,6 +232,11 @@
     font-size: 18px;   
 }
 
+#criHeader3{
+    text-align: left;   
+    font-size: 18px;   
+}
+
 #criBody{
     text-align: center;  
     font-size: 15px;  
@@ -230,12 +244,39 @@
     vertical-align: middle;
 }
 
+#criBody2{
+    text-align: left;  
+    font-size: 15px;  
+    padding-left: 10px;  
+    vertical-align: middle;
+}
+
+#criBody3{
+    text-align: center;  
+    font-size: 15px;  
+    vertical-align: middle;
+    width: 100%;
+}
+
+#criString{
+    text-align: left;  
+    font-size: 15px;  
+    padding-left: 10px;  
+    vertical-align: middle;
+}
+
+#criNumber{
+    text-align: right;  
+    font-size: 15px;  
+    padding-left: 10px;  
+    vertical-align: middle;
+}
 
 /* Alternative section */
 #alternativeTable{
     margin: auto;
     text-align: center;
-    width: 90%;
+    width: 95%;
 }
 
 #altLabel{
@@ -377,15 +418,14 @@
     text-align: center;
     width: 90%;
     margin: auto;
-    border-collapse:separate;
+ /*   border-collapse:separate;
     border: solid #033773 5px;
-    border-radius: 25px;
+    border-radius: 25px;*/
 }
 
 #rankingTable tr td{
     margin: auto;
     vertical-align: top;
-    padding-bottom: 10px;
 }
 
 #whiteCardRow{
@@ -418,6 +458,7 @@
 
 #ratioOptions{
     font-size: 18px;
+    text-align: left;
 }
 
 #rankInput{
@@ -428,8 +469,6 @@
 #ratioZIntervalResult{
     text-align: center;
     width: 8%;
-    margin-right: 10px;
-    margin-left: 10px;
     font-size: 18px;
     vertical-align: middle;
 }
@@ -443,7 +482,6 @@
     text-align: center;
     width: 7%;
     font-size: 18px;
-    margin: -7px;
     vertical-align: middle;
 }
 
@@ -492,7 +530,7 @@
     /*float: left; */
     list-style-type:none;
     
-    width:85%;
+    width:95%;
     overflow-y:auto;
     
     margin-top: 15px;
@@ -560,10 +598,16 @@
 }
 
 #whiteSection{ 
-    margin: auto;
-    text-align: center;
-    font-size: 18px;
-    width: 50%;
+  list-style-type:none;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 50px;
+  text-align: center;
+  font-size: 18px;
+  width:95%;
+  overflow-y:auto;
+  padding: 3px;
+  display: flex;
 /*    height: 50px;
     display: block;*/
 }
@@ -574,7 +618,7 @@
     background-color: #fff;
     color: #000;
     margin-left: 5px;
-    width: 20%;
+    width: 10%;
     height: 50px;
     margin-top: 10px;
     display: inline-table;
@@ -585,7 +629,7 @@
     border-color: #000;
     background-color: #000;
     color: #fff;
-    width: 20%;
+    width: 15%;
     height: 50px;
     display: inline-table;
     margin-left: 5px;
@@ -593,7 +637,7 @@
 
 #instructionsSection{
 /*    float:right; */ 
-    text-align: center;   
+    text-align: left;   
 /*    margin-right: 100px;
     margin-bottom: 20px;*/
     font-size: 18px;
@@ -601,22 +645,22 @@
 }
 
 #stepOne{
-    margin-right: 30px;
+  /* text-align: left; */  
 }
 
 #steptwo{
     font-size: 18px;
     list-style-type: none; 
-    text-align: center;  
+    text-align: left;  
+    margin-left: 40px;
     margin-bottom: 15px;   
 }
 
 #importance{
-    margin-bottom: 15px;
-    font-size: 35px;
-    font-weight: 400;
-    margin-top: 20px;
-    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 18px;
+    text-align: left;
 }
 
 #executeWeightsBtn{
@@ -818,17 +862,16 @@ input[type="checkbox"]{
     cursor: pointer;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background: red;
-    border-radius: 15px;
+    background: white;
+    border-radius: 5px;
     box-sizing: border-box;
-    position: relative;
     box-sizing: content-box ;
     width: 30px;
     height: 30px;
-    border-width: 0;
     transition: all .3s linear;
-    vertical-align: top;
+    vertical-align: bottom;
     margin-right: 10px;
+    border:2px solid #555;
 }
 
 input[type="checkbox"]:checked{
@@ -888,7 +931,8 @@ input[name="ratio"]{
     text-align: center;  
 }
 
-#addBtn{
+#addBtn,
+#getRandomN1{
     padding-top: 3px;
     padding-right: 15px;
     padding-bottom: 3px;
@@ -898,7 +942,8 @@ input[name="ratio"]{
     vertical-align: middle;
 }
 
-#minusBtn{
+#minusBtn,
+#getRandomN2{
     padding-top: 3px;
     padding-right: 15px;
     padding-bottom: 3px;
@@ -928,4 +973,77 @@ input[name="ratio"]{
   text-align: center;
   width: 10%;
   margin: auto;  
+}
+
+/* Result section */
+#headers{
+  text-align: left;  
+  font-size: 16px;  
+}
+
+#resultTbl{
+  margin: auto;
+  width: 97%;
+}
+
+#titleTbl{
+  padding: 0px;
+  margin: 5px;
+  width: 20%;
+  text-align: left;
+}
+
+#titleTbl2{
+  padding: 0px;
+  margin: 5px;
+  text-align: center;
+}
+
+#titleTbl3{
+  text-align: left;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+tr.noBorder td{
+  border: 0; 
+}
+
+.noBorder{
+  border: 0; 
+}
+
+#loading,
+#importing {
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   position: fixed;
+   display: block;
+   opacity: 0.9;
+   background-color: #fff;
+   z-index: 99;
+   text-align: center;
+}
+
+#loading-image {
+  position: fixed;
+  width: 20%;
+  height: 40%;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+#loading-text {
+  font-size:18px; 
+  font-weight: bold;
+  font-family: Helvetica,Arial,sans-serif;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
 }

@@ -6,13 +6,36 @@ var Criterions = $resource('/api/criterions');
 
 $scope.projectID = $location.search().projectId;
 $scope.username = $location.search().n;
+$scope.criteriaDone = false;
+$scope.alternativesDone = false;
+$scope.configurationsDone = false;
+
+// Hide loader
+$('#loading').hide();
 
 var refresh = function(){
   $http.get('/api/criterions/' + $scope.projectID).success(function(response) {
     console.log('I got the data I requested');
       $scope.project = response;
       $scope.criterions = response.criteria;
+      checkStatus();
   });  
+}
+
+// Update status to see if the execute button can be pressed
+var checkStatus = function(){
+  if($scope.project.criteria.length == 0){
+    document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
+    $scope.criteriaDone = false;
+  }else{
+    document.getElementById('sectionsCriteria').style.backgroundColor = '#6fdc6f';
+    $scope.criteriaDone = true;
+  }
+  if($scope.criteriaDone && $scope.alternativesDone && $scope.performanceDone && $scope.configurationsDone){
+    document.getElementById('buttonDiviz').disabled = false;
+  } else{
+    document.getElementById('buttonDiviz').disabled = true;
+  }
 }
 
 //Get the data from criterions in mongoDB
@@ -21,23 +44,29 @@ $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
   $scope.criterions = data.criteria;
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
+      $scope.criteriaDone = false;
     }else{
       document.getElementById('sectionsCriteria').style.backgroundColor = '#6fdc6f';
+      $scope.criteriaDone = true;
     }
-    if($scope.project.alternatives.length == 0){
+    if($scope.project.alternatives.length == 0 || $scope.project.performancetables.length == 0){
       document.getElementById('sectionsAlternatives').style.backgroundColor = '#ff3333';
+      $scope.alternativesDone = false;
     }else{
       document.getElementById('sectionsAlternatives').style.backgroundColor = '#6fdc6f';
-    }
-    if($scope.project.performancetables.length == 0){
-      document.getElementById('sectionsPerformances').style.backgroundColor = '#ff3333';
-    }else{
-      document.getElementById('sectionsPerformances').style.backgroundColor = '#6fdc6f';
+      $scope.alternativesDone = true;
     }
     if($scope.project.profiletables.length == 0 || $scope.project.categories.length == 0 || $scope.project.parameters.length == 0){
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#ff3333';
+      $scope.configurationsDone = false;
     }else{
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
+      $scope.configurationsDone = true;
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('buttonDiviz').disabled = false;
+    } else{
+      document.getElementById('buttonDiviz').disabled = true;
     }
   })
   .error(function(data) {
@@ -94,6 +123,7 @@ $scope.createCriterion = function () {
     $scope.criterion.preference = '';
     $scope.criterion.veto = '';
     refresh();
+    $scope.submitted=false;
   });
   $scope.updateProject();
 }  
@@ -219,6 +249,8 @@ $scope.changeSection = function(name){
   var n = $scope.username;
   var projectName = $scope.project.name;
   if(sectionName == 'divizServer'){
+    // Show loader when execute button was clicked
+    $('#loading').show();
     $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;      
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n;  

@@ -77,6 +77,7 @@ app.delete('/api/user/:id', usersController.delete);
 //Project 
 app.get('/api/projects/:id', projectsController.get);
 app.get('/api/project/:id', projectsController.findById);
+app.get('/api/cloneproject/:id/:projectId', projectsController.duplicate);
 app.post('/api/projects/:id', projectsController.create);
 app.put('/api/project/:id', projectsController.edit);
 app.delete('/api/project/:id/:projectId', projectsController.delete);
@@ -87,6 +88,7 @@ app.get('/api/alternative/:id', alternativesController.findById);
 app.post('/api/alternatives/:id', alternativesController.create);
 app.put('/api/alternative/:id', alternativesController.edit);
 app.delete('/api/alternative/:id/:alternativeId', alternativesController.delete);
+app.delete('/api/alternatives/:id', alternativesController.deleteAll);
 //Criterion 
 app.get('/api/criterions/:id', criterionsController.get);
 app.get('/api/criterion/:id', criterionsController.findById);
@@ -96,6 +98,7 @@ app.delete('/api/criterion/:id/:criterionId', criterionsController.delete);
 //Category 
 app.get('/api/categories/:id', categoriesController.get);
 app.get('/api/category/:id', categoriesController.findById);
+app.get('/api/categoryRank/:id/:rank', categoriesController.findByRank);
 app.post('/api/categories/:id', categoriesController.create);
 app.put('/api/category/:id', categoriesController.edit);
 app.delete('/api/category/:id/:categoryId', categoriesController.delete);
@@ -112,7 +115,6 @@ app.post('/api/performances/:id', performanceTableController.create);
 app.put('/api/performance/:id', performanceTableController.edit);
 app.delete('/api/performance/:id', performanceTableController.delete);
 app.delete('/api/performances/:id', performanceTableController.deleteAll);
-//app.delete('/api/performances', performanceTableController.destroy);
 //Profile Table 
 app.get('/api/profiles/:id', profileTableController.get);
 app.get('/api/profile/:id', profileTableController.findById);

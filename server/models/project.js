@@ -15,6 +15,8 @@ module.exports = mongoose.model('Project', {
 	results: [{
 		result: [{ 
 			identifier : Number,
+			name : { type: String, default: 'Results' },
+			resultDate: { type: Date, default: Date.now},
 			resultValues: [{ 
 				alternativeID: String, 
   				minCategory: String,

@@ -4,6 +4,13 @@ app.controller('performancesController', ['$scope', '$http', '$resource', '$time
 
 $scope.projectID = $location.search().projectId;
 $scope.username = $location.search().n;
+$scope.criteriaDone = false;
+$scope.alternativesDone = false;
+$scope.performanceDone = false;
+$scope.configurationsDone = false;
+
+// Hide loader
+$('#loading').hide();
 
 //Get all data when loading body
 $scope.run = function () {
@@ -69,23 +76,36 @@ $http.get('/api/performances/' + $scope.projectID).success(function(data) {
   $scope.performances = data.performancetables;
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
+      $scope.criteriaDone = false;
     }else{
       document.getElementById('sectionsCriteria').style.backgroundColor = '#6fdc6f';
+      $scope.criteriaDone = true;
     }
     if($scope.project.alternatives.length == 0){
       document.getElementById('sectionsAlternatives').style.backgroundColor = '#ff3333';
+      $scope.alternativesDone = false;
     }else{
       document.getElementById('sectionsAlternatives').style.backgroundColor = '#6fdc6f';
+      $scope.alternativesDone = true;
     }
     if($scope.project.performancetables.length == 0){
       document.getElementById('sectionsPerformances').style.backgroundColor = '#ff3333';
+      $scope.performanceDone = false;
     }else{
       document.getElementById('sectionsPerformances').style.backgroundColor = '#6fdc6f';
+      $scope.performanceDone = true;
     }
     if($scope.project.profiletables.length == 0 || $scope.project.categories.length == 0 || $scope.project.parameters.length == 0){
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#ff3333';
+      $scope.configurationsDone = false;
     }else{
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
+      $scope.configurationsDone = true;
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.performanceDone && $scope.configurationsDone){
+      document.getElementById('buttonDiviz').disabled = false;
+    } else{
+      document.getElementById('buttonDiviz').disabled = true;
     }
   })
   .error(function(data) {
@@ -97,8 +117,25 @@ var refresh = function(){
     console.log('I got the data I requested');
       $scope.project = response;
       $scope.performances = response.performancetables;
+      checkStatus();
     });  
 }  
+
+// Update status to see if the execute button can be pressed
+var checkStatus = function(){
+  if($scope.project.performancetables.length == 0){
+    document.getElementById('sectionsPerformances').style.backgroundColor = '#ff3333';
+    $scope.performanceDone = false;
+  }else{
+    document.getElementById('sectionsPerformances').style.backgroundColor = '#6fdc6f';
+    $scope.performanceDone = true;
+  }
+  if($scope.criteriaDone && $scope.alternativesDone && $scope.performanceDone && $scope.configurationsDone){
+    document.getElementById('buttonDiviz').disabled = false;
+  } else{
+    document.getElementById('buttonDiviz').disabled = true;
+  }
+}
 
 //Create performance
 $scope.createPerformance = function () {
@@ -377,6 +414,8 @@ $scope.changeSection = function(name){
   var n = $scope.username;
   var projectName = $scope.project.name;
   if(sectionName == 'divizServer'){
+    // Show loader when execute button was clicked
+    $('#loading').show();
     $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;       
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n;  

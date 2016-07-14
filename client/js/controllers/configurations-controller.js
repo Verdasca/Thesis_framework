@@ -4,6 +4,12 @@ app.controller('configurationsController', ['$scope', '$http', '$resource', '$ti
 
 $scope.projectID = $location.search().projectId;
 $scope.username = $location.search().n;
+$scope.criteriaDone = false;
+$scope.alternativesDone = false;
+$scope.configurationsDone = false;
+
+// Hide loader
+$('#loading').hide();
 
 //Get all data when loading body
 $scope.run = function () {
@@ -67,23 +73,29 @@ $http.get('/api/categories/' + $scope.projectID).success(function(data) {
   $scope.categories = data.categories;
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
+      $scope.criteriaDone = false;
     }else{
       document.getElementById('sectionsCriteria').style.backgroundColor = '#6fdc6f';
+      $scope.criteriaDone = true;
     }
-    if($scope.project.alternatives.length == 0){
+    if($scope.project.alternatives.length == 0 || $scope.project.performancetables.length == 0){
       document.getElementById('sectionsAlternatives').style.backgroundColor = '#ff3333';
+      $scope.alternativesDone = false;
     }else{
       document.getElementById('sectionsAlternatives').style.backgroundColor = '#6fdc6f';
-    }
-    if($scope.project.performancetables.length == 0){
-      document.getElementById('sectionsPerformances').style.backgroundColor = '#ff3333';
-    }else{
-      document.getElementById('sectionsPerformances').style.backgroundColor = '#6fdc6f';
+      $scope.alternativesDone = true;
     }
     if($scope.project.profiletables.length == 0 || $scope.project.categories.length == 0 || $scope.project.parameters.length == 0){
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#ff3333';
+      $scope.configurationsDone = false;
     }else{
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
+      $scope.configurationsDone = true;
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('buttonDiviz').disabled = false;
+    } else{
+      document.getElementById('buttonDiviz').disabled = true;
     }
   })
   .error(function(data) {
@@ -94,8 +106,25 @@ var refresh = function(){
   $http.get('/api/categories/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.categories = data.categories;
+    checkStatus();
   });  
 }  
+
+// Update status to see if the execute button can be pressed
+var checkStatus = function(){
+  if($scope.project.profiletables.length == 0 || $scope.project.categories.length == 0 || $scope.project.parameters.length == 0){
+    document.getElementById('sectionsConfigurations').style.backgroundColor = '#ff3333';
+    $scope.configurationsDone = false;
+  }else{
+    document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
+    $scope.configurationsDone = true;
+  }
+  if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+    document.getElementById('buttonDiviz').disabled = false;
+  } else{
+    document.getElementById('buttonDiviz').disabled = true;
+  }
+}
 
 //Create category
 $scope.createCategory = function () {
@@ -111,15 +140,17 @@ $scope.createCategory = function () {
   // })
 
   var i = $scope.project._id;
+  var rank = $scope.categories.length + 1;
   var category = new Categories();
   category.name = $scope.category.name;
-  category.rank = $scope.category.rank;
+  category.rank = rank;
   category.action = $scope.category.action;
   $http.post('/api/categories/' + i, category).success(function(response) {
     refresh();
     $scope.category.name = '';
-    $scope.category.rank = '';
     $scope.category.action = '';
+    $scope.submitted=false; 
+    $scope.resetProfileTable();
   });
   $scope.updateProject();
 }
@@ -160,11 +191,10 @@ $scope.editCategory = function(category) {
 
 //Then save it or update it
 $scope.updateCategory = function() {
-  console.log($scope.category._id);
+  //console.log($scope.category._id);
   $http.put('/api/category/' + $scope.category._id, $scope.category).success(function(response) {
     refresh();
     $scope.category.name = '';
-    $scope.category.rank = '';
     $scope.category.action = '';
   });
 }
@@ -174,16 +204,14 @@ $scope.updateCategory = function() {
 $scope.updateCategory2 = function(category) {
   var i = category._id;
   category.name = $scope.model.name;
-  category.rank = $scope.model.rank;
   category.action = $scope.model.action;
   $http.get('/api/category/' + i).success(function(response) {
         $scope.category = response;
-    });
+  });
 
   $http.put('/api/category/' + i, category).success(function(response) {
     refresh();
     $scope.category.name = '';
-    $scope.category.rank = '';
     $scope.category.action = '';
   });
   $scope.updateProject();
@@ -213,6 +241,70 @@ $scope.reset = function () {
   $scope.model = {};
 }
 
+// Up category rank
+$scope.upRank = function (category) {
+  var i = category._id;
+  var rank = category.rank;
+  var nextRank = category.rank - 1;
+  if(category.rank == 1){
+    // Do nothing, its already the higher rank possible
+    return 0;
+  }else{
+    // Get category with the next rank to switch ranks and save changes on DB
+    $http.get('/api/categoryRank/' + $scope.projectID +'/'+ nextRank).success(function(data) {
+      $scope.category2 = data;
+      $scope.category2[0].rank = rank;
+      //console.log('category id: '+ $scope.category2[0]._id +' and actual cat:'+i);
+      $http.put('/api/category/' + $scope.category2[0]._id, $scope.category2[0]).success(function(response) {
+        refresh();
+      });
+      category.rank = nextRank;
+      $http.put('/api/category/' + i, category).success(function(response) {
+        refresh();
+      });
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  }); 
+  }
+}
+
+// Down category rank
+$scope.downRank = function (category) {
+  var i = category._id;
+  var rank = category.rank;
+  var previousRank = category.rank + 1;
+  if(category.rank == $scope.project.categories.length){
+    // Do nothing, its already the lowest rank possible (size of categories)
+    return 0;
+  }else{
+    // Get category with the next rank to switch ranks and save changes on DB
+    $http.get('/api/categoryRank/' + $scope.projectID +'/'+ previousRank).success(function(data) {
+      $scope.category2 = data;
+      $scope.category2[0].rank = rank;
+      $http.put('/api/category/' + $scope.category2[0]._id, $scope.category2[0]).success(function(response) {
+        refresh();
+      });
+      category.rank = previousRank;
+      $http.put('/api/category/' + i, category).success(function(response) {
+        refresh();
+      });
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  }); 
+  }
+}
+
+//Then save it or update it
+$scope.updateCategory = function() {
+  //console.log($scope.category._id);
+  $http.put('/api/category/' + $scope.category._id, $scope.category).success(function(response) {
+    refresh();
+    $scope.category.name = '';
+    $scope.category.action = '';
+  });
+}
 
 var Parameters = $resource('/api/parameters');
 
@@ -229,6 +321,7 @@ var refreshParameter = function(){
   $http.get('/api/parameters/' + $scope.projectID).success(function(response) {
     $scope.project = response;
     $scope.parameters = response.parameters;
+    checkStatus();
   });  
 }  
 
@@ -280,6 +373,7 @@ var refreshProfiles = function(){
   $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.profiles = data.profiletables;
+    checkStatus();
   });  
 }  
 
@@ -390,11 +484,6 @@ $scope.createProfile2 = function (category, criterion, numCat, numCri) {
             // It creates double number of rightNumProfiles for some reason because the caregories length changes for a ng-repeat
             console.log('Stop creating more profiles...');
             if($scope.j == rightNumProfiles*2){
-                // Update chunks
-                // $timeout( function(){ 
-                //     $scope.resetChunks();
-                //     console.log('Done slicing profiles (2 times ng-repeat)');
-                // }, 2000);
               $scope.resetChunks();
             }
             return 0;
@@ -536,7 +625,7 @@ $scope.resetChunks  = function() {
         console.log('Number of profiles that should exist: ' + rightNumProfiles);
         console.log('Actual number of profiles now: ' + numExistingProfiles);
         console.log('Done slicing profiles');
-    }, 1800);
+    }, 1700);
 }
 
 // Get the criterion data and update the rank and weight values
@@ -591,6 +680,8 @@ $scope.changeSection = function(name){
   var n = $scope.username;
   var projectName = $scope.project.name;
   if(sectionName == 'divizServer'){
+    // Show loader when execute button was clicked
+    $('#loading').show();
     $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;      
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n;  

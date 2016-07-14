@@ -61,11 +61,10 @@
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
                         <li id="sectionsCriteria"><a id="aSections" href="" class="active" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set</a></li>
-                        <li id="sectionsPerformances"><a id="aSections" href="" ng-click="changeSection('performance');">Performance Table</a></li>
+                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonDiviz" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -115,7 +114,7 @@
                             <td><input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/></td>
                             <td><input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/></td>
                             <td>
-                                <input type="button" value="Add Criterion" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createCriterion()" class="btn btn-primary"/>
+                                <input type="button" value="Add Criterion" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createCriterion();" class="btn btn-primary"/>
                                 <!-- <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/> -->
                             </td>
                         </tr>
@@ -124,14 +123,14 @@
                         </tr>
                     </table>
                     <script type="text/ng-template" id="display">
-                        <td id="criBody">{{ criterion.name }}</td>
-                        <td id="criBody">{{ criterion.description }}</td>
+                        <td id="criString">{{ criterion.name }}</td>
+                        <td id="criString">{{ criterion.description }}</td>
                         <td id="criBody">{{ criterion.direction }}</td>
                         <td id="criBody">{{ criterion.measure }}</td>
-                        <td id="criBody">{{ criterion.weight }}</td>
-                        <td id="criBody">{{ criterion.indifference }}</td>
-                        <td id="criBody">{{ criterion.preference }}</td>
-                        <td id="criBody">{{ criterion.veto }}</td>
+                        <td id="criNumber">{{ criterion.weight }}</td>
+                        <td id="criNumber">{{ criterion.indifference }}</td>
+                        <td id="criNumber">{{ criterion.preference }}</td>
+                        <td id="criNumber">{{ criterion.veto }}</td>
                         <td>
                             <input type="button" value="Edit" ng-click="editCriterion2(criterion)" class="btn btn-warning"/>
                             <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
@@ -216,6 +215,10 @@
                     </tr>
                 </tbody>
             </table> -->
+        </div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
         </div>
     </div>
 </body>

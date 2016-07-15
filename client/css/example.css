@@ -1,4 +1,4 @@
-/* Workspace style css */
+/* Example style css */
 
 #main{ 
 	padding-top: 60px; 
@@ -87,18 +87,12 @@
 }
 
 #sections:hover,
-#sectionsCriteria:hover,
-#sectionsAlternatives:hover,
-#sectionsPerformances:hover,
-#sectionsConfigurations:hover{
+#sectionsData:hover{
     background-color: #033773;
 }     
 
 #sections,
-#sectionsCriteria,
-#sectionsAlternatives,
-#sectionsPerformances,
-#sectionsConfigurations{
+#sectionsData{
     margin-bottom: 5px;
 }
 
@@ -121,14 +115,7 @@
 }
 
 #exportBtn,
-#exportBtn2,
-#exportBtn3,
-#exportProfileBtn,
-#exportBtnWeight,
-#exportBtnWeight2,
-#exportBtnWeight3,
-#saveBtn2,
-#saveBtn3{
+#saveBtn{
     margin: 5px;
     margin-top: 15px;
     text-align: center;
@@ -136,7 +123,6 @@
 }
 
 #exportBtnAll,
-#saveBtn,
 #compareBtn{
     margin: 5px;
     text-align: center;
@@ -191,30 +177,29 @@
     font-weight: normal;
 }
 
-/* Criterion section */
-#criterionTable,
-#categoryTable{
+/* Data section */
+#dataTable{
   margin: auto;
   text-align: center;
   width: 97%;
 }
 
-#criLabel{
+#dataLabel{
   font-size: 18px; 
 }
 
-#criInput{
+#dataInput{
   text-align: center; 
   vertical-align: text-top; 
 }
 
-#criInput2{
+#dataInput2{
   width: 100%;
   text-align: center; 
   vertical-align: text-top; 
 }
 
-#criInput3{
+#dataInput3{
     text-align: center;  
     width: 100%;
     height: 10%;
@@ -222,86 +207,85 @@
     vertical-align: text-top;
 }
 
-#criHeader{
+#dataLinkMethod{
+  cursor: pointer;
+  text-align: center;  
+  font-size: 18px;  
+  color: #337ab7;
+}
+
+#dataLinkMethod:visited {
+  cursor: pointer;
+  text-align: center;  
+  font-size: 18px;  
+  color: #275d8b;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+#dataLinkMethod:hover {
+  cursor: pointer;
+  text-align: center;  
+  font-size: 18px;  
+  color: #275d8b;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+#dataLinkMethod:active {
+  cursor: pointer;
+  text-align: center;  
+  font-size: 18px;  
+  color: #275d8b;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+#dataHeader{
     text-align: center;  
     font-size: 18px;  
 }
 
-#criHeader2{
-    text-align: center;   
+#dataHeader2{
+    text-align: right;   
     font-size: 18px;   
 }
 
-#criHeader3{
+#dataHeader3{
     text-align: left;   
     font-size: 18px;   
 }
 
-#criBody{
+#dataBody{
     text-align: center;  
     font-size: 15px;  
     padding-left: 10px;  
     vertical-align: middle;
 }
 
-#criBody2{
+#dataBody2{
     text-align: left;  
     font-size: 15px;  
     padding-left: 10px;  
     vertical-align: middle;
 }
 
-#criBody3{
+#dataBody3{
     text-align: center;  
     font-size: 15px;  
     vertical-align: middle;
     width: 100%;
 }
 
-#criString{
+#dataString{
     text-align: left;  
     font-size: 15px;  
     padding-left: 10px;  
     vertical-align: middle;
 }
 
-#criNumber{
+#dataNumber{
     text-align: right;  
-    font-size: 15px;  
-    padding-left: 10px;  
-    vertical-align: middle;
-}
-
-/* Alternative section */
-#alternativeTable{
-    margin: auto;
-    text-align: center;
-    width: 95%;
-}
-
-#altLabel{
-    font-size: 18px;  
-}
-
-#altInput{
-    vertical-align: text-top;
-    padding-right: 80px;
-    padding-left: 80px;
-    text-align: center;  
-}
-
-#altHeader{
-    text-align: left;  
-    font-size: 18px;  
-}
-
-#altHeader2{
-    text-align: center;   
-    font-size: 18px;   
-}
-
-#altBody{
-    text-align: left;  
     font-size: 15px;  
     padding-left: 10px;  
     vertical-align: middle;
@@ -314,16 +298,6 @@
   border-right: 0px solid white !important;
 }
 
-
-/* Performance table section */
-#performanceTable,
-#profileTable,
-#resultsTable{
-    margin: auto;
-    text-align: center;
-    width: 97%;
-}
-
 #explanation{
     width: 85%;
     font-size: 16px;
@@ -331,9 +305,7 @@
     margin: auto;
 }
 
-#weightTbl,
-#weightTbl2,
-#weightTbl3{
+#dataTbl{
   margin: auto;
   text-align: center;
   width: 70%; 
@@ -350,45 +322,6 @@
     vertical-align: middle;
     text-align: center;
     font-size: 16px;
-}
-
-#performanceInput,
-#profileInput{
-  width: 50%;
-  text-align: center;
-  font-size: 18px;
-}
-
-/* Decision Configuration section */
-#configHeader{
-    text-align: center;  
-    font-size: 16px;  
-}
-
-#configHeader2{
-    text-align: center;  
-    font-size: 18px;  
-}
-
-#configHeader3{
-    text-align: center;  
-    font-size: 18px; 
-    font-weight: bold;
-    border: 3px solid #eee;
-}
-
-#configBody{
-    text-align: center;  
-    font-size: 15px;  
-    padding-left: 10px;  
-    vertical-align: middle;
-}
-
-#methodsTable{
-    text-align: left;
-    margin: auto;
-    padding: 5px;
-    width: 80%;
 }
 
 #selectionTitle{
@@ -413,31 +346,17 @@
     margin-bottom: 10px;
 }
 
-/* Determining Weights method */
-#rankingTable{
-    text-align: center;
-    width: 90%;
-    margin: auto;
- /*   border-collapse:separate;
-    border: solid #033773 5px;
-    border-radius: 25px;*/
-}
-
-#rankingTable tr td{
-    margin: auto;
-    vertical-align: top;
-}
-
-#whiteCardRow{
-    vertical-align: top;
-    padding-top: 20px;
-}
-
 #error,
 #errorCompare{
-    color: red;
-    margin: auto;
-    padding-bottom: 20px;
+  color: red;
+  margin: auto;
+  padding-bottom: 20px;
+}
+
+#updateMsg{
+  color: green;
+  margin: auto;
+  padding-bottom: 20px;
 }
 
 #configRatio{
@@ -446,7 +365,6 @@
     padding-right: 10px;
     padding-left: 10px;
     text-align: center;  
-/*    width: 15%;*/
     height: 20%;
     font-size: 16px;
 }
@@ -461,39 +379,6 @@
     text-align: left;
 }
 
-#rankInput{
-    width: 45%;
-    text-align: center;  
-}
-
-#ratioZIntervalResult{
-    text-align: center;
-    width: 8%;
-    font-size: 18px;
-    vertical-align: middle;
-}
-
-#ratioZ1,
-#ratioZ2,
-#ratioZ3,
-#ratioZ,
-#ratioZIntervalMin,
-#ratioZIntervalMax{
-    text-align: center;
-    width: 7%;
-    font-size: 18px;
-    vertical-align: middle;
-}
-
-#getRandomN{
-    padding-top: 5px;
-    padding-right: 15px;
-    padding-bottom: 5px;
-    padding-left: 15px;
-    font-size: 18px;
-    margin-left: 10px;
-}
-
 #decimalBtn{
     padding-top: 5px;
     padding-right: 15px;
@@ -503,16 +388,7 @@
     margin: 5px;
 }
 
-#nDecimals{
-    margin: 10px;
-    display: inline;
-    background: #FFF;
-    color: #000;
-    text-shadow: 0 1px 0 rgba(0,0,0,0.4);
-    text-align: center;
-    font-size: 18px;
-}
-
+/* For drag/drop functions */
 .item, .placeholder {
     padding: 2px;
     width: 50px;
@@ -520,6 +396,7 @@
     border: 1px solid #333;
     background: #EEE;
 }
+
 .placeholder {
     background: #AEF;
 }
@@ -597,120 +474,7 @@
     color:#fff;
 }
 
-#whiteSection{ 
-  list-style-type:none;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  margin-left: 50px;
-  text-align: center;
-  font-size: 18px;
-  width:95%;
-  overflow-y:auto;
-  padding: 3px;
-  display: flex;
-/*    height: 50px;
-    display: block;*/
-}
-
-#card{
-    border: 1px solid;
-    border-color: #000;
-    background-color: #fff;
-    color: #000;
-    margin-left: 5px;
-    width: 10%;
-    height: 50px;
-    margin-top: 10px;
-    display: inline-table;
-}
-
-#cardCriterion{
-    border: 1px solid;
-    border-color: #000;
-    background-color: #000;
-    color: #fff;
-    width: 15%;
-    height: 50px;
-    display: inline-table;
-    margin-left: 5px;
-}
-
-#instructionsSection{
-/*    float:right; */ 
-    text-align: left;   
-/*    margin-right: 100px;
-    margin-bottom: 20px;*/
-    font-size: 18px;
-    list-style-type: none;
-}
-
-#stepOne{
-  /* text-align: left; */  
-}
-
-#steptwo{
-    font-size: 18px;
-    list-style-type: none; 
-    text-align: left;  
-    margin-left: 40px;
-    margin-bottom: 15px;   
-}
-
-#importance{
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 18px;
-    text-align: left;
-}
-
-#executeWeightsBtn{
-    font-size: 18px;
-    text-align: center;
-    padding: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    margin: auto;
-}
-
-#compareButton{
-    font-size: 18px;
-    text-align: center;
-    padding: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    margin: auto;
-    margin-left: 30px;
-}
-
-#auxTbl,
-#auxTbl2,
-#auxTbl3,
-#auxTbl4,
-#auxTbl5,
-#auxTbl6,
-#compareTable{
-    width: 90%;
-    margin: auto;
-    text-align: center;
-}
-
-#chartCriterion,
-#chartRank,
-#chartCriterion2,
-#chartRank2,
-#chartCriterion3,
-#chartRank3{
-    width: 800px;
-    height: 400px;
-    margin: auto;
-    margin-top: 25px;
-}
-
-#compareOptionsTable{
-    width: 50%;
-    margin: auto;
-}
-
+/* Charts for amcharts_3 */
 .amcharts-export-menu{
 /*    margin: 5px;*/
 }
@@ -753,26 +517,11 @@
     text-decoration: none;
 }
 
-#showRatio,
-#showRatio2,
-#showRatio3{
-    margin: auto;
-    margin-top: 40px;
-    margin-bottom: 0px;
-    text-align: center;
-    font-size: 25px;
-    font-weight: bold; 
-}
-
-#note{
-    margin-right: 35px;
-}
-
-/* HOVER STYLES */
+/* Examples of pop-ups used */
 div#helpInfo{
   display: none;
   position: fixed;
-  width: 84.3%;
+  width: 84%;
   padding-left: 5px;
   padding-right: 5px;
   background: #eeeeee;
@@ -794,61 +543,6 @@ div#pop-up-help-rank{
   border: 1px solid #1a1a1a;
 }
 
-div#pop-up-help-ratioZ{
-  display: none;
-  position: absolute;
-  width: 40%;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: #eeeeee;
-  color: #000000;
-  border: 1px solid #1a1a1a;
-}
-
-div#pop-up-help-interval{
-  display: none;
-  position: absolute;
-  width: 38%;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: #eeeeee;
-  color: #000000;
-  border: 1px solid #1a1a1a;
-}
-
-div#pop-up-help-whiteCard{
-  display: none;
-  position: absolute;
-  width: 53%;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: #eeeeee;
-  color: #000000;
-  border: 1px solid #1a1a1a;
-}
-
-div#pop-up-help-values{
-  display: none;
-  position: absolute;
-  width: 30%;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: #eeeeee;
-  color: #000000;
-  border: 1px solid #1a1a1a;
-}
-
-div#pop-up-help-decimals{
-  display: none;
-  position: absolute;
-  width: 20%;
-  padding-left: 5px;
-  padding-right: 5px;
-  background: #eeeeee;
-  color: #000000;
-  border: 1px solid #1a1a1a;
-}
-
 #pop-up-header{
       font-size: 16px;
 }
@@ -858,6 +552,7 @@ div#pop-up-help-decimals{
       padding-top: 0px;
 }
 
+/* Checkboxes */
 input[type="checkbox"]{
     cursor: pointer;
     -webkit-appearance: none;
@@ -895,6 +590,7 @@ input[type="checkbox"]:focus{
   color: #666;
   cursor: pointer;
 }
+
 .radio:before {
   background: #fff;
   content: "";
@@ -914,9 +610,11 @@ input[type="checkbox"]:focus{
   -moz-box-shadow: inset 0 0 3px 0 #ccc;
   -webkit-box-shadow: inset 0 0 3px 0 #ccc;
 }
+
 input[type="radio"] {
   display: none;
 } 
+
 input[type="radio"]:checked + label:before {
   content: "\2022";
   text-align: center;
@@ -931,8 +629,8 @@ input[name="ratio"]{
     text-align: center;  
 }
 
-#addBtn,
-#getRandomN1{
+/* Add/minus buttons that have an input between */
+#addBtn{
     padding-top: 3px;
     padding-right: 15px;
     padding-bottom: 3px;
@@ -942,8 +640,7 @@ input[name="ratio"]{
     vertical-align: middle;
 }
 
-#minusBtn,
-#getRandomN2{
+#minusBtn{
     padding-top: 3px;
     padding-right: 15px;
     padding-bottom: 3px;
@@ -953,26 +650,51 @@ input[name="ratio"]{
     vertical-align: middle;
 }
 
-#compareWeightMethod{
-  text-align: center;
-  width: 85%;
-  float: right;
-  padding-top: 5px;
-  background-color: #ffffff;
+/* Execute section */
+#resultsTable{
+    margin: auto;
+    text-align: center;
+    width: 80%;
 }
 
-/* Electre Tri-C method */
-#credibilityLambda{
-  font-size: 18px;
-  margin: auto;
-  padding: 5px;
+#explanation{
+    width: 80%;
+    font-size: 18px;
+    text-align: center;
+    margin: auto;
 }
 
-#credibilityInput{
-  font-size: 18px;
-  text-align: center;
-  width: 10%;
-  margin: auto;  
+#errorMessage,
+#errorMessage2{
+    width: 80%;
+    font-size: 18px;
+    text-align: center;
+    margin: auto;
+    color: red;
+}
+
+#methodButtons{
+    font-size: 18px;
+    text-align: center;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin: auto;
+    margin-right: 10px; 
+}
+
+#resultName{
+    text-align: center;
+    vertical-align: middle;
+    width: 25%;
+    margin-right: 30px;
+    font-size: 16px;
+}
+
+#labelResult{
+    font-size: 16px;
+    vertical-align: middle;
+    margin-right: 5px;
 }
 
 /* Result section */
@@ -1013,6 +735,7 @@ tr.noBorder td{
   border: 0; 
 }
 
+/* Loading/importing gif for loader aspects */
 #loading,
 #importing {
    width: 100%;

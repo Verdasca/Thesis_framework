@@ -9,7 +9,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/workspace.css"> <!-- custom styles -->
+    <link rel="stylesheet" type="text/css" href="css/electreTriC.css"> <!-- custom styles -->
 
     <!-- JS -->
     <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
@@ -22,6 +22,7 @@
     <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
     <script src="libs/ng-csv/build/ng-csv.min.js" type="text/javascript"></script>
     <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
     
     <!-- ANGULAR CUSTOM -->
     <script src="js/appRoutes.js" type="text/javascript"></script>
@@ -124,8 +125,15 @@
                     </script>
                 </div>
             </form>
-            <button export-alternatives-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>
-            <button export-alternatives-to-csv-without-description class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without description</button>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Export to CSV <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" export-alternatives-to-csv>Export everything</a></li>
+                    <li><a href="#" export-alternatives-to-csv-without-description>Export without description</a></li>
+                </ul>
+            </div>
             <br/> <br/>
             <hr style="border:1px solid #033773">
             <h2>Performance Table</h2>

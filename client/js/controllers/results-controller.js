@@ -126,13 +126,37 @@ app.directive('exportResultsToCsv',function(){
       restrict: 'A',
       // Get the id of the result table to be exported
       scope: {
-        values: '=values'
+        values: '=values',
+        tableName: '@tbl'
       },
       link: function (scope, element, attrs) {
         var el = element[0];
           element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("resultsTable"+scope.values);
+            var fileName = "";
+            switch(scope.tableName) {
+              case "resultsTable":
+                  fileName = 'electre_Tri_C_results.csv';
+                  break;
+              case "criTable":
+                  fileName = 'electre_Tri_C_criteria.csv';
+                  break;
+              case "altTable":
+                  fileName = 'electre_Tri_C_alternatives.csv';
+                  break;
+              case "perfTable":
+                  fileName = 'electre_Tri_C_performances.csv';
+                  break;
+              case "catTable":
+                  fileName = 'electre_Tri_C_categories.csv';
+                  break;
+              case "paramsTable":
+                  fileName = 'electre_Tri_C_parameters.csv';
+                  break;
+              case "profTable":
+                  fileName = 'electre_Tri_C_profiles.csv';
+                  break;
+            }
+            var table = document.getElementById(scope.tableName+scope.values);
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
                 var rowData = table.rows[i].cells;
@@ -146,7 +170,7 @@ app.directive('exportResultsToCsv',function(){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'electre_Tri_C_results.csv'
+                download: fileName
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -155,66 +179,156 @@ app.directive('exportResultsToCsv',function(){
     }
 });
 
-// // Load file result
-// function loadXMLDoc() {
-//   	var xmlhttp = new XMLHttpRequest();
-//   	xmlhttp.open("GET", "./out/assignments.xml", true);  
-//  	xmlhttp.onreadystatechange = function() {
-// 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-// 	    		showResults(xmlhttp);
-// 	    }
-//   	};
-//   xmlhttp.send();
-// }
-
-// // Get content from assignments.xml, which has the results
-// function showResults(xml) {
-//   var alternatives, categories, xmlDoc;
-//   // Get tbody from result table
-//   var table = document.getElementById("resultsTable").getElementsByTagName('tbody')[0];
-//   xmlDoc = xml.responseXML;
-//   // If file does not exist... show message error
-//   if(xmlDoc == null){
-// 	var xmlhttp = new XMLHttpRequest();
-//     // If results file does not exist it means there are errors during the method execution, open the error message
-//   	xmlhttp.open("GET", "./out/messages.xml", true);  
-//     xmlhttp.onreadystatechange = function() {
-// 	    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-// 	    	showErrorMessage(xmlhttp);
-// 	    }
-//   	};
-//   	xmlhttp.send();
-//   	return false;
-//   } 
-//   // Get all alternatives ids
-//   alternatives = xmlDoc.getElementsByTagName("alternativeID");
-//   // Get all categories min and max
-//   categories = xmlDoc.getElementsByTagName("categoryID");
-//   // Auxiliar to get the right categories for each alternative
-//   var categoryNum = 0;
-//   for (var i = 0; i< alternatives.length; i++) {
-//   	//Insert new row to the table and the results for each cell according to the alternative
-//   	var row = table.insertRow(i);
-//   	var cell1 = row.insertCell(0);
-// 	var cell2 = row.insertCell(1);
-// 	var cell3 = row.insertCell(2);
-// 	cell1.innerHTML = alternatives[i].childNodes[0].nodeValue;
-// 	cell2.innerHTML = categories[categoryNum].childNodes[0].nodeValue;
-// 	cell3.innerHTML = categories[categoryNum+1].childNodes[0].nodeValue;
-// 	categoryNum = categoryNum + 2;
-//   }
-// }
-
-// // Get content from messages.xml
-// function showErrorMessage(xml){
-// 	var errorMessage, txt, xmlDoc;
-// 	var table = document.getElementById("resultsTable").getElementsByTagName('tbody')[0];
-// 	xmlDoc = xml.responseXML;
-// 	txt = '';
-// 	errorMessage = xmlDoc.getElementsByTagName("text");
-// 	for (var i = 0; i< errorMessage.length; i++) {
-// 		txt += errorMessage[i].childNodes[0].nodeValue + ' <br/>';
-// 	}
-// 	table.innerHTML = txt;
-// }
-
+//Export everything into a .csv file 
+app.directive('exportEverythingToCsv',function(){
+    return {
+      restrict: 'A',
+      // Get the id of the result table to be exported
+      scope: {
+        values: '=values'
+      },
+      link: function (scope, element, attrs) {
+        var el = element[0];
+          element.bind('click', function(e){
+            var table = document.getElementById("resultsTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_results.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+        element.bind('click', function(e){
+            var table = document.getElementById("criTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_criteria.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+        element.bind('click', function(e){
+            var table = document.getElementById("altTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_alternatives.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+        element.bind('click', function(e){
+            var table = document.getElementById("perfTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_performances.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+        element.bind('click', function(e){
+            var table = document.getElementById("catTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_categories.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+        element.bind('click', function(e){
+            var table = document.getElementById("paramsTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_parameters.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+        element.bind('click', function(e){
+            var table = document.getElementById("profTable"+scope.values);
+            var csvString = '';
+            for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length; j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
+            }
+            csvString = csvString.substring(0, csvString.length - 1);
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:application/octet-stream;base64,'+btoa(csvString),
+                download:'electre_Tri_C_profiles.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+        });
+      }
+    }
+});

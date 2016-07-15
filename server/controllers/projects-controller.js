@@ -68,7 +68,7 @@ module.exports.edit = function (req, res) {
     Project.findOneAndUpdate({
             _id:req.params.id
         },
-        {$set:{ name:req.body.name, dateSet:req.body.dateSet }},
+        {$set:{ name:req.body.name, dateSet:req.body.dateSet, methodChosen:req.body.methodChosen, decimals:req.body.decimals, ratioOption:req.body.ratioOption, ratioZ:req.body.ratioZ, ratioZMax:req.body.ratioZMax, ratioZMin:req.body.ratioZMin, ratioZInterval:req.body.ratioZInterval, ratioZ1:req.body.ratioZ1, ratioZ2:req.body.ratioZ2, ratioZ3:req.body.ratioZ3 }},
         {upsert:true},
         function(err,project){
             if(err){

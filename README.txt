@@ -1,13 +1,14 @@
 <!-- MCDA Framework structure -->
 
 - server 					<!-- backend part -->
------ models/				<!-- contains all models to be needed - schema strutures -->
+----- models				<!-- contains all models to be needed - schema strutures -->
 ----- controllers     		<!-- controllers between mongoose and node js -->
 - config					<!-- databases to be used -->
 ----- db.js 				<!-- example of the path of a database being used -->
-- node_modules              <!-- created by npm install -->
+----- app.js 				<!-- example of the path of ports being used -->
+- node_modules              <!-- created by npm install, contains all libs necessary for backend (use bower to install libs) -->
 - client                    <!-- all frontend and angular stuff -->
------ css
+----- css					<!-- all css files of each method -->
 ----- js
 ---------- controllers      <!-- angular controllers -->
 ---------- app.js           <!-- angular application - set up to use all the components created-->
@@ -16,7 +17,7 @@
 ----- img					<!-- images used -->
 ----- libs                  <!-- created by bower install -->
 ----- views 				<!-- different views/content for the workspace.html -->
------ index.html			<!-- main page -->
+----- home.html				<!-- main page -->
 - .bowerrc                  <!-- tells bower where to put files (public/libs) -->
 - bower.json                <!-- tells bower which files we need -->
 - package.json              <!-- tells npm which packages we need -->

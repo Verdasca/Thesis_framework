@@ -5,9 +5,9 @@ module.exports = mongoose.model('Criterion', {
   description: {type : String, default: ''},
   direction: {type : String, default: ''},
   measure: {type : String, default: ''},
-  weight: {type : Number, default: ''},
+  weight: {type : Number, default: 0},
   rank: {type : Number, default: ''},
-  indifference: {type : Number, default: ''},
-  preference: {type : Number, default: ''},
-  veto: {type : Number, default: ''}	
+  indifference: {type : Number, default: 0},
+  preference: {type : Number, default: 0},
+  veto: {type : Number, default: 0}
 });

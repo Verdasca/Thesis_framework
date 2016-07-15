@@ -9,7 +9,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/workspace.css"> <!-- custom styles -->
+    <link rel="stylesheet" type="text/css" href="css/electreTriC.css"> <!-- custom styles -->
 
     <!-- JS -->
     <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
@@ -22,6 +22,7 @@
     <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
     <script src="libs/ng-csv/build/ng-csv.min.js" type="text/javascript"></script>
     <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
     
     <!-- ANGULAR CUSTOM -->
     <script src="js/appRoutes.js" type="text/javascript"></script>
@@ -49,6 +50,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
                 <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
+                <li><a id="textNav2" href="" onclick="showHelp();"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
         </div>
@@ -72,6 +74,17 @@
         </div>
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
+        <!-- HIDDEN / POP-UP DIV -->
+        <div id="helpInfo">
+            <h2 id="pop-up-header">Help - Quick Guide</h2>
+                <p id="pop-up-content">
+                    <h5>Method: Determining weights of criteria</h5>
+                    In each step, like Step 1), Step 2) and so on, click on them or pass over them to show a brief explanation about each step and their objectives.
+                </p>
+                <p id="pop-up-content">
+                    The results can be compared. First, save the wanted results to compare using the "Save Result" button and then click on the "Compare Results" button to go to the comparative section.
+                </p>
+        </div>
         <div id="content" class="jumbotron text-center">
             <h2>Criterion Set</h2>
             <br>
@@ -80,6 +93,7 @@
                 Name is required!
               </div>
             </div>
+            <small style="font-size:14px; color:#999;">If you want to use a method to calculate the weights, click on "Weight" after adding all the criteria.</small>
             <form name="myForm" id="criterionTable" runat="server" novalidate>
                 <div>
                     <table id="criterionTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
@@ -88,7 +102,7 @@
                             <th id="criHeader">Description</th>
                             <th id="criHeader">Direction</th>
                             <th id="criHeader">Measure</th>
-                            <th id="criHeader">Weight</th>
+                            <th id="criWeight" ng-click="showWeightMethod();">Weight</th>
                             <th id="criHeader">Indifference</th>
                             <th id="criHeader">Preference</th>
                             <th id="criHeader">Veto</th>
@@ -118,7 +132,7 @@
                                 <!-- <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/> -->
                             </td>
                         </tr>
-                        <tr ng-repeat="criterion in criterions" ng-include="getTemplate(criterion)">
+                        <tr ng-repeat="criterion in criterions | orderBy: 'rank'" ng-include="getTemplate(criterion)">
                             <!-- Get template -->  
                         </tr>
                     </table>
@@ -162,64 +176,517 @@
                     </script>
                 </div>
             </form> 
-            <button export-criterion-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV</button>  
-            <button export-criterion-to-csv-without-thresholds class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without thresholds</button> 
-            <button export-criterion-to-csv-without-weight class="btn btn-default ng-isolate-scope" id="exportBtn">Export to CSV without thresholds and weight</button> 
-            <br/><br/>
-           <!--  <br/><br/> -->
-            <!-- <button onclick="addRow();">Add White Card</button> -->
-            <!-- <input style="margin:auto;" type="button" value="Add White Card" onclick="addWhiteCard();" class="btn btn-info"/>
-            <br/><br/>
-            <table id="sort2" style="width:50%; margin:auto;" class="table table-bordered">
-                <thead>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Export to CSV <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" export-criterion-to-csv>Export everything</a></li>
+                    <li><a href="#" export-criterion-to-csv-without-thresholds>Export without thresholds</a></li>
+                    <li><a href="#" export-criterion-to-csv-without-weight>Export without thresholds and weight</a></li>
+                </ul>
+            </div>
+            <br/><br/><br/>
+            <!-- Weight method section -->
+            <div id="weightMethod" class="weight box">
+                <hr style="border:1px solid #033773">
+                <h3>Determining weights of criteria</h3>
+                <hr style="border:1px solid #033773">
+                <!-- Instructions section -->
+                <ul id="instructionsSection">
+                    <li id="stepOne"><b><a href="#" id="helpRank">Step 1)</a></b> Order the criteria from most important (top) to the least important (bottom). Criteria can have the same importance.
+                    <br>After that, add <b><a href="#" id="helpWhiteCard">white cards</a></b> to detach the importance between criteria if you find it necessary.
+                    </li>
+                </ul>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-rank">
+                  <h3 id="pop-up-header">Rank the criteria</h3>
+                  <p id="pop-up-content">
+                    Which criteria are more or less important for you? Order them by dragging them to the available gray boxes. 
+                  </p>  
+                  <p id="pop-up-content">  
+                    If some criteria have the same importance, both belong to the same gray box and the empty gray boxes should be the last boxes below (the ones closer to the "Least Importance" sign). 
+                  </p>
+                </div>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-whiteCard">
+                  <h3 id="pop-up-header">White Cards</h3>
+                  <p id="pop-up-content">
+                    The more white cards exist between two criteria, the greater the difference in importance between them.
+                    Between the two criteria insert the white card(s) on the gray box of the criterion with bigger importance.
+                  </p>  
+                  <p id="pop-up-content">
+                    If there is no assignment of white cards, this means that the difference between two criteria is considered as a unit.
+                    If a white card is assigned, the difference between two criteria can be considered as twice the unit, and so on.
+                  </p>
+                </div>
+                <table id="rankingTable">
+                    <col width="15%">
+                    <col width="85%">
                     <tr>
-                        <th>Index</th>
-                        <th>Rank</th>
-                        <th>Name</th>
+                        <td>
+                            <p id="importance">Most Important</p>
+                        </td>
+                        <td ROWSPAN=2>
+                            <!-- Upload all the criterion -->
+                            <ol ng-repeat="criterion in draggableCriterions | orderBy: '-rank'" data-draggable="target">
+                                <li id="cardCriterion" data-draggable="item" name="{{ criterion._id }}">{{criterion.name}}</li>
+                            </ol>
+                        </td>
                     </tr>
+                    <tr>
+                        <td style="vertical-align: bottom;">
+                            <p id="importance">Least Important</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <hr style="border:1px dashed #033773; width:100%; vertical-align: top;">
+                            <p id="importance" style="margin-top: 40px;">White Cards</p>
+                        </td>
+                        <td ROWSPAN=2>
+                            <hr style="border:1px dashed #033773; width:100%;">
+                            <!-- White card section -->
+                            <ol id="whiteSection" data-draggable="target">
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                                <li id="card" data-draggable="item">White Card</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </table>
+                <hr style="border:1px solid #033773">
+                <!-- Ratio Z section -->
+                <ul id="instructionsSection">
+                    <li id="stepOne"><b><a href="#" id="helpRatioZ">Step 2)</a></b> Choose a option to define ratio Z.</li>
+                </ul>
+                <div id="ratioOptions">
+                    <div style="margin-left: 50px;">
+                        <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
+                            <input type="checkbox" id="oneValue"/> 
+                            1 value = 
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ')" ng-click="updateRatioZ('ratioZ');"></input>
+                            <input id="ratioZ" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZ');"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ')" ng-click="updateRatioZ('ratioZ');"></input>
+                        </p>
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
+                            <input type="checkbox" id="interval" style="vertical-align:middle;"/>
+                            <a href="#" id="helpInterval">Interval</a> =
+                            <big style="font-size: 33px; vertical-align: middle;">[</big>
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMin')" ng-click="updateRatioZ('ratioZIntervalMin');"></input>
+                            <input id="ratioZIntervalMin" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZIntervalMin');"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMin')" ng-click="updateRatioZ('ratioZIntervalMin');"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMax')" ng-click="updateRatioZ('ratioZIntervalMax');"></input>
+                            <input id="ratioZIntervalMax" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZIntervalMax');"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZIntervalMax')" ng-click="updateRatioZ('ratioZIntervalMax');"></input>
+                            <big style="font-size: 33px; vertical-align: middle;">]</big>
+                            <input id="getRandomN1" type="button" value="<" onclick="decreaseIntervalResult()" ng-click="updateRatioZ('ratioZIntervalResult');"></input>
+                            <input id="ratioZIntervalResult" min="1" value="1" ng-keyup="updateRatioZ('ratioZIntervalResult');"></input>
+                            <input id="getRandomN2" type="button" value=">" onclick="increaseIntervalResult()" ng-click="updateRatioZ('ratioZIntervalResult');"></input>
+                        </p>
+                    </div>
+                    <div style="margin-left: 50px;">
+                        <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
+                            <input type="checkbox" id="threeValues"/>
+                            <a href="#" id="helpValues">3 values</a> =
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ1')" ng-click="updateRatioZ('ratioZ1');"></input>
+                            <input id="ratioZ1" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZ1');"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ1')" ng-click="updateRatioZ('ratioZ1');"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ2')" ng-click="updateRatioZ('ratioZ2');"></input>
+                            <input id="ratioZ2" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZ2');"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ2')" ng-click="updateRatioZ('ratioZ2');"></input>
+                            ,
+                            <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ3')" ng-click="updateRatioZ('ratioZ3');"></input>
+                            <input id="ratioZ3" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZ3');"></input>
+                            <input id="minusBtn" type="button" value="+" onclick="increaseRatio('ratioZ3')" ng-click="updateRatioZ('ratioZ3');"></input>
+                        </p>
+                        <small style="font-size:14px; color:#999; margin-left:50px;">In 3 values choice, the weight results from the first box (from the left) will be set to the criteria.</small>
+                    </div>
+                </div>
+                <br/>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-ratioZ">
+                    <h3 id="pop-up-header">Define Ratio Z</h3>
+                    <p id="pop-up-content">
+                        Ratio Z = how many times the last criterion is more important than the first one in the ranking? 
+                    </p>
+                    <p id="pop-up-content">
+                        You can define 1 value, 3 values or indicate an interval to generate a random value and check which one to use.
+                        Decimal numbers are allowed using dot ('.').
+                    </p>
+                </div>
+                <script type="text/javascript">  
+                $(document).ready(function(){                      
+                    $('#ratioOptions input[type="checkbox"]').on('change', function() {
+                       $('#ratioOptions input[type="checkbox"]').not(this).prop('checked', false);
+                    });
+                });    
+                </script>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-interval">
+                    <h3 id="pop-up-header">Define Interval</h3>
+                    <p id="pop-up-content">
+                        First, define an interval of integers and then click on the equal button ("=") to generate a random number inside the interval, with 2 decimal places. 
+                    </p>
+                </div>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-values">
+                    <h3 id="pop-up-header">Define 3 values</h3>
+                    <p id="pop-up-content">
+                        You can define 3 different values, if you are not sure which one to use. The results for each value will be shown.
+                    </p>
+                </div>
+                <!-- Choose the number of decimals -->
+                <hr style="border:1px solid #033773">
+                <ul id="instructionsSection">
+                    <li id="stepOne"><b><a href="#" id="helpDecimals">Step 3)</a></b> Nº of decimal places = 
+                        <input id="decimalBtn" type="button" value="-" onclick="decreaseDecimal()" ng-click="updateDecimals();"></input>
+                        <div id="nDecimals">x</div>
+                        <input id="decimalBtn" type="button" value="+" onclick="increaseDecimal()" ng-click="updateDecimals();"></input>
+                    </li>
+                </ul>
+                <!-- HIDDEN / POP-UP DIV -->
+                <div id="pop-up-help-decimals">
+                  <h3 id="pop-up-header">Number of decimals to apply</h3>
+                  <p id="pop-up-content">
+                    Choose how many decimal places you want to apply on the final results.
+                  </p>
+                </div>
+                <h3><input id="executeWeightsBtn" type="button" value="Execute" onclick="weightMethod(); showMsg();" ng-click="updateCriterionWeights(); updateRatioOption();" class="btn btn-success"/></h3>
+                <br/>
+                <h4 id="updateMsg">Criteria weights updated.</h4>
+                <h4 id="error">Ratio Z not defined!</h4>
+                <button export-weights-to-csv export-two-weights-to-csv export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnAll">Export all to CSV</button> 
+                <button id="compareBtn" class="btn btn-primary" onclick="compareWeightResults()">Compare Results</button> 
+                <br/>
+                <div id="showRatio"></div>
+                <table id="weightTbl" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button export-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn1">Export to CSV</button>
+                <button export-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight">Export name and norm. weight to CSV</button>
+                <button id="saveBtn" class="btn btn-info" onclick="saveWeightResult()">Save Result for comparison</button> 
+                <div id="chartCriterion"></div>
+                <br/>
+                <div id="chartRank"></div>
+                <br/><br/>
+                <div id="showRatio2"></div>
+                <table id="weightTbl2" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button export-two-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn2">Export to CSV</button>
+                <button export-two-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight2">Export name and norm. weight to CSV</button>
+                <button id="saveBtn2" class="btn btn-info" onclick="saveWeightResult(2)">Save Result for comparison</button> 
+                <div id="chartCriterion2"></div>
+                <br/>
+                <div id="chartRank2"></div>
+                <br/><br/>
+                <div id="showRatio3"></div>
+                <table id="weightTbl3" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button export-three-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtn3">Export to CSV</button>
+                <button export-three-only-weights-to-csv class="btn btn-default ng-isolate-scope" id="exportBtnWeight3">Export name and norm. weight to CSV</button>
+                <button id="saveBtn3" class="btn btn-info" onclick="saveWeightResult(3)">Save Result for comparison</button> 
+                <div id="chartCriterion3"></div>
+                <br/>
+                <div id="chartRank3"></div>
+                <br/>
+            </div>
+            <!-- END of Weight method section -->
+
+            <!-- Auxiliar tables to calculate all the results for the weight method section -->
+            <div>
+                <table id="updateTable" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">ID</th>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">Non-norm. weight</th>
+                        <th id="configHeader">Norm. Weight</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">e'r</th>
+                        <th id="configHeader">er</th>
+                        <th id="configHeader">k(r)</th>
+                        <th id="configHeader">Total</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl2" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">k*i</th>
+                        <th id="configHeader">k''i</th>
+                        <th id="configHeader">di</th>
+                        <th id="configHeader">/di</th>
+                        <th id="configHeader">ki</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table id="auxTbl3" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">e'r</th>
+                        <th id="configHeader">er</th>
+                        <th id="configHeader">k(r)</th>
+                        <th id="configHeader">Total</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl4" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">k*i</th>
+                        <th id="configHeader">k''i</th>
+                        <th id="configHeader">di</th>
+                        <th id="configHeader">/di</th>
+                        <th id="configHeader">ki</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table id="auxTbl5" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank r</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">e'r</th>
+                        <th id="configHeader">er</th>
+                        <th id="configHeader">k(r)</th>
+                        <th id="configHeader">Total</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <table id="auxTbl6" class="table table-bordered horizontal">
+                    <thead>
+                        <th id="configHeader">Rank</th>
+                        <th id="configHeader">Criterion</th>
+                        <th id="configHeader">k*i</th>
+                        <th id="configHeader">k''i</th>
+                        <th id="configHeader">di</th>
+                        <th id="configHeader">/di</th>
+                        <th id="configHeader">ki</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!-- END of auxiliar tables to calculate all results for the weight method section -->
+        </div>
+        <!-- COMPARE SECTION - Weight method -->
+        <div id="compareWeightMethod">
+            <h2>Compare results - weights of criteria</h2>
+            <br/><br/>
+            <table id="compareOptionsTable" class="table table-bordered horizontal">
+                <thead>
+                    <th id="configHeader">Results</th>
+                    <th id="configHeader">Ratio Z</th>
+                    <th id="configHeader">Compare?</th>
+                    <th id="configHeader">Delete</th>
                 </thead>
                 <tbody>
-                    <tr ng:repeat="criterion in criterionCopy | orderBy: 'rank'" class="item" style="cursor: move;">
-                        <td>{{$index+1}}</td>
-                        <td>{{criterion.rank}}</td>
-                        <td>{{criterion.name}}</td>
-                    </tr>
                 </tbody>
             </table>
-            <br/><br/><br/> -->
-            <!-- <table id="sort2" class="grid" title="Kurt Vonnegut novels" style="margin:auto;">
-                <thead>
-                    <tr><th>Year</th><th>Title</th><th>Grade</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>1969</td><td>Slaughterhouse-Five</td><td>A+</td></tr>
-                    <tr><td>1952</td><td>Player Piano</td><td>B</td></tr>
-                    <tr><td>1963</td><td>Cat's Cradle</td><td>A+</td></tr>
-                    <tr><td>1973</td><td>Breakfast of Champions</td><td>C</td></tr>
-                    <tr><td>1965</td><td>God Bless You, Mr. Rosewater</td><td>A</td></tr>
-                </tbody>
-            </table> -->
-            <!-- <table style="width:50%; margin:auto;" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Index</th>
-                        <th>Rank</th>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody ui:sortable ng:model="criterionCopy">
-                    <tr ng:repeat="criterion in criterionCopy | orderBy: 'rank'" class="item" style="cursor: move;">
-                        <td>{{$index+1}}</td>
-                        <td>{{criterion.rank}}</td>
-                        <td>{{criterion.name}}</td>
-                    </tr>
-                </tbody>
-            </table> -->
+            <!-- <div>
+                Compare...
+                <input type="checkbox" id="compareRatio"/>Ratio Z
+                <input type="checkbox" id="compareWeight"/>Weight
+                <input type="checkbox" id="compareNonWeight"/>Non-norma. Weight
+            </div> -->
+            <br/><br/>
+            <button id="compareButton" class="btn btn-success" onclick="compareResults()">Compare</button> 
+            <button id="compareButton" class="btn btn-primary" onclick="backToConfiguration()">Back to Criteria Section</button> 
+            <br/><br/><br/>
+            <h3 id="errorCompare">No results selected! Please select results to compare.</h3>
+            <div id="compareResults">
+                <table id="compareTable" class="table table-bordered horizontal">
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tableResults">
+            </div>
+            <br/>
+        </div>
+        <!-- END of COMPARE SECTION - Weight method -->
         </div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
           <p id="loading-text">Executing...</p>
         </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //Execute refresh function after some time, so the drag/drop function work nicely (time is set in milliseconds)
+        //setTimeout(addDragDrop, 100);
+        document.getElementById("weightMethod").style.display = 'none';
+        document.getElementById("compareWeightMethod").style.display = 'none';
+        document.getElementById("tableResults").style.display = 'none';
+        document.getElementById("exportBtnAll").style.display = 'none';
+        document.getElementById("saveBtn").style.display = 'none';
+        document.getElementById("saveBtn2").style.display = 'none';
+        document.getElementById("saveBtn3").style.display = 'none';
+        document.getElementById("compareBtn").style.display = 'none';
+        document.getElementById("exportBtn1").style.display = 'none';
+        document.getElementById("exportBtnWeight").style.display = 'none';
+        document.getElementById("exportBtn2").style.display = 'none';
+        document.getElementById("exportBtnWeight2").style.display = 'none';
+        document.getElementById("exportBtn3").style.display = 'none';
+        document.getElementById("exportBtnWeight3").style.display = 'none';
+        document.getElementById("error").style.display = 'none';
+        document.getElementById("updateMsg").style.display = 'none'; 
+        document.getElementById("errorCompare").style.display = 'none';
+        document.getElementById("updateTable").style.display = 'none';
+        document.getElementById("auxTbl").style.display = 'none';
+        document.getElementById("auxTbl2").style.display = 'none';
+        document.getElementById("auxTbl3").style.display = 'none';
+        document.getElementById("auxTbl4").style.display = 'none';
+        document.getElementById("auxTbl5").style.display = 'none';
+        document.getElementById("auxTbl6").style.display = 'none';
+        document.getElementById("weightTbl").style.display = 'none';
+        document.getElementById("weightTbl2").style.display = 'none';
+        document.getElementById("weightTbl3").style.display = 'none';
+        document.getElementById("chartCriterion").style.display = 'none';
+        document.getElementById("chartCriterion2").style.display = 'none';
+        document.getElementById("chartCriterion3").style.display = 'none';
+        document.getElementById("chartRank").style.display = 'none';
+        document.getElementById("chartRank2").style.display = 'none';
+        document.getElementById("chartRank3").style.display = 'none';
+
+        //Actualize interval result when the minimal value of the interval is changed
+        $('#ratioZIntervalMin').bind('keypress keyup blur', function() {
+            $('#ratioZIntervalResult').val($(this).val());
+        });
+
+        $('input[type="radio"]').click(function(){
+        if($(this).attr("value")=="weightR"){
+            $(".box").not(".weight").hide();
+            $(".weight").show();
+        }
+        if($(this).attr("value")=="electreTriCR"){
+            $(".box").not(".electreTriC").hide();
+            $(".electreTriC").show();
+        }
+        });
+    });
+
+    //Functions to show/hide tutorials/steps explanations
+    $(function() {
+      var moveLeft = 20;
+      var moveDown = 10;
+
+      $('a#helpRank').hover(function(e) {
+        $('div#pop-up-help-rank').show();
+      }, function() {
+        $('div#pop-up-help-rank').hide();
+      });
+
+      $('a#helpRank').mousemove(function(e) {
+        $("div#pop-up-help-rank").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpWhiteCard').hover(function(e) {
+        $('div#pop-up-help-whiteCard').show();
+      }, function() {
+        $('div#pop-up-help-whiteCard').hide();
+      });
+
+      $('a#helpWhiteCard').mousemove(function(e) {
+        $("div#pop-up-help-whiteCard").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpRatioZ').hover(function(e) {
+        $('div#pop-up-help-ratioZ').show();
+      }, function() {
+        $('div#pop-up-help-ratioZ').hide();
+      });
+
+      $('a#helpRatioZ').mousemove(function(e) {
+        $("div#pop-up-help-ratioZ").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpInterval').hover(function(e) {
+        $('div#pop-up-help-interval').show();
+      }, function() {
+        $('div#pop-up-help-interval').hide();
+      });
+
+      $('a#helpInterval').mousemove(function(e) {
+        $("div#pop-up-help-interval").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpValues').hover(function(e) {
+        $('div#pop-up-help-values').show();
+      }, function() {
+        $('div#pop-up-help-values').hide();
+      });
+
+      $('a#helpValues').mousemove(function(e) {
+        $("div#pop-up-help-values").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+
+      $('a#helpDecimals').hover(function(e) {
+        $('div#pop-up-help-decimals').show();
+      }, function() {
+        $('div#pop-up-help-decimals').hide();
+      });
+
+      $('a#helpDecimals').mousemove(function(e) {
+        $("div#pop-up-help-decimals").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+      });
+    });  
+</script>
     </div>
 </body>
 </html>    

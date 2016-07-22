@@ -70,10 +70,6 @@
             <div ng-repeat="res in results">
             <table ng:repeat="values in res.result" id="resultTbl" class="table horizontal">
                 <tr class="noBorder">
-                    <td id="titleTbl3" style="width:30%;"><b>Name:</b> {{ values.name }}</td> 
-                    <td style="width:15%;">
-                    </td> 
-                    <td id="titleTbl3" style="width:25%;">{{ values.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
                     <td id="titleTbl3" style="width:25%;">
                         <button ng-click="showResult = ! showResult" class="btn btn-success">View</button>
                         <div class="btn-group">
@@ -89,6 +85,10 @@
                         </div>
                         <button ng-click="deleteResult(res, values.identifier)" class="btn btn-danger">Delete</button>
                     </td> 
+                    <td id="titleTbl3" style="width:30%;"><b>Name:</b> {{ values.name }}</td> 
+                    <td style="width:15%;">
+                    </td> 
+                    <td id="titleTbl3" style="width:25%;">{{ values.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
                 </tr>
                 <tr ng-show="showResult" class="noBorder"> 
                     <td colspan="4">

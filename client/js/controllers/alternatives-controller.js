@@ -1,8 +1,9 @@
-var app = angular.module("alternatives-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("alternatives-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'ui']);
 
 app.controller('alternativesController', ['$scope', '$http', '$resource', '$location', '$window', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $location, $window, $timeout, orderBy) {
 
 var Alternatives = $resource('/api/alternatives');
+var Performances = $resource('/api/performances');
 
 $scope.projectID = $location.search().projectId;
 $scope.username = $location.search().n;
@@ -11,7 +12,6 @@ $scope.alternativesDone = false;
 $scope.configurationsDone = false;
 
 // Hide loader and importing
-$('#loading').hide();
 $('#importing').hide();
 
 //Get all data when loading body
@@ -53,6 +53,70 @@ var refreshAlternatives = function(){
   }); 
 }
 
+var refreshCriteria = function(){
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
+    $scope.criterions = data.criteria;
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  }); 
+}
+
+// Refresh the page current data after closing the import section (so the data on the page is actualized with the imported data)
+$scope.refreshBeforeClosing = function(){
+  $('#loading').show();
+  $scope.updateProject();
+  refreshCriteria();
+  refreshAlternatives();
+  refresh();
+  $timeout( function(){
+      $scope.chunksCat = [];
+      $scope.chunksCat = $scope.alternatives;
+      //Update performance table if necessary
+      $scope.confirmPerformance(); 
+      refresh();
+  }, 1000);
+}
+
+// Reset performance table if criteria or alternatives were imported
+$scope.refreshNewPerformanceBeforeClosing = function(){
+  $('#loading').show();
+  $scope.updateProject();
+  refreshCriteria();
+  refreshAlternatives();
+  $scope.resetPerformanceTable();
+}
+
+// Refresh performance table if imported
+$scope.refreshPerformancesBeforeClosing = function(){
+  $('#loading').show();
+  $scope.updateProject();
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
+    $scope.criterions = data.criteria;
+    $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
+      $scope.project = data;
+      $scope.alternatives = data.alternatives;
+      $http.get('/api/performances/' + $scope.projectID).success(function(data) {
+        $scope.performances = data.performancetables;
+        $scope.chunksCat = [];
+        $scope.chunksCat = $scope.alternatives;
+        //Order performances by alternative before slicing it
+        $scope.performances2 = orderBy($scope.performances, $scope.propertyName, $scope.reverse);
+        //Get all performances to put them inside a table
+        var i, l = $scope.performances.length;
+        var x = $scope.criterions.length;
+        // Slice the performances results so it can be put inside a table numAlternativeXnumCriteria
+        $scope.chunks = [];
+        for ( i = 0; i < l; i += x) {
+            $scope.chunks.push( $scope.performances2.slice(i, i + x));
+        }
+        console.log('Done slicing performances');
+        $('#loading').hide();
+      });  
+    }); 
+  });
+}
+
 // Update status to see if the execute button can be pressed
 var checkStatus = function(){
   if($scope.project.alternatives.length == 0 || $scope.project.performancetables.length == 0){
@@ -62,16 +126,40 @@ var checkStatus = function(){
     document.getElementById('sectionsAlternatives').style.backgroundColor = '#6fdc6f';
     $scope.alternativesDone = true;
   } 
-  if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-    document.getElementById('buttonDiviz').disabled = false;
-  } else{
-    document.getElementById('buttonDiviz').disabled = true;
-  }
+  // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+  //   document.getElementById('methodButtons').disabled = false;
+  // } else{
+  //   document.getElementById('methodButtons').disabled = true;
+  // }
 }
 
 $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.alternatives = data.alternatives;
+  //Get the data from criterions in mongoDB
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
+    $scope.criterions = data.criteria;
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  }); 
+  //Get the data from performances in mongoDB
+  $http.get('/api/performances/' + $scope.projectID).success(function(data) {
+    $scope.performances = data.performancetables;
+    // Time to execute the performance table review 
+    $timeout( function(){
+        $scope.chunksCat = [];
+        refreshAlternatives();
+        refresh();
+        $scope.chunksCat = $scope.alternatives;
+        //Update performance table if necessary
+        $scope.confirmPerformance(); 
+        refresh();
+    }, 800);
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  });
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
       $scope.criteriaDone = false;
@@ -93,20 +181,11 @@ $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
       $scope.configurationsDone = true;
     }
-    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-      document.getElementById('buttonDiviz').disabled = false;
-    } else{
-      document.getElementById('buttonDiviz').disabled = true;
-    }
-  })
-  .error(function(data) {
-    console.log('Error: ' + data);
-}); 
-
-//Get the data from criterions in mongoDB
-$http.get('/api/criterions/' + $scope.projectID).success(function(data) {
-  $scope.project = data;
-  $scope.criterions = data.criteria;
+    // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+    //   document.getElementById('methodButtons').disabled = false;
+    // } else{
+    //   document.getElementById('methodButtons').disabled = true;
+    // }
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -121,6 +200,7 @@ $http.get('/api/userFind/' + $scope.username).success(function(data) {
 
 //Create alternative
 $scope.createAlternative = function () {
+  $('#loading').show();
   // var alternative = new Alternatives();
   // alternative.name = $scope.alternative.name;
   // alternative.description = $scope.alternative.description;
@@ -161,6 +241,7 @@ $scope.createAlternative = function () {
 
 //Delete alternative
 $scope.deleteAlternative = function(alternative) {
+  $('#loading').show();
   var i = $scope.project._id;
   var id = alternative._id;
   $http.delete('/api/alternative/' + i + '/' + id)
@@ -206,6 +287,7 @@ $scope.updateAlternative = function() {
 
 //Update the value and reset model
 $scope.updateAlternative2 = function(alternative) {
+  $('#loading').show();
   var i = alternative._id;
   alternative.name = $scope.model.name;
   alternative.description = $scope.model.description;
@@ -254,7 +336,7 @@ $scope.changeSection = function(name){
   if(sectionName == 'divizServer'){
     // Show loader when execute button was clicked
     $('#loading').show();
-    $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;   
+    //$window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;   
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n; 
   }
@@ -276,17 +358,6 @@ $scope.updateProject = function() {
 
   });
 }
-
-var Performances = $resource('/api/performances');
-
-//Get the data from performances in mongoDB
-$http.get('/api/performances/' + $scope.projectID).success(function(data) {
-  $scope.project = data;
-  $scope.performances = data.performancetables;
-  })
-  .error(function(data) {
-    console.log('Error: ' + data);
-});
 
 var refresh = function(){
   $http.get('/api/performances/' + $scope.projectID).success(function(data) {
@@ -441,31 +512,17 @@ $scope.deletePerformance2 = function() {
     .success(function() {
       console.log("success");
       refresh();
-      // Update data if doing a import
-      if(doUpload){
-        // Update data to the DB
-        console.log('Getting performances to update...');
-        $timeout( function(){ Upload2(); }, 2000);
-        doUpload = false;
-      }
     })
     .error(function() {
       //console.log('Error: fail deletes' );
       refresh();
-      // Update data if doing a import
-      if(doUpload){
-        // Update data to the DB
-        console.log('Getting performances to update...');
-        $timeout( function(){ Upload2(); }, 2000);
-        doUpload = false;
-      }
   });
   //refresh();
 }
 
 // At the beginning see if alternatives or criteria where change to update the performance table 
 $scope.confirmPerformance  = function() {
-  var numCriteria = $scope.criterions.length;
+  var numCriteria = $scope.project.criteria.length;
   var numAlternatives = $scope.alternatives.length;
   var rightNumPerformances = numCriteria * numAlternatives;
   var numExistingPerformances = $scope.performances.length;
@@ -486,6 +543,7 @@ $scope.confirmPerformance  = function() {
             $scope.chunks.push( $scope.performances2.slice(i, i + x));
         }
         console.log('Done slicing performances');
+        $('#loading').hide();
     }else{
       if(numExistingPerformances == 0){
 
@@ -494,20 +552,10 @@ $scope.confirmPerformance  = function() {
         $scope.deletePerformance2();
       }
       console.log('Performance Table has been updated.');
+      $('#loading').hide();
     }
   //}
 }
-
-// Time to execute the profile table review 
-$timeout( function(){
-    $scope.chunksCat = [];
-    refreshAlternatives();
-    refresh();
-    $scope.chunksCat = $scope.alternatives;
-    //Update performance table if necessary
-    $scope.confirmPerformance(); 
-    refresh();
-}, 500);
 
 //Update the value 
 $scope.updatePerformance2 = function(performance) {
@@ -546,233 +594,6 @@ $scope.resetChunks  = function() {
     }, 1700);      
 }
 
-// Delete all alternatives if exist
-$scope.deleteAlternatives = function(){
-  $('#importing').show();
-  var i = $scope.project._id;
-  if($scope.project.alternatives.length == 0){
-    console.log('There are no alternatives to delete...');
-    // Import data
-    UploadAlt();
-  }else{
-    //Delete all alternatives 
-    $http.delete('/api/alternatives/' + i)
-      .success(function() {
-        console.log("Done deleting all alternatives.");
-        refreshAlternatives();
-        //$scope.resetPerformanceTable();
-        // Import data
-        $timeout( function(){ UploadAlt(); }, 1000);
-      })
-      .error(function() {
-        //console.log('Error: fail deletes' );
-        $('#importing').hide();
-    });
-  }
-}
-
-//Create alternative when importing
-$scope.createAlternativeImport = function (alt) {
-  var i = $scope.project._id;
-  var alternative = new Alternatives();
-  alternative.name = alt;
-  $http.post('/api/alternatives/'+i, alternative).success(function(response) {
-    refreshAlternatives();
-    console.log('Done creating alternative.');
-  });
-}
-
-var doUpload = false;
-// Upload file to get the perfomance values and alternatives
-function UploadAlt(){
-  var fileUpload = document.getElementById("fileUpload");
-  var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
-  if (regex.test(fileUpload.value.toLowerCase())) {
-    if (typeof (FileReader) != "undefined") {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var table = document.createElement("table");
-        var performanceTable = document.getElementById("performanceTable");
-        //var numAlternatives = performanceTable.rows.length;
-        var rows = e.target.result.split("\n");
-        //Check number of rows
-        var numRows = rows.length;
-        if(numRows <= 1){
-          console.log('Number of rows insufficient.');
-          alert("CSV file was rejected: number of rows are incorrect.\n\nNumber of rows = 1 header line for criteria names + total number of alternatives. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...");
-          $('#importing').hide();
-          return 0;
-        }
-        //Check number of columns
-        var numCriteria = performanceTable.rows[0].cells.length;
-        var c = rows[1].split(",");
-        var numCells = c.length;
-        //console.log('CSV cell size: ' + numCells);
-        if(numCells != numCriteria){
-          console.log('Number of columns are incorrect or do not correspond to the actual number of criteria.');
-          alert("CSV file was rejected: number of columns are incorrect.\n\nNumber of columns = 1 header column for alternative names + total number of criteria. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...");
-          $('#importing').hide();
-          return 0;    
-        }
-        for (var i = 1; i < rows.length; i++) {
-          var row = table.insertRow(-1);
-          var cells = rows[i].split(",");
-          // Insert new row to the performanceTable
-          //var perfRow = performanceTable.insertRow(i);
-          for (var j = 0; j < 1; j++) {
-            //console.log('Row: '+i+' and col: '+j);
-            //var perfCell = perfRow.insertCell(j);
-            //perfCell.rows[i].cells[j].children[0].value = cells[j]; 
-            var cell = row.insertCell(-1);
-            cell.innerHTML = cells[j];
-            //console.log(cell.innerHTML+' and '+cells[j]);
-            // If it is a alternative, create it and save it on DB
-            if(cell.innerHTML == '' || cell.innerHTML == null){
-              // Do nothing - ignore because its an empty line or as no alternative name 
-            }else{
-              $scope.createAlternativeImport(cells[j]);
-              //console.log('------Create alternative '+cells[j]+'------');
-            }
-          }
-        }
-        table.className = 'table table-bordered horizontal';
-        table.id = 'performanceTable';
-        var dvCSV = document.getElementById("dvCSV");
-        dvCSV.innerHTML = "";
-        dvCSV.appendChild(table);
-      }
-      reader.readAsText(fileUpload.files[0]);
-      // Reset performance table after adding the new alternatives
-      doUpload = true;
-      $scope.resetPerformanceTable();
-      // Update data to the DB
-      //console.log('Getting performances to update...');
-      //$timeout( function(){ Upload2(); }, 2000);
-      //$timeout( function(){ $scope.uploadfile(); }, 2000);
-    } else {
-      alert("This browser does not support HTML5.");
-      $('#importing').hide();
-    }
-  } else {
-      alert("Please upload a valid CSV file.");
-      $('#importing').hide();
-  }
-}
-
-// When importing data, update performances and alternatives on mongodb
-$scope.uploadfileAlt = function(scope, element) {
-  console.log('Update performances into the DB.');
-  $timeout( function(){ 
-    var performanceTable = document.getElementById("performanceTable");
-    var dvCSV = document.getElementById("dvCSV").getElementsByTagName('tbody')[0];
-    var rows = performanceTable.rows;
-    var CSVrows = dvCSV.rows;
-    //console.log(rows.length);
-    for (var i = 0; i < rows.length; i++) {
-      var cells = rows[0].cells;
-      //console.log(cells.length);
-      for (var j = 0; j < cells.length; j++) {
-        if(i == 0 | j == 0){
-          //Ignore
-        }else{
-          performanceTable.rows[i].cells[j].children[0].value = dvCSV.rows[i].cells[j].innerHTML;  
-          var item = performanceTable.rows[i].cells[j].children[0];
-          //console.log(item);
-          angular.element(item).trigger('change');
-        }
-      }
-    }
-    $('#importing').hide();
-  }, 600);
-}
-
-// When importing data, update performances on mongodb
-$scope.uploadfile = function(scope, element) {
-  console.log('Update performances into the DB.');
-  $timeout( function(){ 
-    var performanceTable = document.getElementById("performanceTable");
-    var rows = performanceTable.rows;
-    //console.log(rows.length);
-    for (var i = 0; i < rows.length; i++) {
-      var cells = rows[0].cells;
-      //console.log(cells.length);
-      for (var j = 0; j < cells.length; j++) {
-        if(i == 0 | j == 0){
-          //Ignore
-        }else{
-          //performanceTable.rows[i].cells[j].children[0].value = cells[j]; 
-          var item = performanceTable.rows[i].cells[j].children[0];
-          //console.log(item);
-          angular.element(item).trigger('change');
-        }
-      }
-    }
-  }, 600);
-}
-
-// Upload file to get the perfomance values
-function Upload2() {
-  console.log('Getting file again to update performance values...');
-  var fileUpload = document.getElementById("fileUpload");
-  var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
-  if (regex.test(fileUpload.value.toLowerCase())) {
-    if (typeof (FileReader) != "undefined") {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var table = document.createElement("table");
-        var performanceTable = document.getElementById("performanceTable");
-        var numAlternatives = performanceTable.rows.length;
-        var rows = e.target.result.split("\n");
-        //Check number of rows
-        var numRows = rows.length;
-        if(numRows != numAlternatives){
-          console.log('Number of rows are incorrect or do not correspond to the actual number of alternatives.');
-          //alert("CSV file was rejected: number of rows are incorrect.\n\nNumber of rows = 1 header line for criteria names + total number of alternatives. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...\n Also be careful with empty lines, they count as a row.");
-          $('#importing').hide();
-          return 0;
-        }
-        //Check number of columns
-        var numCriteria = performanceTable.rows[0].cells.length;
-        var c = rows[1].split(",");
-        var numCells = c.length;
-        if(numCells != numCriteria){
-          console.log('Number of columns are incorrect or do not correspond to the actual number of criteria.');
-          //alert("CSV file was rejected: number of columns are incorrect.\n\nNumber of columns = 1 header column for alternative names + total number of criteria. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...");
-          $('#importing').hide();
-          return 0;    
-        }
-        for (var i = 0; i < rows.length; i++) {
-          var row = table.insertRow(-1);
-          var cells = rows[i].split(",");
-          for (var j = 0; j < cells.length; j++) {
-            if(i == 0 | j == 0){
-              //Ignore headers
-            }else{
-              //console.log('Row: '+i+' col: '+j+' value: '+cells[j]);
-              performanceTable.rows[i].cells[j].children[0].value = cells[j]; 
-            }
-            var cell = row.insertCell(-1);
-            cell.innerHTML = cells[j];
-          }
-        }
-        table.className = 'table table-bordered horizontal';
-        table.id = 'performanceTable';
-        var dvCSV = document.getElementById("dvCSV");
-        dvCSV.innerHTML = "";
-        dvCSV.appendChild(table);
-        $scope.uploadfileAlt();
-      }
-      reader.readAsText(fileUpload.files[0]);
-    } else {
-      alert("This browser does not support HTML5.");
-      $('#importing').hide();
-    }
-  } else {
-    alert("Please upload a valid CSV file.");
-    $('#importing').hide();
-  }
-}
-
 // If a alternative is created or deleted or even updated manually, update performance table from 0
 $scope.resetPerformanceTable  = function() {
     $timeout( function(){
@@ -784,115 +605,116 @@ $scope.resetPerformanceTable  = function() {
         refresh();
         $scope.chunksCat = $scope.alternatives;
         console.log('Performance Table has been updated.');
+        $('#loading').hide();
     }, 800);
 }
 
 }]);
 
 //Export alternatives into a .csv file without the description column 
-app.directive('exportAlternativesToCsvWithoutDescription',function(){
-    return {
-      restrict: 'A',
-      link: function (scope, element, attrs) {
-        var el = element[0];
-          element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("alternativeTbl");
-            var csvString = '';
-            for(var i=0; i<table.rows.length;i++){
-              if(i == 1){
-                //Ignore save/update line
-              }else{
-                var rowData = table.rows[i].cells;
-                for(var j=0; j<rowData.length-2;j++){ //number of columns to export
-                  csvString = csvString + rowData[j].innerHTML + ",";
-                }
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
-              }
-          }
-            csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'alternatives.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          });
-      }
-    }
-});
+// app.directive('exportAlternativesToCsvWithoutDescription',function(){
+//     return {
+//       restrict: 'A',
+//       link: function (scope, element, attrs) {
+//         var el = element[0];
+//           element.bind('click', function(e){
+//             //var table = e.target.nextElementSibling;
+//             var table = document.getElementById("alternativeTbl");
+//             var csvString = '';
+//             for(var i=0; i<table.rows.length;i++){
+//               if(i == 1){
+//                 //Ignore save/update line
+//               }else{
+//                 var rowData = table.rows[i].cells;
+//                 for(var j=0; j<rowData.length-2;j++){ //number of columns to export
+//                   csvString = csvString + rowData[j].innerHTML + ",";
+//                 }
+//                 csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+//                 csvString = csvString + "\n";
+//               }
+//           }
+//             csvString = csvString.substring(0, csvString.length - 1);
+//             var a = $('<a/>', {
+//                 style:'display:none',
+//                 href:'data:application/octet-stream;base64,'+btoa(csvString),
+//                 download:'alternatives.csv'
+//             }).appendTo('body')
+//             a[0].click()
+//             a.remove();
+//           });
+//       }
+//     }
+// });
 
 
 //Export alternatives into a .csv file 
-app.directive('exportAlternativesToCsv',function(){
-    return {
-      restrict: 'A',
-      link: function (scope, element, attrs) {
-        var el = element[0];
-          element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("alternativeTbl");
-            var csvString = '';
-            for(var i=0; i<table.rows.length;i++){
-              if(i == 1){
-                //Ignore save/update line
-              }else{
-                var rowData = table.rows[i].cells;
-                for(var j=0; j<rowData.length-1;j++){ //number of columns to export
-                  csvString = csvString + rowData[j].innerHTML + ",";
-                }
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
-              }
-          }
-            csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'alternatives.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          });
-      }
-    }
-});
+// app.directive('exportAlternativesToCsv',function(){
+//     return {
+//       restrict: 'A',
+//       link: function (scope, element, attrs) {
+//         var el = element[0];
+//           element.bind('click', function(e){
+//             //var table = e.target.nextElementSibling;
+//             var table = document.getElementById("alternativeTbl");
+//             var csvString = '';
+//             for(var i=0; i<table.rows.length;i++){
+//               if(i == 1){
+//                 //Ignore save/update line
+//               }else{
+//                 var rowData = table.rows[i].cells;
+//                 for(var j=0; j<rowData.length-1;j++){ //number of columns to export
+//                   csvString = csvString + rowData[j].innerHTML + ",";
+//                 }
+//                 csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+//                 csvString = csvString + "\n";
+//               }
+//           }
+//             csvString = csvString.substring(0, csvString.length - 1);
+//             var a = $('<a/>', {
+//                 style:'display:none',
+//                 href:'data:application/octet-stream;base64,'+btoa(csvString),
+//                 download:'alternatives.csv'
+//             }).appendTo('body')
+//             a[0].click()
+//             a.remove();
+//           });
+//       }
+//     }
+// });
 
 //Export performance table into a .csv file 
-app.directive('exportPerformanceToCsv',function(){
-    return {
-      restrict: 'A',
-      link: function (scope, element, attrs) {
-        var el = element[0];
-          element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("performanceTable");
-            var csvString = '';
-            for(var i=0; i<table.rows.length;i++){
-                var rowData = table.rows[i].cells;
-                for(var j=0; j<rowData.length;j++){ //number of columns to export
-                  // See if it's a header value or a first column value
-                  if(i == 0 || j == 0){ 
-                    csvString = csvString + rowData[j].innerHTML + ",";
-                  }else{
-                    csvString = csvString + rowData[j].children[0].value + ",";
-                  }
-                }
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
-          }
-            csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'performance_table.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          });
-      }
-    }
-});
+// app.directive('exportPerformanceToCsv',function(){
+//     return {
+//       restrict: 'A',
+//       link: function (scope, element, attrs) {
+//         var el = element[0];
+//           element.bind('click', function(e){
+//             //var table = e.target.nextElementSibling;
+//             var table = document.getElementById("performanceTable");
+//             var csvString = '';
+//             for(var i=0; i<table.rows.length;i++){
+//                 var rowData = table.rows[i].cells;
+//                 for(var j=0; j<rowData.length;j++){ //number of columns to export
+//                   // See if it's a header value or a first column value
+//                   if(i == 0 || j == 0){ 
+//                     csvString = csvString + rowData[j].innerHTML + ",";
+//                   }else{
+//                     csvString = csvString + rowData[j].children[0].value + ",";
+//                   }
+//                 }
+//                 csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+//                 csvString = csvString + "\n";
+//           }
+//             csvString = csvString.substring(0, csvString.length - 1);
+//             var a = $('<a/>', {
+//                 style:'display:none',
+//                 href:'data:application/octet-stream;base64,'+btoa(csvString),
+//                 download:'performance_table.csv'
+//             }).appendTo('body')
+//             a[0].click()
+//             a.remove();
+//           });
+//       }
+//     }
+// });
 

@@ -49,7 +49,7 @@
         <div id="contentRegister" class="jumbotron text-center" ng-controller="registerController">
             <h1>Sign Up!</h1>
             <br>
-            <div ng-show="myForm.$invalid" class="alert alert-danger">
+            <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
               <div ng-show="myForm.name.$error.required">
                 Name is required!
               </div>
@@ -67,7 +67,7 @@
                 <input id="loginForm" type="text" name="username" ng-model="username" required/><br>
                 <label id="labelText" for="password">Password</label><br>
                 <input id="loginForm" type="password" name="password" ng-model="password" required/><br>
-                <input id="btnSubmit" type="submit" value="Sign Up" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.username.$dirty && myForm.username.$invalid || myForm.password.$dirty && myForm.password.$invalid" ng-click="myForm.name.$valid && myForm.username.$valid && myForm.password.$valid && createUser();"/>
+                <input id="btnSubmit" type="submit" value="Sign Up" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.username.$dirty && myForm.username.$invalid || myForm.password.$dirty && myForm.password.$invalid" ng-click="submitted=true; myForm.name.$valid && myForm.username.$valid && myForm.password.$valid && createUser();"/>
             </form>
             <br>
             <p id="okRegister">{{doneMessage}}</p> 

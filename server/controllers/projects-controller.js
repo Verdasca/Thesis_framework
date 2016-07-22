@@ -7,6 +7,7 @@ var Criterion = require('../models/criterion');
 var Category = require('../models/category');
 var Performance = require('../models/performanceTable');
 var Profile = require('../models/profileTable');
+var Person = require('../models/person');
 
 //Create a project
 module.exports.create = function (req, res) {
@@ -68,7 +69,7 @@ module.exports.edit = function (req, res) {
     Project.findOneAndUpdate({
             _id:req.params.id
         },
-        {$set:{ name:req.body.name, dateSet:req.body.dateSet, methodChosen:req.body.methodChosen, decimals:req.body.decimals, ratioOption:req.body.ratioOption, ratioZ:req.body.ratioZ, ratioZMax:req.body.ratioZMax, ratioZMin:req.body.ratioZMin, ratioZInterval:req.body.ratioZInterval, ratioZ1:req.body.ratioZ1, ratioZ2:req.body.ratioZ2, ratioZ3:req.body.ratioZ3 }},
+        {$set:{ name:req.body.name, dateSet:req.body.dateSet, methodChosen:req.body.methodChosen, numExecutions:req.body.numExecutions, orderType:req.body.orderType, decimals:req.body.decimals, ratioOption:req.body.ratioOption, ratioZ:req.body.ratioZ, ratioZMax:req.body.ratioZMax, ratioZMin:req.body.ratioZMin, ratioZInterval:req.body.ratioZInterval, ratioZ1:req.body.ratioZ1, ratioZ2:req.body.ratioZ2, ratioZ3:req.body.ratioZ3 }},
         {upsert:true},
         function(err,project){
             if(err){
@@ -81,15 +82,58 @@ module.exports.edit = function (req, res) {
     });
 }
 
+//Add new result into the project
+module.exports.addResult = function (req, res) {
+    console.log('Adding results...');
+    var projectID = req.params.projectId;
+    //console.log('ProId: '+projectID+' obj: '+req.body.resName);
+    //console.log(req.body);
+    var id = req.body.id;
+    var n = req.body.resName;
+    var date = req.body.date;
+    var type = req.body.orderPeople;
+    Project.findOneAndUpdate( 
+        { '_id': projectID },
+        { $push: { results: {identifier : id, name: n, resultDate: date, orderPeople: type} } },
+        {safe: true, upsert: true, new : true},
+        function(err, result) {
+            if(err){
+                res.send(err);
+            }
+            res.send('Result added.');
+    });
+}
+// projects.update_one({'_id': ObjectId(project_id), 'results.result.identifier': executions}, {'$push': {'results.$.alternativeValues': {'$each': data}}})
+//Update new result
+module.exports.saveResult = function (req, res) {
+    //console.log('Saving result...');
+    var projectID = req.params.projectId;
+    var resultID = req.params.id;
+    //console.log('ProId: '+projectID+' ResId: '+resultID+' obj: '+req.body);
+    //console.log(req.body);
+    var name = req.body.name;
+    var age = req.body.age;
+    Project.findOneAndUpdate( 
+        { '_id': projectID, 'results.identifier': resultID },
+        { $push: {'results.$.personValues': {personName : name, personAge: age} } },
+        {safe: true},
+        function(err, result) {
+            if(err){
+                res.send(err);
+            }
+            res.send('Result updated.');
+    });
+}
+
 //Delete a result from the project
 module.exports.deleteResult = function (req, res) {
     console.log('Deleting result...');
     var projectID = req.params.projectId;
     var resultID = req.params.id;
-    console.log('Project: '+projectID +' ResultId: '+resultID);
+    //console.log('Project: '+projectID +' ResultId: '+resultID);
     Project.update( 
       { '_id': projectID },
-      { $pull: { results : { result : {identifier : resultID} } } },
+      { $pull: { results : {identifier : resultID} } },
       { safe: true },
       function removeConnectionsCB(err, obj) {
             if(err){
@@ -99,18 +143,8 @@ module.exports.deleteResult = function (req, res) {
       });
 }
 
-//Delete a project
+//Delete a project + delete the associated data from other collections
 module.exports.delete = function(req, res){
-        // Project.remove({
-        //     _id : req.params.id
-        // }, function(err, project) {
-        //     if (err) {
-        //         throw new Error(err);
-        //     }
-        //     res.send(project);
-
-        // });
-
     var project = req.params.projectId;
     // Before deleting the project, all the data associated with the project must be deleted as well
     //Delete all associated parameters
@@ -203,6 +237,21 @@ module.exports.delete = function(req, res){
                 });
             });
     });
+    //Delete all associated people
+    Project.findOne({ _id: project })
+        .populate('people')
+        .exec(function (err, project) {
+            if (err){
+                //res.send(err);
+            }
+            var person = project.people;
+            Project.update({ _id: project }, {'$pullAll': {people: person }})
+              .exec(function(err) {
+                Person.remove({ _id: { $in: person }}, function(err, numberRemoved) {
+                  // The identified person are now removed.
+                });
+            });
+    });
     //console.log('ID user: '+req.params.id+' id project: '+req.params.projectId);
     User.update({ '_id' :req.params.id }, {$pull: { projects: project }} )
       .exec(function(err) {
@@ -218,57 +267,6 @@ module.exports.delete = function(req, res){
 //Duplicate a project
 module.exports.duplicate = function(req, res){
     var projectID = req.params.projectId;
-
-    // Project.findOne({ _id: projectID })
-    //     .exec(function (err, project) {
-    //         if (err){
-    //             res.send(err);
-    //         }
-    //         project._id = mongoose.Types.ObjectId();
-    //         var id = project._id;
-    //         project.name = project.name + '_2';
-    //         project.creationDate = new Date();
-    //         project.dateSet = new Date();
-    //         project.isNew = true; 
-    //         //var alternatives = project.alternatives;
-    //         project.save(function (err, result) {
-    //             //res.json(result);
-    //         });
-    //         // Save alternatives with a new id so they don't have the same alternatives
-    //         Project.findOne({ _id: projectID })
-    //             .populate('alternatives')
-    //             .exec(function (err, project) {
-    //                 if (err){
-    //                     //res.send(err);
-    //                 }
-    //                 var alternative = project.alternatives;
-    //                 Alternative.update({'$pushAll': {alternatives: alternative }})
-    //                   .exec(function(err, alts) {
-    //                     Project.findOne({ _id: id })
-    //                         .exec(function (err, project) {
-    //                             if (err){
-    //                                 res.send(err);
-    //                             }
-    //                             // First push then save to do the association
-    //                             project.alternatives.push(alts);
-    //                             project.save();
-    //                         });
-    //                 });
-    //         });
-    //         // Associate/save the new project to the user
-    //         User.findOne({ _id:req.params.id })
-    //             .populate('projects')
-    //             .exec(function (err, user) {
-    //             if (err){
-    //               res.send(err);
-    //             }
-    //             // First push then save to do the association
-    //             user.projects.push(project);
-    //             user.save();
-    //             //res.send('Clone project complete.');
-    //             res.send('Cloning project plus respective parameters complete.');
-    //         });
-    // });
 
     Project.findOne({ _id: projectID })
         .exec(function (err, project) {
@@ -288,6 +286,7 @@ module.exports.duplicate = function(req, res){
             project.parameters = [];
             project.performancetables = [];
             project.profiletables = [];
+            project.people = [];
             project.results = [];
             project.isNew = true; 
             //var alternatives = project.alternatives;
@@ -465,6 +464,36 @@ module.exports.duplicate = function(req, res){
                             console.log(err);
                         }else{
                             console.log("Successfully clone profiles.");
+                        }
+                    });
+            });
+            // Save people with a new id and associate the new id to the clone project
+            Project.findOne({ _id: projectID })
+                .populate('people')
+                .exec(function (err, project) {
+                    if (err){
+                        //res.send(err);
+                    }
+                    var person = project.people;
+                    var pers = [];
+                    var per = {
+                        name: "",
+                        age: 0
+                    };
+                    for (var i = 0; i < person.length; i++) {
+                        per.name = person[i].name;
+                        per.age = person[i].age;
+                        var newper = new Person(per);
+                        newper.save(function (err, result) {
+                                //res.json(result);
+                        });
+                        pers.push(newper);
+                    }
+                    Project.update({ _id: newId}, {'$pushAll': {people: pers}},{upsert:true},function(err){
+                        if(err){
+                            console.log(err);
+                        }else{
+                            console.log("Successfully clone people.");
                         }
                     });
             });

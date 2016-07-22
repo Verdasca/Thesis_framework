@@ -87,12 +87,14 @@
 }
 
 #sections:hover,
-#sectionsData:hover{
+#sectionsData:hover,
+#sectionsResults:hover{
     background-color: #033773;
 }     
 
 #sections,
-#sectionsData{
+#sectionsData,
+#sectionsResults{
     margin-bottom: 5px;
 }
 
@@ -146,12 +148,12 @@
 #descriptionTable{
   margin: auto;
   text-align: left;
-  width: 80%;
+  width: 90%;
 }
 
 #descriptionTd{
-    font-size: 18px;  
-    vertical-align: middle;
+    font-size: 17px;  
+    vertical-align: left;
 }
 
 #tutorial{
@@ -308,7 +310,6 @@
 #dataTbl{
   margin: auto;
   text-align: center;
-  width: 70%; 
   margin-top: 25px;
   margin-bottom: 10px;
 }

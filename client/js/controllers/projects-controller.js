@@ -11,6 +11,7 @@ $scope.data = {
     availableOptions: [
       {id: 'notSelected', name: '<-- Select method for the project -->'},
       {id: 'Electre Tri-C', name: 'Electre Tri-C'},
+      {id: 'Order People', name: 'Order People'},
       {id: 'Void', name: 'Void'}
     ],
 };
@@ -69,12 +70,14 @@ $scope.deleteProject = function(project) {
         $scope.projects.splice(idx, 1);
       }
       refresh();
+      refresh();
     })
     .error(function() {
       var idx = $scope.projects.indexOf(project);
       if (idx >= 0) {
         $scope.projects.splice(idx, 1);
       }
+      refresh();
       refresh();
     });
 }
@@ -129,6 +132,9 @@ $scope.openProject = function (project){
   switch (method) {
     case 'Electre Tri-C':
       $window.location.href = '/description.html?projectId='+id+'&n='+username; 
+      break;
+    case 'Order People':
+      $window.location.href = '/description_orderPeople.html?projectId='+id+'&n='+username; 
       break;
     case 'Void':
       $window.location.href = '/descriptionVoid.html?projectId='+id+'&n='+username; 

@@ -1,4 +1,4 @@
-var app = angular.module("configurations-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("configurations-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'ui']);
 
 app.controller('configurationsController', ['$scope', '$http', '$resource', '$timeout', 'orderByFilter', '$location', '$window', function ($scope, $http, $resource, $timeout, orderBy, $location, $window) {
 
@@ -8,8 +8,12 @@ $scope.criteriaDone = false;
 $scope.alternativesDone = false;
 $scope.configurationsDone = false;
 
-// Hide loader
-$('#loading').hide();
+var Categories = $resource('/api/categories');
+var Parameters = $resource('/api/parameters');
+var Profiles = $resource('/api/profiles');
+
+// Hide loader and importing
+$('#importing').hide();
 
 //Get all data when loading body
 $scope.run = function () {
@@ -57,6 +61,67 @@ $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
     console.log('Error: ' + data);
 });    
 
+// Refresh the page current data after closing the import section (so the data on the page is actualized with the imported data)
+$scope.refreshBeforeClosing = function(){
+  $('#loading').show();
+  $scope.updateProject();
+  refresh();
+  refreshCriteria();
+  refreshParameter();
+  refreshProfiles();
+  $timeout( function(){
+    $scope.chunksCat = [];
+    $scope.chunksCat = $scope.categories;
+    //Update profile table if necessary
+    $scope.confirmProfile(); 
+    refreshProfiles();
+  }, 1000);
+}
+
+// Reset profile perf. table if criteria or categories were imported
+$scope.refreshNewProfileBeforeClosing = function(){
+  $('#loading').show();
+  $scope.updateProject();
+  refresh();
+  refreshCriteria();
+  refreshParameter();
+  refreshProfiles();
+  $scope.resetProfileTable();
+}
+
+// Refresh profile perf. table if imported
+$scope.refreshProfilesBeforeClosing = function(){
+  $('#loading').show();
+  $scope.updateProject();
+  $http.get('/api/parameters/' + $scope.projectID).success(function(data) {
+    $scope.parameters = data.parameters;
+  })
+  $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
+    $scope.criterions = data.criteria;
+    $http.get('/api/categories/' + $scope.projectID).success(function(data) {
+      $scope.project = data;
+      $scope.categories = data.categories;
+      $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
+        $scope.profiles = data.profiletables;
+        $scope.chunksCat = [];
+        $scope.chunksCat = $scope.categories;
+        //Order profiles by action before slicing it
+        $scope.profiles2 = orderBy($scope.profiles, $scope.propertyName, $scope.reverse);
+        //Get all profiles to put them inside a table
+        var i, l = $scope.profiles.length;
+        var x = $scope.criterions.length;
+        // Slice the profiles results so it can be put inside a table numAlternativeXnumCriteria
+        $scope.chunks = [];
+        for ( i = 0; i < l; i += x) {
+            $scope.chunks.push( $scope.profiles2.slice(i, i + x));
+        }
+        console.log('Done slicing profiles');
+        $('#loading').hide();
+      });  
+    }); 
+  });
+}
+
 var refreshCriteria = function(){
   $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
     //console.log('I got the data I requested');
@@ -65,12 +130,28 @@ var refreshCriteria = function(){
   });  
 }  
 
-var Categories = $resource('/api/categories');
-
 //Get the data from categories in mongoDB
 $http.get('/api/categories/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.categories = data.categories;
+  //Get the data from profiles in mongoDB
+  $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
+      $scope.profiles = data.profiletables;
+      // Time to execute the profile table review 
+      $timeout( function(){
+          $scope.chunksCat = [];
+          refresh();
+          refreshCriteria(); 
+          refreshProfiles();
+          $scope.chunksCat = $scope.categories;
+          //Update profile table if necessary
+          $scope.confirmProfile(); 
+          refreshProfiles();
+      }, 500);
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+  });
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
       $scope.criteriaDone = false;
@@ -92,11 +173,11 @@ $http.get('/api/categories/' + $scope.projectID).success(function(data) {
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
       $scope.configurationsDone = true;
     }
-    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-      document.getElementById('buttonDiviz').disabled = false;
-    } else{
-      document.getElementById('buttonDiviz').disabled = true;
-    }
+    // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+    //   document.getElementById('methodButtons').disabled = false;
+    // } else{
+    //   document.getElementById('methodButtons').disabled = true;
+    // }
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -119,15 +200,16 @@ var checkStatus = function(){
     document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
     $scope.configurationsDone = true;
   }
-  if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-    document.getElementById('buttonDiviz').disabled = false;
-  } else{
-    document.getElementById('buttonDiviz').disabled = true;
-  }
+  // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+  //   document.getElementById('methodButtons').disabled = false;
+  // } else{
+  //   document.getElementById('methodButtons').disabled = true;
+  // }
 }
 
 //Create category
 $scope.createCategory = function () {
+  $('#loading').show();
   // var category = new Categories();
   // category.name = $scope.category.name;
   // category.rank = $scope.category.rank;
@@ -157,6 +239,7 @@ $scope.createCategory = function () {
 
 //Delete category
 $scope.deleteCategory = function(category) {
+  $('#loading').show();
   var i = $scope.project._id;
   var id = category._id;
   $http.delete('/api/category/' + i + '/' + id)
@@ -202,6 +285,7 @@ $scope.updateCategory = function() {
 
 //Update the value and reset model
 $scope.updateCategory2 = function(category) {
+  $('#loading').show();
   var i = category._id;
   category.name = $scope.model.name;
   category.action = $scope.model.action;
@@ -306,8 +390,6 @@ $scope.updateCategory = function() {
   });
 }
 
-var Parameters = $resource('/api/parameters');
-
 //Get parameter in mongoDB
 $http.get('/api/parameters/' + $scope.projectID).success(function(data) {
   $scope.project = data;
@@ -356,18 +438,6 @@ $scope.updateParameter = function(parameter) {
   });
   $scope.updateProject();
 }
-
-
-var Profiles = $resource('/api/profiles');
-
-//Get the data from profiles in mongoDB
-$http.get('/api/profiles/' + $scope.projectID).success(function(data) {
-    $scope.project = data;
-    $scope.profiles = data.profiletables;
-  })
-  .error(function(data) {
-    console.log('Error: ' + data);
-});
 
 var refreshProfiles = function(){
   $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
@@ -563,6 +633,7 @@ $scope.confirmProfile  = function() {
             $scope.chunks.push( $scope.profiles2.slice(i, i + x));
         }
         console.log('Done slicing profiles');
+        $('#loading').hide();
     }else{
       if(numExistingProfiles == 0){
 
@@ -571,21 +642,10 @@ $scope.confirmProfile  = function() {
         $scope.deleteProfile2();
       }
       console.log('Profile Table has been updated.');
+      $('#loading').hide();
     }
   //}
 }
-
-// Time to execute the profile table review 
-$timeout( function(){
-    $scope.chunksCat = [];
-    refresh();
-    refreshCriteria(); 
-    refreshProfiles();
-    $scope.chunksCat = $scope.categories;
-    //Update profile table if necessary
-    $scope.confirmProfile(); 
-    refreshProfiles();
-}, 500);
 
 // If a category is created or deleted or even updated, update profile table from 0
 $scope.resetProfileTable  = function() {
@@ -598,6 +658,7 @@ $scope.resetProfileTable  = function() {
         refreshProfiles();
         $scope.chunksCat = $scope.categories;
         console.log('Profile Table has been updated.');
+        $('#loading').hide();
     }, 800);
 }
 
@@ -632,7 +693,7 @@ $scope.changeSection = function(name){
   if(sectionName == 'divizServer'){
     // Show loader when execute button was clicked
     $('#loading').show();
-    $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;      
+    //$window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;      
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n;  
   }
@@ -658,270 +719,73 @@ $scope.updateProject = function() {
 }]);
 
 //Export categories into a .csv file 
-app.directive('exportCategoriesToCsv',function(){
-    return {
-      restrict: 'A',
-      link: function (scope, element, attrs) {
-        var el = element[0];
-          element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("categoryTbl");
-            var csvString = '';
-            for(var i=0; i<table.rows.length;i++){
-              if(i == 1){
-                //Ignore save/update line
-              }else{
-                var rowData = table.rows[i].cells;
-                for(var j=1; j<rowData.length-1;j++){ //number of columns to export
-                  csvString = csvString + rowData[j].innerHTML + ",";
-                }
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
-              }
-          }
-            csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'categories.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          });
-      }
-    }
-});
+// app.directive('exportCategoriesToCsv',function(){
+//     return {
+//       restrict: 'A',
+//       link: function (scope, element, attrs) {
+//         var el = element[0];
+//           element.bind('click', function(e){
+//             //var table = e.target.nextElementSibling;
+//             var table = document.getElementById("categoryTbl");
+//             var csvString = '';
+//             for(var i=0; i<table.rows.length;i++){
+//               if(i == 1){
+//                 //Ignore save/update line
+//               }else{
+//                 var rowData = table.rows[i].cells;
+//                 for(var j=1; j<rowData.length-1;j++){ //number of columns to export
+//                   csvString = csvString + rowData[j].innerHTML + ",";
+//                 }
+//                 csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+//                 csvString = csvString + "\n";
+//               }
+//           }
+//             csvString = csvString.substring(0, csvString.length - 1);
+//             var a = $('<a/>', {
+//                 style:'display:none',
+//                 href:'data:application/octet-stream;base64,'+btoa(csvString),
+//                 download:'categories.csv'
+//             }).appendTo('body')
+//             a[0].click()
+//             a.remove();
+//           });
+//       }
+//     }
+// });
 
 //Export profile table into a .csv file 
-app.directive('exportProfileToCsv',function(){
-    return {
-      restrict: 'A',
-      link: function (scope, element, attrs) {
-        var el = element[0];
-          element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("profileTable");
-            var csvString = '';
-            for(var i=0; i<table.rows.length;i++){
-                var rowData = table.rows[i].cells;
-                for(var j=0; j<rowData.length;j++){ //number of columns to export
-                  // See if it's a header value or a first column value
-                  if(i == 0 || j == 0){ 
-                    csvString = csvString + rowData[j].innerHTML + ",";
-                  }else{
-                    csvString = csvString + rowData[j].children[0].value + ",";
-                  }
-                }
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
-          }
-            csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'profile_table.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          });
-      }
-    }
-});
-
-//Export weight method 1 ratio results into a .csv file 
-app.directive('exportWeightsToCsv',function(){
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            var el = element[0];
-            element.bind('click', function(e){
-                //var table = e.target.nextElementSibling;
-                var table = document.getElementById("weightTbl");
-                var csvString = '';
-                for(var i=0; i<table.rows.length;i++){
-                    var rowData = table.rows[i].cells;
-                    for(var j=0; j<rowData.length;j++){ //number of columns to export
-                        csvString = csvString + rowData[j].innerHTML + ",";
-                    }
-                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                    csvString = csvString + "\n";
-                }
-                csvString = csvString.substring(0, csvString.length - 1);
-                var a = $('<a/>', {
-                    style:'display:none',
-                    href:'data:application/octet-stream;base64,'+btoa(csvString),
-                    download:'weight_Results.csv'
-                }).appendTo('body')
-                a[0].click()
-                a.remove();
-            });
-        }
-    }
-});
-
-//Export weight method 3 ratios results into a .csv file 
-app.directive('exportTwoWeightsToCsv',function(){
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            var el = element[0];
-            element.bind('click', function(e){
-                //var table = e.target.nextElementSibling;
-                var table = document.getElementById("weightTbl2");
-                var csvString = '';
-                for(var i=0; i<table.rows.length;i++){
-                    var rowData = table.rows[i].cells;
-                    for(var j=0; j<rowData.length;j++){ //number of columns to export
-                        csvString = csvString + rowData[j].innerHTML + ",";
-                    }
-                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                    csvString = csvString + "\n";
-                }
-                csvString = csvString.substring(0, csvString.length - 1);
-                var a = $('<a/>', {
-                    style:'display:none',
-                    href:'data:application/octet-stream;base64,'+btoa(csvString),
-                    download:'weight_Results_2.csv'
-                }).appendTo('body')
-                a[0].click()
-                a.remove();
-            });
-        }
-    }
-});
-
-app.directive('exportThreeWeightsToCsv',function(){
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            var el = element[0];
-            element.bind('click', function(e){
-                //var table = e.target.nextElementSibling;
-                var table = document.getElementById("weightTbl3");
-                var csvString = '';
-                for(var i=0; i<table.rows.length;i++){
-                    var rowData = table.rows[i].cells;
-                    for(var j=0; j<rowData.length;j++){ //number of columns to export
-                        csvString = csvString + rowData[j].innerHTML + ",";
-                    }
-                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                    csvString = csvString + "\n";
-                }
-                csvString = csvString.substring(0, csvString.length - 1);
-                var a = $('<a/>', {
-                    style:'display:none',
-                    href:'data:application/octet-stream;base64,'+btoa(csvString),
-                    download:'weight_Results_3.csv'
-                }).appendTo('body')
-                a[0].click()
-                a.remove();
-            });
-        }
-    }
-});
-
-//Export weight method 1 ratio results into a .csv file, only with name and norm. weight 
-app.directive('exportOnlyWeightsToCsv',function(){
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            var el = element[0];
-            element.bind('click', function(e){
-                //var table = e.target.nextElementSibling;
-                var table = document.getElementById("weightTbl");
-                var csvString = '';
-                for(var i=0; i<table.rows.length;i++){
-                    var rowData = table.rows[i].cells;
-                    for(var j=0; j<rowData.length;j++){ //number of columns to export
-                        if(j == 1 || j == 2){
-                            //Do nothing
-                        }else{
-                            csvString = csvString + rowData[j].innerHTML + ",";
-                        }
-                    }   
-                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                    csvString = csvString + "\n";   
-                }
-                csvString = csvString.substring(0, csvString.length - 1);
-                var a = $('<a/>', {
-                    style:'display:none',
-                    href:'data:application/octet-stream;base64,'+btoa(csvString),
-                    download:'weights.csv'
-                }).appendTo('body')
-                a[0].click()
-                a.remove();
-            });
-        }
-    }
-});
-
-//Export weight method 3 ratios results into a .csv file, only with name and norm. weight 
-app.directive('exportTwoOnlyWeightsToCsv',function(){
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            var el = element[0];
-            element.bind('click', function(e){
-                //var table = e.target.nextElementSibling;
-                var table = document.getElementById("weightTbl2");
-                var csvString = '';
-                for(var i=0; i<table.rows.length;i++){
-                    var rowData = table.rows[i].cells;
-                    for(var j=0; j<rowData.length;j++){ //number of columns to export
-                        if(j == 1 || j == 2){
-                            //Do nothing
-                        }else{
-                            csvString = csvString + rowData[j].innerHTML + ",";
-                        }
-                    }   
-                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                    csvString = csvString + "\n";   
-                }
-                csvString = csvString.substring(0, csvString.length - 1);
-                var a = $('<a/>', {
-                    style:'display:none',
-                    href:'data:application/octet-stream;base64,'+btoa(csvString),
-                    download:'weights_2.csv'
-                }).appendTo('body')
-                a[0].click()
-                a.remove();
-            });
-        }
-    }
-});
-
-app.directive('exportThreeOnlyWeightsToCsv',function(){
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            var el = element[0];
-            element.bind('click', function(e){
-                //var table = e.target.nextElementSibling;
-                var table = document.getElementById("weightTbl3");
-                var csvString = '';
-                for(var i=0; i<table.rows.length;i++){
-                    var rowData = table.rows[i].cells;
-                    for(var j=0; j<rowData.length;j++){ //number of columns to export
-                        if(j == 1 || j == 2){
-                            //Do nothing
-                        }else{
-                            csvString = csvString + rowData[j].innerHTML + ",";
-                        }
-                    }   
-                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                    csvString = csvString + "\n";   
-                }
-                csvString = csvString.substring(0, csvString.length - 1);
-                var a = $('<a/>', {
-                    style:'display:none',
-                    href:'data:application/octet-stream;base64,'+btoa(csvString),
-                    download:'weights_3.csv'
-                }).appendTo('body')
-                a[0].click()
-                a.remove();
-            });
-        }
-    }
-}); 
-
+// app.directive('exportProfileToCsv',function(){
+//     return {
+//       restrict: 'A',
+//       link: function (scope, element, attrs) {
+//         var el = element[0];
+//           element.bind('click', function(e){
+//             //var table = e.target.nextElementSibling;
+//             var table = document.getElementById("profileTable");
+//             var csvString = '';
+//             for(var i=0; i<table.rows.length;i++){
+//                 var rowData = table.rows[i].cells;
+//                 for(var j=0; j<rowData.length;j++){ //number of columns to export
+//                   // See if it's a header value or a first column value
+//                   if(i == 0 || j == 0){ 
+//                     csvString = csvString + rowData[j].innerHTML + ",";
+//                   }else{
+//                     csvString = csvString + rowData[j].children[0].value + ",";
+//                   }
+//                 }
+//                 csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+//                 csvString = csvString + "\n";
+//           }
+//             csvString = csvString.substring(0, csvString.length - 1);
+//             var a = $('<a/>', {
+//                 style:'display:none',
+//                 href:'data:application/octet-stream;base64,'+btoa(csvString),
+//                 download:'profile_table.csv'
+//             }).appendTo('body')
+//             a[0].click()
+//             a.remove();
+//           });
+//       }
+//     }
+// });
 

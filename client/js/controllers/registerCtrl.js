@@ -6,6 +6,7 @@ app.controller('registerController', [ '$scope', '$http', '$resource', function(
     $scope.userinfo = {username: '', password: '', name: ''};
 
     $scope.createUser = function(){
+        $scope.doneMessage = '';
         $scope.userinfo.name = $scope.name;
         $scope.userinfo.username = $scope.username;
         $scope.userinfo.password = $scope.password;
@@ -19,6 +20,7 @@ app.controller('registerController', [ '$scope', '$http', '$resource', function(
             $scope.password = '';
         });
         $scope.doneMessage = 'Sign up complete!';
+        $scope.submitted=false;
     }
 
 }]);

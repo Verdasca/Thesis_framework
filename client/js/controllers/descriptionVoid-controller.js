@@ -1,9 +1,14 @@
-var app = angular.module("descriptionVoid-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'appRoutes', 'mainCtrl', 'ui']);
+var app = angular.module("descriptionVoid-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'appRoutes', 'ui']);
 
 app.controller('descriptionVoidController', ['$scope', '$http', '$resource', '$location', '$window', function ($scope, $http, $resource, $location, $window) {
 
 $scope.projectID = $location.search().projectId;
 $scope.username = $location.search().n
+
+// Hide loader
+$('#importing').hide();
+$('#executing').hide();
+$('#loading').hide();
 
 $http.get('/api/project/' + $scope.projectID).success(function(data) {
   $scope.project = data;

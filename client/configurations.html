@@ -30,12 +30,9 @@
     <script src="js/amcharts_3/amcharts/amcharts.js" type="text/javascript"></script>
     <script src="js/amcharts_3/amcharts/serial.js" type="text/javascript"></script>
     <script src="js/amcharts_3/amcharts/plugins/export/export.js" type="text/javascript"></script>
-    <script src="js/controllers/criterions-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/alternatives-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/performances-controller.js" type="text/javascript"></script>
     <script src="js/controllers/configurations-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/results-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/mainCtrl.js" type="text/javascript"></script>
+    <script src="js/controllers/import-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/export-controller.js" type="text/javascript"></script>
     <script src="js/sortable.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
@@ -64,8 +61,9 @@
                         <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
                         <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" class="active" ng-click="changeSection('configurations');">Decision Configurations</a></li>
-                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -76,22 +74,6 @@
         <div id="content" class="jumbotron text-center">
             <h2>Decision Configurations</h2>
             <br />
-            <!-- Selection ratios for the available methods -->
-            <!-- <table id="methodsTable">
-                <tr>
-                    <td id="selectionTitle">
-                        <label id="selectLabel">Select which section you want to go:</label>
-                    </td>
-                    <td>
-                        <form id='methods-form'>
-                            <input id="weightFunction" name='method' type='radio' value="weightR"><label for="weightFunction" id="ratioLabel" class="radio"> Determining weights of criteria</label> 
-                            <br/>
-                            <input id="electreTriCFunction" name='method' type='radio' value="electreTriCR"><label for="electreTriCFunction" id="ratioLabel" class="radio">Configurations (Electre Tri-C method)</label>  
-                        </form>
-                    </td>
-                </tr>
-            </table>
-            <br/> -->
             <!-- Electre Tri C method section -->
             <div id="electreTriCMethod" class="electreTriC box">
                 <h3>Category Set</h3>
@@ -112,60 +94,52 @@
                 <div>
                 <table id="categoryTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                     <tr>
+                        <th id="criHeader2" style="width:100px">Action</th>
                         <th style="width:90px"></th>
                         <th id="altHeader" style="width:10%">Rank</th>
                         <th id="altHeader" style="width:30%">Category Name</th>
                         <th id="altHeader" style="width:30%">Reference Action</th>
-                        <th id="criHeader2" style="width:150px">Action</th>
                     </tr>
                     <tr>
-                        <td></td>
-                        <td><!-- <input id="criBody" type="text" placeholder="Category rank" name="rank" ng-model="category.rank" required/> --></td>
-                        <td id="criBody2"><input id="criBody3" type="text" placeholder="Category name" name="name" ng-model="category.name" required/></td>
-                        <td id="criBody2"><input id="criBody3" type="text" placeholder="Reference Action" name="reference" ng-model="category.action" required/></td>
                         <td>
                             <input type="button" value="Add Category" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.reference.$dirty && myForm.reference.$invalid" ng-click="submitted=true; myForm.name.$valid && myForm.reference.$valid && createCategory();" class="btn btn-primary"/>
                             <!-- <input type="button" value="Update" ng-click="updateCategory(); resetProfileTable();" class="btn btn-info"/> -->
                         </td>
+                        <td></td>
+                        <td><!-- <input id="criBody" type="text" placeholder="Category rank" name="rank" ng-model="category.rank" required/> --></td>
+                        <td id="criBody2"><input id="criBody3" type="text" placeholder="Category name" name="name" ng-model="category.name" required/></td>
+                        <td id="criBody2"><input id="criBody3" type="text" placeholder="Reference Action" name="reference" ng-model="category.action" required/></td>
                     </tr>
                     <tr ng-repeat="category in categories | orderBy: 'rank'" ng-include="getTemplate(category)">
-                        <!-- <td id="criBody">{{ category.name }}</td>
-                        <td id="criBody">{{ category.rank }}</td>
-                        <td id="criBody">{{ category.action }}</td>
-                        <td>
-                            <input type="button" value="Edit" ng-click="editCategory(category)" class="btn btn-warning"/>
-                            <input type="button" value="Delete" ng-click="deleteCategory(category); resetProfileTable();" class="btn btn-danger"/> 
-                        </td>   -->   
                     </tr>
                 </table>
                 <script type="text/ng-template" id="display">
                     <td>
-                        <button ng-click="upRank(category);" class="btn btn-default">&#8593;</button>
-                        <button ng-click="downRank(category);" class="btn btn-default">&#8595;</button>
+                        <input type="button" value="Edit" ng-click="editCategory2(category)" class="btn btn-warning"/>
+                        <input type="button" value="Delete" ng-click="deleteCategory(category); resetProfileTable();" class="btn btn-danger"/> 
+                    </td> 
+                    <td>
+                        <button ng-click="upRank(category);" class="btn btn-default" style="padding-left:15px; padding-right:15px;">&#8593;</button>
+                        <button ng-click="downRank(category);" class="btn btn-default" style="padding-left:15px; padding-right:15px;">&#8595;</button>
                     </td>
                     <td id="criBody2">{{ category.rank }}</td>
                     <td id="criBody2">{{ category.name }}</td>
                     <td id="criBody2">{{ category.action }}</td>
-                    <td>
-                        <input type="button" value="Edit" ng-click="editCategory2(category)" class="btn btn-warning"/>
-                        <input type="button" value="Delete" ng-click="deleteCategory(category); resetProfileTable();" class="btn btn-danger"/> 
-                    </td>  
                 </script>
                 <script type="text/ng-template" id="edit">
-                    <!--//<td><input id="criInput" type="text" placeholder="Category name" ng-model="model.name"/></td>-->
-                    <td></td>
-                    <td></td>
-                    <td id="criBody2"><input id="criBody3" type="text" placeholder="Category name" ng-model="model.name"/></td>
-                    <td id="criBody2"><input id="criBody3" type="text" placeholder="Reference Action" ng-model="model.action"/></td>
                     <td>
                         <input type="button" value="Save" ng-click="updateCategory2(category); resetProfileTable();" class="btn btn-success"/>
                         <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
                     </td>
+                    <td></td>
+                    <td></td>
+                    <td id="criBody2"><input id="criBody3" type="text" placeholder="Category name" ng-model="model.name"/></td>
+                    <td id="criBody2"><input id="criBody3" type="text" placeholder="Reference Action" ng-model="model.action"/></td>
                 </script>
                 </div>
                 </form> 
-                <button export-categories-to-csv class="btn btn-default ng-isolate-scope" id="exportProfileBtn">Export to CSV</button>
-                <br/><br/>
+                <!-- <button export-categories-to-csv class="btn btn-default ng-isolate-scope" id="exportProfileBtn">Export to CSV</button> -->
+                <br/>
                 <hr style="border:1px solid #033773">
                 <h3>Parameters</h3>
                 <br/>
@@ -177,40 +151,13 @@
                 <div ng-repeat="parameter in parameters | limitTo: 1">
                     <label id="credibilityLambda">Credibility Lambda ( &lambda; ):</label>
                     <input id="credibilityInput" type="text" value="{{ parameter.credibility }}" placeholder="Credibility value" ng-model="parameter.credibility" ng-change="updateParameter(parameter);"/>
-                    <br/><br/>
-                    <small style="font-size:14px; color:#999;">&lambda; should have a value between [0 ; 1.0].</small>
+                    <small style="font-size:14px; color:#999; margin-left: 15px;">&lambda; should have a value between [0 ; 1.0].</small>
                 </div>
                 <br/>
                 <hr style="border:1px solid #033773">
                 <h3>Profiles Performance Table</h3>
                 <br/>
                 <div>
-                    <!-- <table id="profileTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
-                        <tr>
-                            <th id="criHeader">Reference Action</th>
-                            <th id="criHeader">Criterion</th>
-                            <th id="criHeader">Value</th>
-                            <th id="criHeader2" style="width:150px">Action</th>
-                        </tr>
-                        <tr>
-                            <td><input id="criBody" type="text" placeholder="Reference Action" ng-model="profile.action"/></td>
-                            <td><input id="criBody" type="text" placeholder="Criterion" ng-model="profile.criterion"/></td>
-                            <td><input id="criBody" type="text" placeholder="Value" ng-model="profile.value"/></td>
-                            <td>
-                                <input type="button" value="Save" ng-click="createProfile()" class="btn btn-primary"/>
-                                <input type="button" value="Update" ng-click="updateProfile()" class="btn btn-info"/>
-                            </td>
-                        </tr>
-                        <tr ng-repeat="profile in profiles">
-                            <td id="criBody">{{ profile.action }}</td>
-                            <td id="criBody">{{ profile.criterion }}</td>
-                            <td id="criBody">{{ profile.value }}</td>
-                            <td>
-                                <input type="button" value="Edit" ng-click="editProfile(profile)" class="btn btn-warning"/>
-                                <input type="button" value="Delete" ng-click="deleteProfile(profile)" class="btn btn-danger"/> 
-                            </td>     
-                        </tr>
-                    </table> -->
                     <br/>
                     <table style="display:none">
                         <tr ng-repeat="category in chunksCat | limitTo: chunksCat.length | orderBy: 'action' track by category.action">
@@ -232,14 +179,127 @@
                             </td>
                         </tr>
                     </table>
-                    <br/>
-                    <button export-profile-to-csv class="btn btn-default ng-isolate-scope" id="exportProfileBtn">Export to CSV</button>     
+                    <br/>   
                 </div>
             </div>
             <!-- END of Electre Tri C method section -->
+        </div>
+        <div id="dvCSV" style="display:none"></div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
-          <p id="loading-text">Executing...</p>
+          <p id="loading-text">Loading...</p>
+        </div>
+        <div id="importing">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Importing...</p>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="importController">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ng-click="!proTblImported && refreshBeforeClosing(); proTblImported && refreshProfilesBeforeClosing(); (categoriesImported || criteriaImported) && !proTblImported && refreshNewProfileBeforeClosing(); proTblImported=false; categoriesImported=false; criteriaImported=false;">&times;</button>
+                        <h4 class="modal-title">Import from CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Import data to:</b></p>
+                        <form>
+                            <input type="radio" ng-model="content" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"> Criteria<br>
+                            <input type="radio" ng-model="content" name="dataType" value="alternativesData" class="importRatio" style="margin-bottom: 5px;"> Alternatives<br>
+                            <input type="radio" ng-model="content" name="dataType" value="performanceData" class="importRatio" style="margin-bottom: 5px;"> Performance Table<br>
+                            <input type="radio" ng-model="content" name="dataType" value="altAndPerfData" class="importRatio" style="margin-bottom: 5px;"> Alternatives and Performance Table<br>
+                            <input type="radio" ng-model="content" name="dataType" value="categoriesData" class="importRatio" style="margin-bottom: 5px;"> Categories<br>
+                            <input type="radio" ng-model="content" name="dataType" value="parametersData" class="importRatio" style="margin-bottom: 5px;"> Parameters<br>
+                            <input type="radio" ng-model="content" name="dataType" value="profileData" class="importRatio" style="margin-bottom: 5px;"> Profile Performance Table
+                        </form>
+                        <input type="file" id="fileUpload"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                        <div class="wrapper">
+                            <p ng-show="content == 'criteriaData'">
+                                <b>CSV file structure example:</b><br>Name, Description, Direction, Measure, Weight, Indifference, Preference, Veto 
+                                <br>criterion name 1, test, min, ordinal, 10, 2, 4, 6<br>criterion name 2, other, max, cardinal, 1.0, 2.44, 9, 2.5<br>and so on...    
+                            </p>
+                            <p ng-show="content == 'alternativesData'">
+                                <b>CSV file structure example:</b><br>Name, Description
+                                <br>alternative name 1, water<br>alternative name 2, fire<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'performanceData'">
+                                <b>CSV file structure example:</b><br>Alternatives\Criteria, criterion name 1, criterion name 2, ...
+                                <br>alternative name 1, 4, 12.4, ...<br>alternative name 2, 10, 2.99, ...<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'altAndPerfData'">
+                                <b>CSV file structure example:</b><br>Alternatives\Criteria, criterion name 1, criterion name 2, ...
+                                <br>alternative name 1, 4, 12.4, ...<br>alternative name 2, 10, 2.99, ...<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'categoriesData'">
+                                <b>CSV file structure example:</b><br>Rank, Name, Reference Action
+                                <br>1, category name 1, reference action name 1<br>2, category name 2, reference action name 2<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'parametersData'">
+                                <b>CSV file structure example:</b><br>Credibility Lambda
+                                <br>0.85
+                            </p>
+                            <p ng-show="content == 'profileData'">
+                                <b>CSV file structure example:</b><br>Reference Actions\Criteria, criterion name 1, criterion name 2, ...
+                                <br>reference action name 1, 5.9, 21, ...<br>reference action name 2, 3.98, 3, ...<br>and so on... 
+                            </p>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="!proTblImported && refreshBeforeClosing(); proTblImported && refreshProfilesBeforeClosing(); (categoriesImported || criteriaImported) && !proTblImported && refreshNewProfileBeforeClosing(); proTblImported=false; categoriesImported=false; criteriaImported=false;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Export Modal -->
+        <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="exportController">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export to CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Export project data:</b></p>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li>
+                                <label for="exportCri" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportCri" name="dataBox" checked><span class="lbl">
+                                Criteria</label></li>
+                            <li>
+                                <label for="exportAlt" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportAlt" name="dataBox" checked><span class="lbl">
+                                Alternatives</label></li>
+                            <li>
+                                <label for="exportPerf" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportPerf" name="dataBox" checked><span class="lbl">
+                                Performance Table</label></li>
+                            <li>
+                                <label for="exportCat" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportCat" name="dataBox" checked><span class="lbl">
+                                Categories</label></li>
+                            <li>
+                                <label for="exportPar" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportPar" name="dataBox" checked><span class="lbl">
+                                Parameters</label></li>
+                            <li>
+                                <label for="exportPro" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportPro" name="dataBox" checked><span class="lbl">
+                                Profiles Performance Table</label></li>
+                        </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
+                        <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
+                        <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

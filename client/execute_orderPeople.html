@@ -1,0 +1,111 @@
+<!-- Execute order people method -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+
+    <title>Execute Order People Method</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/orderPeople.css"> <!-- custom styles -->
+
+    <!-- JS -->
+    <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <script src="libs/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="libs/angular/angular.js" type="text/javascript"></script>
+    <script src="libs/angular-route/angular-route.min.js" type="text/javascript"></script>
+    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
+    <script src="libs/angular-ui/build/angular-ui.min.js" type="text/javascript"></script>
+    <script src="libs/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
+    <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
+    <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    
+    <!-- ANGULAR CUSTOM -->
+    <script src="js/appRoutes.js" type="text/javascript"></script>
+    <script src="js/app.js" type="text/javascript"></script>
+    <script src="js/controllers/people-controller.js" type="text/javascript"></script>
+    <script src="js/sortable.js" type="text/javascript"></script>
+</head>
+<!-- sampleApp is in app.js, is to set up every controller together -->
+<body ng-app="people-controller" ng-controller="peopleController" data-ng-init="executeMethod();">
+<!-- HEADER AND NAVBAR -->
+    <header>
+        <nav id="navigationBar" class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a id="textNav" class="navbar-brand" style="font-size:18px">MCDA Framework</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
+                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
+                <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+        </div>
+        </nav>
+    </header>
+        <div class="col-sm-3">
+            <div class="sidebar-nav">
+                <div id="verticalNav" class="navbar navbar-default" role="navigation">
+                    <div class="navbar-collapse collapse sidebar-navbar-collapse">
+                    <ul id="optionList" class="nav navbar-nav">
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description_orderPeople');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('people');">Person Set</a></li>
+                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('execute_orderPeople');">Execute</button></li>
+                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results_orderPeople');">Results</a></li>
+                    </ul>
+                    </div>
+                    <!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+    <!-- MAIN CONTENT AND INJECTED VIEWS -->
+    <div id="main">
+		<div id="content">
+            <br/> 
+            <!-- SHOW when method successfully executes the method and show results + save button in case the user wants to save -->
+            <p id="explanation" style="display:none; font-size:18px; font-family: Helvetica,Arial,sans-serif;">If you want to save these results please click on "Save Results" button, otherwise these results will be lost.<br> To see all your saved results click on "Results" button.</p>
+            <br/> 
+            <label id="labelResult" style="display:none">Insert a name for the results: </label>
+            <input id="resultName" ng-model="resName" onkeyup="checkResultName()" style="display:none" type="text" value="" placeholder="Result name" name="name" required></input>
+            <button id="methodButtons" style="display:none" class="btn btn-info" type="button" ng-click="saveResult()">Save Results</button>
+            <br/>
+            <br/><br/>
+            <!-- table in case you want to put manually the results through javascript -->
+            <table style="display:none" id="resultsTable" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                <tr>
+                    <th id="dataHeader3">Name</th>
+                    <th id="dataHeader3">Age</th>
+                </tr>
+                <tr ng-repeat="person in peopleOrdered">
+                    <td id="dataBody2">{{ person.name }}</td>
+                    <td id="dataBody2">{{ person.age }}</td>
+                </tr>
+            </table>
+            <!-- END - method success -->
+            <!-- SHOW when method gives an error or problems during the execution -->
+            <p id="errorMethod" style="display:none;font-size:18px; font-family: Helvetica,Arial,sans-serif; color:red; text-align: center; margin: auto; width: 80%;">
+            Function cannot be executed.<br>Please be sure that all data sections are filled (the sections should be green) and/or not missing or empty (mandatory: name, description, etc...) and have an enough number of data (have at least 2).
+            </p>
+            <!-- END - method failure -->
+        </div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
+        </div>
+    </div>   
+    <script type="text/javascript">
+        document.getElementById("methodButtons").disabled=true;
+        // Disabled save button when input as a name
+        function checkResultName() {
+          if(document.getElementById("resultName").value == ""){
+            document.getElementById("methodButtons").disabled=true;
+          }else{
+            document.getElementById("methodButtons").disabled=false;
+          }
+        }
+    </script>
+</body>
+</html>

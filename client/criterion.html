@@ -31,11 +31,8 @@
     <script src="js/amcharts_3/amcharts/serial.js" type="text/javascript"></script>
     <script src="js/amcharts_3/amcharts/plugins/export/export.js" type="text/javascript"></script>
     <script src="js/controllers/criterions-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/alternatives-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/performances-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/configurations-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/results-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/mainCtrl.js" type="text/javascript"></script>
+    <script src="js/controllers/import-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/export-controller.js" type="text/javascript"></script>
     <script src="js/sortable.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
@@ -65,8 +62,9 @@
                         <li id="sectionsCriteria"><a id="aSections" href="" class="active" ng-click="changeSection('criterion');">Criterion Set</a></li>
                         <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
-                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('divizServer');">Execute</button></li>
-                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('results');">Results</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -98,6 +96,7 @@
                 <div>
                     <table id="criterionTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
+                            <th id="criHeader2" style="width:150px">Action</th>
                             <th id="criHeader">Name</th>
                             <th id="criHeader">Description</th>
                             <th id="criHeader">Direction</th>
@@ -106,9 +105,12 @@
                             <th id="criHeader">Indifference</th>
                             <th id="criHeader">Preference</th>
                             <th id="criHeader">Veto</th>
-                            <th id="criHeader2" style="width:150px">Action</th>
                         </tr>
                         <tr>
+                            <td>
+                                <input type="button" value="Add Criterion" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createCriterion();" class="btn btn-primary"/>
+                                <!-- <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/> -->
+                            </td>
                             <td><input id="criInput" type="text" placeholder="Criterion name" name="name" ng-model="criterion.name" required/></td>
                             <td><input id="criInput" type="text" placeholder="Criterion description" ng-model="criterion.description"/></td>
                             <td>
@@ -127,16 +129,16 @@
                             <td><input id="criInput2" type="text" placeholder="Indifference" ng-model="criterion.indifference"/></td>
                             <td><input id="criInput2" type="text" placeholder="Preference" ng-model="criterion.preference"/></td>
                             <td><input id="criInput2" type="text" placeholder="Veto" ng-model="criterion.veto"/></td>
-                            <td>
-                                <input type="button" value="Add Criterion" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createCriterion();" class="btn btn-primary"/>
-                                <!-- <input type="button" value="Update" ng-click="updateCriterion()" class="btn btn-info"/> -->
-                            </td>
                         </tr>
                         <tr ng-repeat="criterion in criterions | orderBy: 'rank'" ng-include="getTemplate(criterion)">
                             <!-- Get template -->  
                         </tr>
                     </table>
                     <script type="text/ng-template" id="display">
+                        <td>
+                            <input type="button" value="Edit" ng-click="editCriterion2(criterion)" class="btn btn-warning"/>
+                            <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
+                        </td> 
                         <td id="criString">{{ criterion.name }}</td>
                         <td id="criString">{{ criterion.description }}</td>
                         <td id="criBody">{{ criterion.direction }}</td>
@@ -144,13 +146,13 @@
                         <td id="criNumber">{{ criterion.weight }}</td>
                         <td id="criNumber">{{ criterion.indifference }}</td>
                         <td id="criNumber">{{ criterion.preference }}</td>
-                        <td id="criNumber">{{ criterion.veto }}</td>
-                        <td>
-                            <input type="button" value="Edit" ng-click="editCriterion2(criterion)" class="btn btn-warning"/>
-                            <input type="button" value="Delete" ng-click="deleteCriterion(criterion)" class="btn btn-danger"/> 
-                        </td>  
+                        <td id="criNumber">{{ criterion.veto }}</td> 
                     </script>
                     <script type="text/ng-template" id="edit">
+                        <td>
+                            <input type="button" value="Save" ng-click="updateCriterion2(criterion)" class="btn btn-success"/>
+                            <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
+                        </td>
                         <td><input id="criInput" type="text" placeholder="Criterion name" ng-model="model.name"/></td>
                         <td><input id="criInput" type="text" placeholder="Criterion description" ng-model="model.description"/></td>
                         <td>
@@ -169,13 +171,9 @@
                         <td><input id="criInput2" type="text" placeholder="Indifference" ng-model="model.indifference"/></td>
                         <td><input id="criInput2" type="text" placeholder="Preference" ng-model="model.preference"/></td>
                         <td><input id="criInput2" type="text" placeholder="Veto" ng-model="model.veto"/></td>
-                        <td>
-                            <input type="button" value="Save" ng-click="updateCriterion2(criterion)" class="btn btn-success"/>
-                            <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
-                        </td>
                     </script>
                 </div>
-            </form> 
+            </form> <!-- 
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Export to CSV <span class="caret"></span>
@@ -185,8 +183,8 @@
                     <li><a href="#" export-criterion-to-csv-without-thresholds>Export without thresholds</a></li>
                     <li><a href="#" export-criterion-to-csv-without-weight>Export without thresholds and weight</a></li>
                 </ul>
-            </div>
-            <br/><br/><br/>
+            </div> -->
+            <br/>
             <!-- Weight method section -->
             <div id="weightMethod" class="weight box">
                 <hr style="border:1px solid #033773">
@@ -273,7 +271,7 @@
                 <div id="ratioOptions">
                     <div style="margin-left: 50px;">
                         <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
-                            <input type="checkbox" id="oneValue"/> 
+                            <input class="ratioZZ" type="checkbox" id="oneValue"/> 
                             1 value = 
                             <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ')" ng-click="updateRatioZ('ratioZ');"></input>
                             <input id="ratioZ" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZ');"></input>
@@ -282,7 +280,7 @@
                     </div>
                     <div style="margin-left: 50px;">
                         <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
-                            <input type="checkbox" id="interval" style="vertical-align:middle;"/>
+                            <input class="ratioZZ" type="checkbox" id="interval" style="vertical-align:middle;"/>
                             <a href="#" id="helpInterval">Interval</a> =
                             <big style="font-size: 33px; vertical-align: middle;">[</big>
                             <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZIntervalMin')" ng-click="updateRatioZ('ratioZIntervalMin');"></input>
@@ -300,7 +298,7 @@
                     </div>
                     <div style="margin-left: 50px;">
                         <p style="font-size:18px; font-family: Helvetica,Arial,sans-serif;">
-                            <input type="checkbox" id="threeValues"/>
+                            <input class="ratioZZ" type="checkbox" id="threeValues"/>
                             <a href="#" id="helpValues">3 values</a> =
                             <input id="addBtn" type="button" value="-" onclick="decreaseRatio('ratioZ1')" ng-click="updateRatioZ('ratioZ1');"></input>
                             <input id="ratioZ1" type="text" min="1" value="1" ng-keyup="updateRatioZ('ratioZ1');"></input>
@@ -562,9 +560,122 @@
         </div>
         <!-- END of COMPARE SECTION - Weight method -->
         </div>
+        <div id="dvCSV" style="display:none"></div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
-          <p id="loading-text">Executing...</p>
+          <p id="loading-text">Loading...</p>
+        </div>
+        <div id="importing">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Importing...</p>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="importController">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ng-click="!perfTblImported && refreshBeforeClosing(); perfTblImported && refreshPerformancesBeforeClosing(); perfTblImported=false">&times;</button>
+                        <h4 class="modal-title">Import from CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Import data to:</b></p>
+                        <form>
+                            <input type="radio" ng-model="content" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"> Criteria<br>
+                            <input type="radio" ng-model="content" name="dataType" value="alternativesData" class="importRatio" style="margin-bottom: 5px;"> Alternatives<br>
+                            <input type="radio" ng-model="content" name="dataType" value="performanceData" class="importRatio" style="margin-bottom: 5px;"> Performance Table<br>
+                            <input type="radio" ng-model="content" name="dataType" value="altAndPerfData" class="importRatio" style="margin-bottom: 5px;"> Alternatives and Performance Table<br>
+                            <input type="radio" ng-model="content" name="dataType" value="categoriesData" class="importRatio" style="margin-bottom: 5px;"> Categories<br>
+                            <input type="radio" ng-model="content" name="dataType" value="parametersData" class="importRatio" style="margin-bottom: 5px;"> Parameters<br>
+                            <input type="radio" ng-model="content" name="dataType" value="profileData" class="importRatio" style="margin-bottom: 5px;"> Profile Performance Table
+                        </form>
+                        <input type="file" id="fileUpload"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                        <div class="wrapper">
+                            <p ng-show="content == 'criteriaData'">
+                                <b>CSV file structure example:</b><br>Name, Description, Direction, Measure, Weight, Indifference, Preference, Veto 
+                                <br>criterion name 1, test, min, ordinal, 10, 2, 4, 6<br>criterion name 2, other, max, cardinal, 1.0, 2.44, 9, 2.5<br>and so on...    
+                            </p>
+                            <p ng-show="content == 'alternativesData'">
+                                <b>CSV file structure example:</b><br>Name, Description
+                                <br>alternative name 1, water<br>alternative name 2, fire<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'performanceData'">
+                                <b>CSV file structure example:</b><br>Alternatives\Criteria, criterion name 1, criterion name 2, ...
+                                <br>alternative name 1, 4, 12.4, ...<br>alternative name 2, 10, 2.99, ...<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'altAndPerfData'">
+                                <b>CSV file structure example:</b><br>Alternatives\Criteria, criterion name 1, criterion name 2, ...
+                                <br>alternative name 1, 4, 12.4, ...<br>alternative name 2, 10, 2.99, ...<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'categoriesData'">
+                                <b>CSV file structure example:</b><br>Rank, Name, Reference Action
+                                <br>1, category name 1, reference action name 1<br>2, category name 2, reference action name 2<br>and so on... 
+                            </p>
+                            <p ng-show="content == 'parametersData'">
+                                <b>CSV file structure example:</b><br>Credibility Lambda
+                                <br>0.85
+                            </p>
+                            <p ng-show="content == 'profileData'">
+                                <b>CSV file structure example:</b><br>Reference Actions\Criteria, criterion name 1, criterion name 2, ...
+                                <br>reference action name 1, 5.9, 21, ...<br>reference action name 2, 3.98, 3, ...<br>and so on... 
+                            </p>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="!criteriaImported && refreshBeforeClosing(); criteriaImported && refreshMethodBeforeClosing(); criteriaImported=false">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Export Modal -->
+        <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="exportController">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export to CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Export project data:</b></p>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li>
+                                <label for="exportCri" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportCri" name="dataBox" checked><span class="lbl">
+                                Criteria</label></li>
+                            <li>
+                                <label for="exportAlt" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportAlt" name="dataBox" checked><span class="lbl">
+                                Alternatives</label></li>
+                            <li>
+                                <label for="exportPerf" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportPerf" name="dataBox" checked><span class="lbl">
+                                Performance Table</label></li>
+                            <li>
+                                <label for="exportCat" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportCat" name="dataBox" checked><span class="lbl">
+                                Categories</label></li>
+                            <li>
+                                <label for="exportPar" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportPar" name="dataBox" checked><span class="lbl">
+                                Parameters</label></li>
+                            <li>
+                                <label for="exportPro" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportPro" name="dataBox" checked><span class="lbl">
+                                Profiles Performance Table</label></li>
+                        </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
+                        <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
+                        <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
 <script type="text/javascript">
     $(document).ready(function(){

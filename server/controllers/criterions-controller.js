@@ -96,3 +96,22 @@ module.exports.delete = function(req, res){
   });
   res.send('Delete criterion complete.');
 }
+
+//Delete all criteria
+exports.deleteAll = function(req, res) {
+    Project.findOne({ _id:req.params.id })
+        .populate('criteria')
+        .exec(function (err, project) {
+            if (err){
+                res.send(err);
+            }
+            var criterion = project.criteria;
+            Project.update({ _id:req.params.id }, {'$pullAll': {criteria: criterion }})
+              .exec(function(err) {
+                Criterion.remove({ _id: { $in: criterion }}, function(err, numberRemoved) {
+                  // The identified criteria are now removed.
+                });
+            });
+            res.send('Delete all criteria complete.');
+    });
+}

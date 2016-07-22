@@ -111,3 +111,22 @@ module.exports.delete = function(req, res){
   });
   res.send('Delete category complete.');   
 }
+
+//Delete all categories
+exports.deleteAll = function(req, res) {
+    Project.findOne({ _id:req.params.id })
+        .populate('categories')
+        .exec(function (err, project) {
+            if (err){
+                res.send(err);
+            }
+            var category = project.categories;
+            Project.update({ _id:req.params.id }, {'$pullAll': {categories: category }})
+              .exec(function(err) {
+                Category.remove({ _id: { $in: category }}, function(err, numberRemoved) {
+                  // The identified category are now removed.
+                });
+            });
+            res.send('Delete all categories complete.');
+    });
+}

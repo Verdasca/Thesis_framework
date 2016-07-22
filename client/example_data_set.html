@@ -77,35 +77,35 @@
                     <br />
                     <table id="dataTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
                         <tr>
+                            <th id="dataHeader" style="width:150px">Action</th>
                             <th id="dataHeader3">Name</th>
                             <th id="dataHeader3">Description</th>
-                            <th id="dataHeader" style="width:150px">Action</th>
                         </tr>
                         <tr>
-                            <td style="text-align:left;" id="dataBody2"><input id="dataInput" type="text" placeholder="Data name" name="name" ng-model="data.name" required/></td>
-                            <td style="text-align:left;" id="dataBody2"><input id="dataInput" type="text" placeholder="Data description" ng-model="data.description"/></td>
                             <td>
                                 <input type="button" value="Add Data" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createData();" class="btn btn-primary"/>
                             </td>
+                            <td style="text-align:left;" id="dataBody2"><input id="dataInput" type="text" placeholder="Data name" name="name" ng-model="data.name" required/></td>
+                            <td style="text-align:left;" id="dataBody2"><input id="dataInput" type="text" placeholder="Data description" ng-model="data.description"/></td>
                         </tr>
                         <tr ng-repeat="data in dataInformation" ng-include="getTemplate(data)">
                         </tr>
                     </table>
                     <script type="text/ng-template" id="display">
-                        <td id="dataBody2">{{ data.name }}</td>
-                        <td id="dataBody2">{{ data.description }}</td>
                         <td>
                             <input type="button" value="Edit" ng-click="editData2(data)" class="btn btn-warning"/>
                             <input type="button" value="Delete" ng-click="deleteData(data);" class="btn btn-danger"/> 
-                        </td> 
+                        </td>
+                        <td id="dataBody2">{{ data.name }}</td>
+                        <td id="dataBody2">{{ data.description }}</td> 
                     </script>
                     <script type="text/ng-template" id="edit">
-                        <td id="dataBody2"><input id="dataInput" type="text" placeholder="Data name" ng-model="model.name"/></td>
-                        <td id="dataBody2"><input id="dataInput" type="text" placeholder="Data description" ng-model="model.description"/></td>
                         <td>
                             <input type="button" value="Save" ng-click="updateData(data);" class="btn btn-success"/>
                             <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
                         </td>
+                        <td id="dataBody2"><input id="dataInput" type="text" placeholder="Data name" ng-model="model.name"/></td>
+                        <td id="dataBody2"><input id="dataInput" type="text" placeholder="Data description" ng-model="model.description"/></td>
                     </script>
                 </div>
             </form>

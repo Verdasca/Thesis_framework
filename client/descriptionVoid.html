@@ -27,7 +27,6 @@
     <script src="js/appRoutes.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
     <script src="js/controllers/descriptionVoid-controller.js" type="text/javascript"></script>
-    <script src="js/controllers/mainCtrl.js" type="text/javascript"></script>
     <script src="js/sortable.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
@@ -53,8 +52,9 @@
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('descriptionVoid');"> {{ project.name }}<br>Description</a></li>
-                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="">Execute</button></li>
-                        <li><button id="buttonResults" class="btn btn-primary" ng-click="">Results</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -67,12 +67,16 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <td id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
-                    <td id="descriptionTd"><label>Creation Date: </label> {{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <th id="descriptionTd" style="width:30%">Project Name</th>
+                    <th id="descriptionTd" style="width:24%">Method</th>
+                    <th id="descriptionTd" style="width:23%">Creation Date</th>
+                    <th id="descriptionTd" style="width:23%">Updated</th>
                 </tr>
                 <tr>
-                    <td id="descriptionTd"><label>Method: </label> {{ project.methodChosen }}</td>
-                    <td id="descriptionTd"><label>Last update: </label> {{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.name }}</td>
+                    <td id="descriptionTd">{{ project.methodChosen }}</td>
+                    <td id="descriptionTd">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </tr>
             </table>
             <br/>
@@ -82,6 +86,63 @@
                 <li id="step1">This method is just an example for future methods, how the selection and view of each method will be based.</li>
             </ol>
 		</div>
+        <div id="dvCSV" style="display:none"></div>
+        <div id="executing">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Executing...</p>
+        </div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Loading...</p>
+        </div>
+        <div id="importing">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Importing...</p>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ng-click="">&times;</button>
+                        <h4 class="modal-title">Import from CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Import data to:</b></p>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click=""/>
+                        <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Export Modal -->
+        <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export to CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Export project data:</b></p>
+                        <ul class="list-group" style="list-style-type: none;">
+                        </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export"/>
+                        <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
+                        <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>   
 </body>
 </html>

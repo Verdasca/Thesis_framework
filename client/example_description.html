@@ -68,12 +68,16 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <td id="descriptionTd"><label>Project Name: </label> {{ project.name }}</td>
-                    <td id="descriptionTd"><label>Creation Date: </label> {{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <th id="descriptionTd" style="width:30%">Project Name</th>
+                    <th id="descriptionTd" style="width:24%">Method</th>
+                    <th id="descriptionTd" style="width:23%">Creation Date</th>
+                    <th id="descriptionTd" style="width:23%">Updated</th>
                 </tr>
                 <tr>
-                    <td id="descriptionTd"><label>Method: </label> {{ project.methodChosen }}</td>
-                    <td id="descriptionTd"><label>Last update: </label> {{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.name }}</td>
+                    <td id="descriptionTd">{{ project.methodChosen }}</td>
+                    <td id="descriptionTd">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                 </tr>
             </table>
             <br/>
@@ -95,6 +99,47 @@
                   </ol>
                 </li>
             </ol>
+            <br/>
+            <hr style="border:1px solid #033773">
+            <h3>Current Data</h3>
+            <br/>
+            <!-- Insert here all current data (data needed to execute the method), for the user to see all the data at once -->
+            <table id="resultTbl" class="table horizontal">
+                <tr class="noBorder"> 
+                    <td class="noBorder">
+                        <h4 id="titleTbl">Data 1</h4>
+                        <!-- <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Category</th>
+                                <th id="headers">Rank</th>
+                                <th id="headers">Ref. Action</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="category in categories">
+                                <td id="headers">{{ category.name }}</td>
+                                <td id="headers">{{ category.rank }}</td>
+                                <td id="headers">{{ category.action }}</td>
+                            </tr> 
+                            </tbody>
+                        </table> -->
+                    </td>
+                    <td>
+                        <h4 id="titleTbl">Data 2</h4>
+                       <!--  <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Alternative</th>
+                                <th id="headers">Description</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="alternative in alternatives">
+                                <td id="headers">{{ alternative.name }}</td>
+                                <td id="headers">{{ alternative.description }}</td>
+                            </tr> 
+                            </tbody>
+                        </table> -->
+                    </td>
+                </tr>
+            </table>
 		</div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />

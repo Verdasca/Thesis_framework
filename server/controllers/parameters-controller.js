@@ -88,3 +88,22 @@ module.exports.delete = function(req, res){
 
         });
 }
+
+//Delete all parameters
+exports.deleteAll = function(req, res) {
+    Project.findOne({ _id:req.params.id })
+        .populate('parameters')
+        .exec(function (err, project) {
+            if (err){
+                res.send(err);
+            }
+            var parameter = project.parameters;
+            Project.update({ _id:req.params.id }, {'$pullAll': {parameters: parameter }})
+              .exec(function(err) {
+                Parameter.remove({ _id: { $in: parameter }}, function(err, numberRemoved) {
+                  // The identified parameter are now removed.
+                });
+            });
+            res.send('Delete all parameters complete.');
+    });
+}

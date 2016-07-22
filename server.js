@@ -18,6 +18,7 @@ var categoriesController = require('./server/controllers/categories-controller')
 var parametersController = require('./server/controllers/parameters-controller');
 var performanceTableController = require('./server/controllers/performanceTable-controller');
 var profileTableController = require('./server/controllers/profileTable-controller');
+var peopleController = require('./server/controllers/people-controller');
 
 // Function to reset DB and get the correct data + create/delete folders and projects 
 //var importData = require('./importData.js');
@@ -80,6 +81,8 @@ app.get('/api/project/:id', projectsController.findById);
 app.get('/api/cloneproject/:id/:projectId', projectsController.duplicate);
 app.post('/api/projects/:id', projectsController.create);
 app.put('/api/project/:id', projectsController.edit);
+app.put('/api/projectAddResult/:projectId', projectsController.addResult);
+app.put('/api/projectSaveResult/:id/:projectId', projectsController.saveResult);
 app.delete('/api/project/:id/:projectId', projectsController.delete);
 app.delete('/api/projects/:projectId/:id', projectsController.deleteResult);
 //Alternative 
@@ -95,6 +98,7 @@ app.get('/api/criterion/:id', criterionsController.findById);
 app.post('/api/criterions/:id', criterionsController.create);
 app.put('/api/criterion/:id', criterionsController.edit);
 app.delete('/api/criterion/:id/:criterionId', criterionsController.delete);
+app.delete('/api/criterions/:id', criterionsController.deleteAll);
 //Category 
 app.get('/api/categories/:id', categoriesController.get);
 app.get('/api/category/:id', categoriesController.findById);
@@ -102,12 +106,14 @@ app.get('/api/categoryRank/:id/:rank', categoriesController.findByRank);
 app.post('/api/categories/:id', categoriesController.create);
 app.put('/api/category/:id', categoriesController.edit);
 app.delete('/api/category/:id/:categoryId', categoriesController.delete);
+app.delete('/api/categories/:id', categoriesController.deleteAll);
 //Parameter 
 app.get('/api/parameters/:id', parametersController.get);
 app.get('/api/parameter/:id', parametersController.findById);
 app.post('/api/parameters/:id', parametersController.create);
 app.put('/api/parameter/:id', parametersController.edit);
 app.delete('/api/parameter/:id', parametersController.delete);
+app.delete('/api/parameters/:id', parametersController.deleteAll);
 //Performance Table 
 app.get('/api/performances/:id', performanceTableController.get);
 app.get('/api/performance/:id', performanceTableController.findById);
@@ -122,6 +128,13 @@ app.post('/api/profiles/:id', profileTableController.create);
 app.put('/api/profile/:id', profileTableController.edit);
 app.delete('/api/profile/:id', profileTableController.delete);
 app.delete('/api/profiles/:id', profileTableController.deleteAll);
+//People 
+app.get('/api/people/:id', peopleController.get);
+app.get('/api/person/:id', peopleController.findById);
+app.post('/api/people/:id', peopleController.create);
+app.put('/api/person/:id', peopleController.edit);
+app.delete('/api/person/:id/:personId', peopleController.delete);
+app.delete('/api/people/:id', peopleController.deleteAll);
 // Import data functions
 //app.get('/importData', importData.reset);
 //app.get('/createProject', importData.createProject);
@@ -130,23 +143,6 @@ app.delete('/api/profiles/:id', profileTableController.deleteAll);
 //app.get('/getProjectData/alternatives', getProjectData.getAlternatives);
 // app.post('/getProjectData/:id', getProjectData.add);
 //app.post('/getProjectData/alternatives', getProjectData.addAlternative);
-
-// app.get('/setup', function(req, res) {
-//   	// create a sample user
-//   	var cris = new User({ 
-//     	username: 'cristina', 
-//     	password: 'verdasca',
-//     	name: 'cristina verdasca'
-//   	});
-
-//   	// save the sample user
-//   	cris.save(function(err) {
-//     	if (err) throw err;
-
-// 	console.log('User saved successfully');
-//     res.json({ success: true });
-//   });
-// });
 
 // =======================
 // routes ================

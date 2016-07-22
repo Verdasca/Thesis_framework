@@ -9,12 +9,13 @@
 }
 
 #navigationBar{
-    background-color: #033773;  
-    border: none;
-    border-radius: 0px;  
-    position: fixed;  
-    width: 100%;
-    padding: 1px;
+  z-index: 3;
+  background-color: #033773;  
+  border: none;
+  border-radius: 0px;  
+  position: fixed;  
+  width: 100%;
+  padding: 1px;
 }
 
 #textNav{
@@ -29,6 +30,14 @@
 
 #content{
     height: 548px;
+    margin: auto;
+    width: 90%;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 30px;
+}
+
+#content2{
     margin: auto;
     width: 90%;
     border-radius: 10px;

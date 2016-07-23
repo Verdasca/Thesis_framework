@@ -14,6 +14,7 @@ module.exports = mongoose.model('Project', {
 	profiletables : [{ type: mongoose.Schema.Types.ObjectId, ref: 'ProfileTable' }],
 	people : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Person' }],
 	orderType : { type: String, default: '' },
+	orderAttribute : { type: String, default: '' },
 	decimals : { type: Number, default: 0 },
 	ratioOption : { type: String, default: '' },
 	ratioZ : { type: Number, default: 1 },
@@ -29,6 +30,8 @@ module.exports = mongoose.model('Project', {
 		methodError : { type: String, default: 'Everything OK. No errors.' },
 		resultDate: { type: Date, default: Date.now},
 		orderPeople : String,
+		orderTypes : String,
+		orderAttributes : String,
 		resultValues: [{ 
 			alternativeID: String, 
   			minCategory: String,
@@ -70,7 +73,8 @@ module.exports = mongoose.model('Project', {
 		personValues: [{  
 			personName: String,  
   			personAge: Number
-		}]
+		}],
+		dataValues: [mongoose.Schema.Types.Mixed]
 	}]
 });
 

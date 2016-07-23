@@ -554,7 +554,7 @@ div#pop-up-help-rank{
 }
 
 /* Checkboxes */
-input[type="checkbox"]{
+.ratioZZ{
     cursor: pointer;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -570,11 +570,11 @@ input[type="checkbox"]{
     border:2px solid #555;
 }
 
-input[type="checkbox"]:checked{
+.ratioZZ:checked{
   background-color: green;
 }
 
-input[type="checkbox"]:focus{
+.ratioZZ:focus{
   outline: 0 none;
   box-shadow: none;
 }
@@ -736,6 +736,10 @@ tr.noBorder td{
   border: 0; 
 }
 
+.exportChoice{
+  padding: 10px !important;
+}
+
 /* Loading/importing gif for loader aspects */
 #loading,
 #importing {
@@ -770,4 +774,13 @@ tr.noBorder td{
   left: 50%;
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
+}
+
+/* Importing/Executing gif must be in front of everything, even the import/export section*/
+.modal-backdrop.in{
+  z-index: 2 !important;
+}
+
+.importRatio{
+  display: inline !important;
 }

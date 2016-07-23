@@ -11,7 +11,7 @@ $scope.data = {
     availableOptions: [
       {id: 'notSelected', name: '<-- Select method for the project -->'},
       {id: 'Electre Tri-C', name: 'Electre Tri-C'},
-      {id: 'Order People', name: 'Order People'},
+      {id: 'Order By', name: 'Order By'},
       {id: 'Void', name: 'Void'}
     ],
 };
@@ -51,7 +51,6 @@ $scope.createProject = function (nameValid) {
     project.name = $scope.project.name; 
     project.methodChosen = $scope.data.repeatSelect;
     $http.post('/api/projects/' + i, project).success(function(response) {
-      refresh();
       $scope.project.name = '';
       refresh();
     });
@@ -62,6 +61,11 @@ $scope.createProject = function (nameValid) {
 $scope.deleteProject = function(project) {
   var i = $scope.user._id;
   var id = project._id;
+  if(project.methodChosen == 'Order By'){
+    // Delete project folder
+    $http.get('/deleteProject/' + id ).success(function(data) {
+    })
+  }
   $http.delete('/api/project/' + i + '/' + id)
     .success(function() {
       console.log("success");
@@ -70,14 +74,12 @@ $scope.deleteProject = function(project) {
         $scope.projects.splice(idx, 1);
       }
       refresh();
-      refresh();
     })
     .error(function() {
       var idx = $scope.projects.indexOf(project);
       if (idx >= 0) {
         $scope.projects.splice(idx, 1);
       }
-      refresh();
       refresh();
     });
 }
@@ -126,15 +128,17 @@ $scope.openProject = function (project){
   var id = project._id;
   var method = project.methodChosen;
   var username = $scope.user.username;
-  //$state.go('projects.html', {id: project._id});
-  //console.log('-----> ID: '+t);
-  //$state.go("alternative", { "id": id});
+  if(method == 'Order By'){
+    // Create project folder
+    $http.get('/createProject/' + id ).success(function(data) {
+    })
+  }
   switch (method) {
     case 'Electre Tri-C':
       $window.location.href = '/description.html?projectId='+id+'&n='+username; 
       break;
-    case 'Order People':
-      $window.location.href = '/description_orderPeople.html?projectId='+id+'&n='+username; 
+    case 'Order By':
+      $window.location.href = '/description_orderBy.html?projectId='+id+'&n='+username; 
       break;
     case 'Void':
       $window.location.href = '/descriptionVoid.html?projectId='+id+'&n='+username; 

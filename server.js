@@ -21,7 +21,7 @@ var profileTableController = require('./server/controllers/profileTable-controll
 var peopleController = require('./server/controllers/people-controller');
 
 // Function to reset DB and get the correct data + create/delete folders and projects 
-//var importData = require('./importData.js');
+var importData = require('./importData.js');
 //var createUserProject = require('./createUserProject.js');
 //var getProjectData = require('./getProjectData.js');
 
@@ -136,8 +136,13 @@ app.put('/api/person/:id', peopleController.edit);
 app.delete('/api/person/:id/:personId', peopleController.delete);
 app.delete('/api/people/:id', peopleController.deleteAll);
 // Import data functions
-//app.get('/importData', importData.reset);
-//app.get('/createProject', importData.createProject);
+app.get('/getData/:id', importData.getData);
+app.get('/getDataResult/:id/:nameId', importData.getDataResult);
+app.get('/createProject/:id', importData.createProject);
+app.get('/deleteProject/:id', importData.deleteProject);
+app.get('/deleteResult/:id/:nameId', importData.deleteResult);
+app.post('/saveData/:id', importData.saveData);
+app.post('/saveDataResults/:id/:nameId', importData.saveDataResults);
 //app.get('/createUserProject', createUserProject.create);
 //app.get('/createUserProjectGet', createUserProject.get);
 //app.get('/getProjectData/alternatives', getProjectData.getAlternatives);

@@ -126,7 +126,7 @@
                     <td id="titleTbl3" style="width:25%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
                 </tr>
                 <tr ng-show="showResult"> 
-                    <td>
+                    <td style="vertical-align: top;">
                         <h4 id="titleTbl">Results</h4>
                         <table id="resultsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                         <thead>
@@ -143,7 +143,7 @@
                         </tbody>
                         </table> 
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <h4 id="titleTbl">Categories</h4>
                         <table id="catTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
@@ -160,7 +160,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <h4 id="titleTbl">Parameters</h4>
                         <table id="paramsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
@@ -173,7 +173,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <h4 id="titleTbl">Alternatives</h4>
                         <table id="altTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
@@ -190,7 +190,7 @@
                     </td>
                 </tr>
                 <tr ng-show="showResult">
-                    <td colspan="4">
+                    <td colspan="4" style="vertical-align: top;">
                         <h4 id="titleTbl2">Criteria</h4>
                         <table id="criTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
@@ -219,7 +219,7 @@
                     </td>
                 </tr>
                 <tr ng-show="showResult">
-                    <td colspan="2">
+                    <td colspan="2" style="vertical-align: top;"> 
                         <h4 id="titleTbl">Performance Table</h4>
                         <table id="perfTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
@@ -236,7 +236,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td colspan="2">
+                    <td colspan="2" style="vertical-align: top;">
                         <h4 id="titleTbl">Profiles Performance Table</h4>
                         <table id="profTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>

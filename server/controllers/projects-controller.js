@@ -8,6 +8,7 @@ var Category = require('../models/category');
 var Performance = require('../models/performanceTable');
 var Profile = require('../models/profileTable');
 var Person = require('../models/person');
+var fs = require('fs-extra')
 
 //Create a project
 module.exports.create = function (req, res) {
@@ -523,6 +524,26 @@ module.exports.duplicate = function(req, res){
                   res.send(err);
                 }
                 // First push then save to do the association
+                if(project.methodChosen == 'Order By'){
+                    var dir = './Projects/' + projectID + '/data';
+                    var cloneDir = './Projects/' + project._id;
+                    // If folder does not exist, create the folder plus data and result folder
+                    if (!fs.existsSync(cloneDir)){
+                        fs.mkdirSync(cloneDir);
+                        fs.mkdirSync(cloneDir+'/data');
+                        fs.mkdirSync(cloneDir+'/results');
+                    }
+                    var cloneDirData = cloneDir + '/data';
+                    fs.copy(dir, cloneDirData, function (err) {
+                      if (err) {
+                        console.error(err);
+                      } else {
+                        console.log("success!");
+                      }
+                    }); //copies directory, even if it has subdirectories or files
+                }else{
+                    //Do nothing - method does not use local files
+                }
                 user.projects.push(project);
                 user.save();
                 //res.send('Clone project complete.');

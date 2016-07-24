@@ -79,8 +79,8 @@ $scope.changeSection = function(name){
   if(sectionName == 'divizServer'){
     // Show loader when execute button was clicked
     $('#executing').show();
-    //$window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName;  
-    $window.location.href = 'http://localhost:5000/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName+'&resName='+nameResult;     
+    $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName+'&resName='+nameResult;   
+    //$window.location.href = 'http://localhost:5000/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName+'&resName='+nameResult;     
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n;  
   }

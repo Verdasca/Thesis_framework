@@ -35,9 +35,9 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
   //   $scope.dataDone = true;
   // }
   // if($scope.dataDone){
-  //   document.getElementById('buttonDiviz').disabled = false;
+  //   document.getElementById('methodButtons').disabled = false;
   // } else{
-  //   document.getElementById('buttonDiviz').disabled = true;
+  //   document.getElementById('methodButtons').disabled = true;
   // }
   })
   .error(function(data) {
@@ -98,9 +98,9 @@ var checkStatus = function(){
   //   $scope.dataDone = true;
   // }
   // if($scope.dataDone){
-  //   document.getElementById('buttonDiviz').disabled = false;
+  //   document.getElementById('methodButtons').disabled = false;
   // } else{
-  //   document.getElementById('buttonDiviz').disabled = true;
+  //   document.getElementById('methodButtons').disabled = true;
   // }
 }
 
@@ -859,23 +859,27 @@ function createData2(){
 /**** 
   Export functions for methods using DB 
 ***/
+
 // Function example used to export data from a table into csv, can change function to export only certain rows or columns 
 //Export into a .csv file 
 app.directive('exportToCsv',function($http, $location){
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
-        document.getElementById("exportMessage").style.display = "none";
-      document.getElementById("exportMessageError").style.display = "none";
         var projectID = $location.search().projectId;
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
-        // This is like the import function, has a list of options to what to export - this case only has 1 but can have more
-        if(!elements[0].checked){
-          document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
-        document.getElementById("exportMessageError").style.display = "block";
-        }else{
         element.bind('click', function(e){
+          document.getElementById("exportMessage").style.display = "none";
+          document.getElementById("exportMessageError").style.display = "none";
+          // This is like the import function, has a list of options to what to export - this case only has 1 but can have more
+          if(!elements[0].checked){
+            document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
+            document.getElementById("exportMessageError").style.display = "block";
+          }else{
+            document.getElementById("exportMessage").innerHTML = "Export successfully.";
+            document.getElementById("exportMessage").style.display = "block";
+          }
           if(elements[0].checked){
             $http.get('/api/criterions/' + projectID).success(function(data) {
         var criteriaUpdated = data.criteria;
@@ -907,7 +911,6 @@ app.directive('exportToCsv',function($http, $location){
             })
           }
         });
-      }
       }
     }
 });
@@ -960,6 +963,7 @@ app.directive('exportResultsToCsv',function(){
 /**** 
   Export functions for methods using files to store data 
 ***/
+
 //Export into a .csv file 
 app.directive('exportToCsv',function(){
     return {

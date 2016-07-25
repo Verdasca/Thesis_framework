@@ -29,7 +29,6 @@ module.exports = mongoose.model('Project', {
 		name : { type: String, default: 'Results' },
 		methodError : { type: String, default: 'Everything OK. No errors.' },
 		resultDate: { type: Date, default: Date.now},
-		orderPeople : String,
 		orderTypes : String,
 		orderAttributes : String,
 		resultValues: [{ 
@@ -73,8 +72,7 @@ module.exports = mongoose.model('Project', {
 		personValues: [{  
 			personName: String,  
   			personAge: Number
-		}],
-		dataValues: [mongoose.Schema.Types.Mixed]
+		}]
 	}]
 });
 

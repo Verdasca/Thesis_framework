@@ -179,7 +179,7 @@
     font-weight: normal;
 }
 
-/* Person set section */
+/* Data set section */
 #repeatSelect,
 #repeatSelect2{
   display: inline-table;
@@ -328,7 +328,6 @@
 #dataTbl{
   margin: auto;
   text-align: center;
-  width: 70%; 
   margin-top: 25px;
   margin-bottom: 10px;
 }

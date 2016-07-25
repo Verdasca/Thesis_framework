@@ -1,36 +1,32 @@
-<!-- description page example -->
+<!-- description order people method -->
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <base href="/">
 
-    <title>Description Page Example</title>
+    <title>Description Order People Method</title>
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/example.css"> <!-- custom styles -->
+    <link rel="stylesheet" type="text/css" href="css/orderPeople.css"> <!-- custom styles -->
 
     <!-- JS -->
     <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
-    <script src="libs/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
     <script src="libs/angular/angular.js" type="text/javascript"></script>
     <script src="libs/angular-route/angular-route.min.js" type="text/javascript"></script>
-    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
-    <script src="libs/angular-ui/build/angular-ui.min.js" type="text/javascript"></script>
-    <script src="libs/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
-    <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
     <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
     <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
     
     <!-- ANGULAR CUSTOM -->
     <script src="js/appRoutes.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
-    <script src="js/controllers/example-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/people-controller.js" type="text/javascript"></script>
     <script src="js/sortable.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
-<body ng-app="example-controller" ng-controller="exampleController">
+<body ng-app="people-controller" ng-controller="peopleController">
 <!-- HEADER AND NAVBAR -->
     <header>
         <nav id="navigationBar" class="navbar navbar-default">
@@ -51,9 +47,9 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set &<br>Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description_orderPeople');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('data_orderPeople');">Person Set</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results_orderPeople');">Execution and Results</a></li>
                         <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
                         <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
@@ -82,71 +78,35 @@
                 </tr>
             </table>
             <br/>
-            <h3>The following steps are required to run the "Method Name" method correctly:</h3>
+            <h3>The following steps are required to run the Order People method correctly:</h3>
             <br/>
             <ol type="1" id="tutorial">
-                <li id="step1">Describe Step 1:
-                  <ul style="list-style-type:disc">
-                    <li>Instructions...</li>
-                    <li>Instructions...</li>
-                  </ul>
-                </li>
-                <li id="step2">Describe Step 2.</li>
-                <li id="step3">In Step 3:
-                  <ol type="a">
-                    <li id="step5">Instructions...</li>
-                    <li id="step6">Instructions...</li>
-                    <li id="step7">Instructions...</li>
-                  </ol>
-                </li>
+                <li id="step1">Define person set.</li>
+                <li id="step2">Choose which attribute to order and what type of order to run.</li>
             </ol>
             <br/>
             <hr style="border:1px solid #033773">
             <h3>Current Data</h3>
             <br/>
-            <!-- Insert here all current data (data needed to execute the method), for the user to see all the data at once - using DB -->
-            <!-- EXAMPLE for methods using data base -->
             <table id="resultTbl" class="table horizontal">
                 <tr class="noBorder"> 
-                    <td class="noBorder">
-                        <h4 id="titleTbl">Data 1</h4>
+                    <td>
+                        <h4 id="titleTbl">Data - Attribute: {{ project.orderAttributes }}, Order Type: {{ project.orderTypes }}</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
-                                <th id="headers">Category</th>
-                                <th id="headers">Rank</th>
-                                <th id="headers">Ref. Action</th>
+                                <th id="headers">Name</th>
+                                <th id="headers">Age</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="category in categories">
-                                <td id="headers">{{ category.name }}</td>
-                                <td id="headers">{{ category.rank }}</td>
-                                <td id="headers">{{ category.action }}</td>
+                            <tr ng-repeat="data in people">
+                                <td id="headers">{{ data.name }}</td>
+                                <td id="headers">{{ data.age }}</td>
                             </tr> 
                             </tbody>
-                        </table> 
-                    </td>
-                    <td>
-                        <h4 id="titleTbl">Data 2</h4>
-                       <table style="background-color:white;" class=" table borderless">
-                            <thead>
-                                <th id="headers">Alternative</th>
-                                <th id="headers">Description</th>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="alternative in alternatives">
-                                <td id="headers">{{ alternative.name }}</td>
-                                <td id="headers">{{ alternative.description }}</td>
-                            </tr> 
-                            </tbody>
-                        </table> 
+                        </table>
                     </td>
                 </tr>
             </table>
-            <!-- END of example -->
-            <!-- EXAMPLE for methods using local files -->
-            <table id="resultTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
-            </table> 
-            <!-- END of example -->
 		</div>
         <div id="dvCSV" style="display:none"></div>
         <div id="loading">
@@ -157,34 +117,38 @@
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
           <p id="loading-text">Importing...</p>
         </div>
-        <!-- Modal to import -->
+        <!-- Modal -->
         <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;">
             <div class="modal-dialog" style="width:50%;">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" ng-click="dataUpdate()">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal" ng-click="refreshBeforeClosing();">&times;</button>
                         <h4 class="modal-title">Import from CSV</h4>
                     </div>
                     <div class="modal-body" style="font-size: 16px;">
                         <p><b>Import data to:</b></p>
+                        <form>
+                            <input type="radio" ng-model="content" name="dataType" value="peopleData" class="importRatio" style="margin-bottom: 5px;"> People
+                        </form>
                         <input type="file" id="fileUpload"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
-                        <br/>
-                        <p>
-                            <b>CSV file structure example:</b><br>Attribute 1, Attribute 2, Attribute 3, ...
-                            <br>value 1, value 2, value 3, ...<br>value x, value y, value z, ...<br>and so on...    
-                        </p>
+                        <div class="wrapper">
+                            <p ng-show="content == 'peopleData'">
+                                <b>CSV file structure example:</b><br>Name, Age
+                                <br>person name 1, 6<br>person name 2,32<br>and so on...    
+                            </p>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dataUpdate()">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="refreshBeforeClosing();">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Modal to export -->
+        <!-- Export Modal -->
         <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;">
             <div class="modal-dialog" style="width:50%;">
                 <!-- Modal content-->
@@ -197,9 +161,9 @@
                         <p><b>Export project data:</b></p>
                         <ul class="list-group" style="list-style-type: none;">
                             <li>
-                                <label for="exportData" class="lbl" style="font-weight: normal !important;">
-                                <input class="exportChoice" type="checkbox" id="exportData" name="dataBox" checked><span class="lbl">
-                                Data</label></li>
+                                <label for="exportCri" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportCri" name="dataBox" checked><span class="lbl">
+                                People</label></li>
                         </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
                         <br/><br/>

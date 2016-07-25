@@ -12,6 +12,7 @@ $scope.data = {
       {id: 'notSelected', name: '<-- Select method for the project -->'},
       {id: 'Electre Tri-C', name: 'Electre Tri-C'},
       {id: 'Order By', name: 'Order By'},
+      {id: 'Order People', name: 'Order People'},
       {id: 'Void', name: 'Void'}
     ],
 };
@@ -139,6 +140,9 @@ $scope.openProject = function (project){
       break;
     case 'Order By':
       $window.location.href = '/description_orderBy.html?projectId='+id+'&n='+username; 
+      break;
+    case 'Order People':
+      $window.location.href = '/description_orderPeople.html?projectId='+id+'&n='+username; 
       break;
     case 'Void':
       $window.location.href = '/descriptionVoid.html?projectId='+id+'&n='+username; 

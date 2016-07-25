@@ -106,41 +106,23 @@ module.exports.addResult = function (req, res) {
             }
     });
 }
-// projects.update_one({'_id': ObjectId(project_id), 'results.result.identifier': executions}, {'$push': {'results.$.alternativeValues': {'$each': data}}})
+
 //Update new result
 module.exports.saveResult = function (req, res) {
-    // //console.log('Saving result...');
-    // var projectID = req.params.projectId;
-    // var resultID = req.params.id;
-    // //console.log('ProId: '+projectID+' ResId: '+resultID+' obj: '+req.body);
-    // //console.log(req.body);
-    // var name = req.body.name;
-    // var age = req.body.age;
-    // Project.findOneAndUpdate( 
-    //     { '_id': projectID, 'results.identifier': resultID },
-    //     { $push: {'results.$.personValues': {personName : name, personAge: age} } },
-    //     {safe: true},
-    //     function(err, result) {
-    //         if(err){
-    //             res.send(err);
-    //         }
-    //         res.send('Result updated.');
-    // });
     console.log('Saving result...');
     var projectID = req.params.projectId;
     var resultID = req.params.id;
-    //var name = req.body.name;
-    //var age = req.body.age;
+    var name = req.body.name;
+    var age = req.body.age;
     Project.findOneAndUpdate( 
         { '_id': projectID, 'results.identifier': resultID },
-        { $push: {'results.$.dataValues': {$each: req.body} } },
+        { $push: {'results.$.personValues': {personName : name, personAge: age} } },
         {safe: true},
         function(err, result) {
             if(err){
                 res.send(err);
-            }else{
-                res.send('Results updated.');  
             }
+            res.send('Result updated.');
     });
 }
 

@@ -1,36 +1,32 @@
-<!-- Date set page example -->
+<!-- People set page example -->
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <base href="/">
 
-    <title>Data Set Page Example</title>
+    <title>People Page Example</title>
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/example.css"> <!-- custom styles -->
+    <link rel="stylesheet" type="text/css" href="css/orderPeople.css"> <!-- custom styles -->
 
     <!-- JS -->
     <script src="libs/jquery/dist/jquery.min.js" type="text/javascript"></script>
-    <script src="libs/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
     <script src="libs/angular/angular.js" type="text/javascript"></script>
     <script src="libs/angular-route/angular-route.min.js" type="text/javascript"></script>
-    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
-    <script src="libs/angular-ui/build/angular-ui.min.js" type="text/javascript"></script>
-    <script src="libs/angular-bootstrap/ui-bootstrap.min.js" type="text/javascript"></script>
-    <script src="libs/angular-sanitize/angular-sanitize.min.js" type="text/javascript"></script>
     <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
     <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
     
     <!-- ANGULAR CUSTOM -->
     <script src="js/appRoutes.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
-    <script src="js/controllers/example-controller.js" type="text/javascript"></script>
+    <script src="js/controllers/people-controller.js" type="text/javascript"></script>
     <script src="js/sortable.js" type="text/javascript"></script>
 </head>
 <!-- sampleApp is in app.js, is to set up every controller together -->
-<body ng-app="example-controller" ng-controller="exampleController">
+<body ng-app="people-controller" ng-controller="peopleController">
 <!-- HEADER AND NAVBAR -->
     <header>
         <nav id="navigationBar" class="navbar navbar-default">
@@ -51,9 +47,9 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" class="active" href="" ng-click="changeSection('example_data_set');">Data Set &<br>Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description_orderPeople');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sectionsData"><a id="aSections" class="active" href="" ng-click="changeSection('data_orderPeople');">Person Set</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results_orderPeople');">Execution and Results</a></li>
                         <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
                         <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
@@ -65,20 +61,56 @@
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
 		<div id="content" class="jumbotron text-center">
-            <!-- EXAMPLE for methods using local files -->
-            <h2>Data Set</h2>
+            <h2>Person Set</h2>
             <br/>
-            <div id="createDataDiv">
-                <label id="dataLambda" style="font-size:16px;">Number of attributes: </label>
-                <input id='attributeNumber' type='number' name='attributeNumber' value="1" min="1"/>
-                <input type='button' value='Create New Data Set' ng-click='createDataSet()' class='btn btn-success'/>
+            <!-- Warnings example when adding something -->
+            <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
+              <div ng-show="myForm.name.$error.required">
+                Name is required!
+              </div>
+              <div ng-show="myForm.age.$error.required">
+                Age is required!
+              </div>
             </div>
+            <!-- Table example -->
+            <form name="myForm" id="dataTable" runat="server" novalidate>
+                <div>
+                    <br />
+                    <table id="peopleTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+                        <tr>
+                            <th id="dataHeader" style="width:150px">Action</th>
+                            <th id="dataHeader3">Name</th>
+                            <th id="dataHeader3">Age</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="button" value="Add Person" ng-disabled="myForm.name.$dirty && myForm.name.$invalid || myForm.age.$dirty && myForm.age.$invalid" ng-click="submitted=true; myForm.name.$valid && myForm.age.$valid && createPerson();" class="btn btn-primary"/>
+                            </td>
+                            <td style="text-align:left;" id="dataBody2"><input id="dataInput2" type="text" placeholder="Person name" name="name" ng-model="people.name" required/></td>
+                            <td style="text-align:left;" id="dataBody2"><input id="dataInput2" type="text" placeholder="Person age" name="age" ng-model="people.age" required/></td>
+                        </tr>
+                        <tr ng-repeat="person in people" ng-include="getTemplate(person)">
+                        </tr>
+                    </table>
+                    <script type="text/ng-template" id="display">
+                        <td>
+                            <input type="button" value="Edit" ng-click="editPerson(person)" class="btn btn-warning"/>
+                            <input type="button" value="Delete" ng-click="deletePerson(person);" class="btn btn-danger"/> 
+                        </td> 
+                        <td id="dataBody2">{{ person.name }}</td>
+                        <td id="dataBody2">{{ person.age }}</td>
+                    </script>
+                    <script type="text/ng-template" id="edit">
+                        <td>
+                            <input type="button" value="Save" ng-click="updatePerson(person);" class="btn btn-success"/>
+                            <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
+                        </td>
+                        <td id="dataBody2"><input id="dataInput2" type="text" placeholder="Person name" ng-model="model.name"/></td>
+                        <td id="dataBody2"><input id="dataInput2" type="text" placeholder="Person age" ng-model="model.age"/></td>
+                    </script>
+                </div>
+            </form>
             <br/>
-            <table id="dataTable" class="table horizontal">
-            </table>
-            <table id="resultTbl" class="table horizontal" style="display:none;">
-            </table>
-            <br/><br/><br/>
             <hr style="border:1px solid #033773">
             <h2>Configurations</h2>
             <br/>
@@ -91,62 +123,7 @@
                 <select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="data.repeatSelect" ng-change="updateOrderType(data.repeatSelect)">
                     <option ng-repeat="option in data.availableOptions" value="{{option.id}}">{{option.name}}</option>
                 </select>
-            </div> 
-            <!-- END of example -->
-            <br/><br/><br/>
-            <hr style="border:1px solid #033773">
-            <!-- EXAMPLE for methods using data base -->
-            <h2>Data Set Example</h2>
-            <!-- Warnings example when adding something -->
-            <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
-              <div ng-show="myForm.name.$error.required">
-                Name is required!
-              </div>
             </div>
-            <form name="myForm" id="dataTable" runat="server" novalidate>
-                <div>
-                    <br />
-                    <table id="dataTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
-                        <tr>
-                            <th id="dataHeader" style="width:150px">Action</th>
-                            <th id="dataHeader3">Name</th>
-                            <th id="dataHeader3">Description</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="button" value="Add Data" ng-disabled="myForm.name.$dirty && myForm.name.$invalid" ng-click="submitted=true; myForm.name.$valid && createData();" class="btn btn-primary"/>
-                            </td>
-                            <td style="text-align:left;" id="dataBody2"><input id="dataInput" type="text" placeholder="Data name" name="name" ng-model="data.name" required/></td>
-                            <td style="text-align:left;" id="dataBody2"><input id="dataInput" type="text" placeholder="Data description" ng-model="data.description"/></td>
-                        </tr>
-                        <tr ng-repeat="data in dataInformation" ng-include="getTemplate(data)">
-                        </tr>
-                    </table>
-                    <script type="text/ng-template" id="display">
-                        <td>
-                            <input type="button" value="Edit" ng-click="editData2(data)" class="btn btn-warning"/>
-                            <input type="button" value="Delete" ng-click="deleteData(data);" class="btn btn-danger"/> 
-                        </td>
-                        <td id="dataBody2">{{ data.name }}</td>
-                        <td id="dataBody2">{{ data.description }}</td> 
-                    </script>
-                    <script type="text/ng-template" id="edit">
-                        <td>
-                            <input type="button" value="Save" ng-click="updateData(data);" class="btn btn-success"/>
-                            <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
-                        </td>
-                        <td id="dataBody2"><input id="dataInput" type="text" placeholder="Data name" ng-model="model.name"/></td>
-                        <td id="dataBody2"><input id="dataInput" type="text" placeholder="Data description" ng-model="model.description"/></td>
-                    </script>
-                </div>
-            </form>
-            <br/><br/>
-            <hr style="border:1px solid #033773">
-            <h2>Data Set Example 2</h2>
-            <br/>
-            <li id="explanation" style="list-style-type: none; text-align:left;">Example of a explanation...</li> 
-            <!-- Put content -->
-            <!-- END of example -->
         </div>
         <div id="dvCSV" style="display:none"></div>
         <div id="loading">
@@ -157,34 +134,38 @@
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
           <p id="loading-text">Importing...</p>
         </div>
-        <!-- Modal to import -->
+        <!-- Modal -->
         <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;">
             <div class="modal-dialog" style="width:50%;">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" ng-click="dataUpdate()">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal" ng-click="refreshBeforeClosing();">&times;</button>
                         <h4 class="modal-title">Import from CSV</h4>
                     </div>
                     <div class="modal-body" style="font-size: 16px;">
                         <p><b>Import data to:</b></p>
+                        <form>
+                            <input type="radio" ng-model="content" name="dataType" value="peopleData" class="importRatio" style="margin-bottom: 5px;"> People
+                        </form>
                         <input type="file" id="fileUpload"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
-                        <br/>
-                        <p>
-                            <b>CSV file structure example:</b><br>Attribute 1, Attribute 2, Attribute 3, ...
-                            <br>value 1, value 2, value 3, ...<br>value x, value y, value z, ...<br>and so on...    
-                        </p>
+                        <div class="wrapper">
+                            <p ng-show="content == 'peopleData'">
+                                <b>CSV file structure example:</b><br>Name, Age
+                                <br>person name 1, 6<br>person name 2,32<br>and so on...    
+                            </p>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dataUpdate()">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="refreshBeforeClosing();">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Modal to export -->
+        <!-- Export Modal -->
         <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;">
             <div class="modal-dialog" style="width:50%;">
                 <!-- Modal content-->
@@ -197,9 +178,9 @@
                         <p><b>Export project data:</b></p>
                         <ul class="list-group" style="list-style-type: none;">
                             <li>
-                                <label for="exportData" class="lbl" style="font-weight: normal !important;">
-                                <input class="exportChoice" type="checkbox" id="exportData" name="dataBox" checked><span class="lbl">
-                                Data</label></li>
+                                <label for="exportCri" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportCri" name="dataBox" checked><span class="lbl">
+                                People</label></li>
                         </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
                         <br/><br/>

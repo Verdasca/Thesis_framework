@@ -13,16 +13,20 @@ app.directive('exportToCsv',function($http, $location){
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
-      	document.getElementById("exportMessage").style.display = "none";
-  		document.getElementById("exportMessageError").style.display = "none";
       	var projectID = $location.search().projectId;
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
-        if(!elements[0].checked && !elements[1].checked && !elements[2].checked && !elements[3].checked && !elements[4].checked && !elements[5].checked){
-        	document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
-    		document.getElementById("exportMessageError").style.display = "block";
-        }else{
         element.bind('click', function(e){
+          document.getElementById("exportMessage").style.display = "none";
+          document.getElementById("exportMessageError").style.display = "none";
+          if(!elements[0].checked && !elements[1].checked && !elements[2].checked && !elements[3].checked && !elements[4].checked && !elements[5].checked){
+            document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
+            document.getElementById("exportMessageError").style.display = "block";
+          }
+          if(elements[0].checked || elements[1].checked || elements[2].checked || elements[3].checked || elements[4].checked || elements[5].checked){
+            document.getElementById("exportMessage").innerHTML = "Export successfully.";
+            document.getElementById("exportMessage").style.display = "block";
+          }
           if(elements[0].checked){
           	$http.get('/api/criterions/' + projectID).success(function(data) {
 	     	var criteriaUpdated = data.criteria;
@@ -186,7 +190,6 @@ app.directive('exportToCsv',function($http, $location){
             })
           }
         });
-		}
       }
     }
 });

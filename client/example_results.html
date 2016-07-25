@@ -82,7 +82,7 @@
                 </tr>
                 <tr ng-show="showResult" class="noBorder"> 
                     <td colspan="4">
-                        <h4 id="titleTbl2">Results - Data type: {{ res.orderAttributes }}</h4>
+                        <h4 id="titleTbl2">Results - Data type: {{ res.orderAttributes }}</h4> <!-- had extra info if necessary -->
                         <table id="resultsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                         </table> 
                     </td>
@@ -133,7 +133,7 @@
                 </tr>
                 <tr ng-show="showResult" class="noBorder"> 
                     <td colspan="4">
-                        <h4 id="titleTbl">Results</h4>
+                        <h4 id="titleTbl2">Results - Data type: {{ res.orderAttributes }}</h4> <!-- had extra info if necessary -->
                         <table id="resultsTable{{ values.identifier }}" style="background-color:white;" class=" table borderless">
                         <thead>
                             <th id="headers">Data</th>

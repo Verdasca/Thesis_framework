@@ -51,9 +51,9 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
                         <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set &<br>Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
+                        <li id="sectionsResults"><a id="aSections" class="active" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
                         <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
                         <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
@@ -66,7 +66,7 @@
     <div id="main">
 		<div id="content" class="jumbotron text-center">
             <!-- EXAMPLE for methods using local files -->
-            <!--<h2>Result Set</h2>
+            <h2>Result Set</h2>
             <br/>
             <div>
                 <table ng:repeat="res in results" id="resultTbl2" class="table horizontal">
@@ -82,7 +82,7 @@
                 </tr>
                 <tr ng-show="showResult" class="noBorder"> 
                     <td colspan="4">
-                        <h4 id="titleTbl2">Results - Attribute: {{ res.orderAttributes }}, Order Type: {{ res.orderTypes }}</h4>
+                        <h4 id="titleTbl2">Results - Data type: {{ res.orderAttributes }}</h4>
                         <table id="resultsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                         </table> 
                     </td>
@@ -102,11 +102,11 @@
             </table>
                 <table id="resultTbl" class="table horizontal" style="display:none;">
                 </table>
-            </div> -->
-
+            </div> 
+            <!-- END of example -->
 
             <!-- EXAMPLE for methods using data base -->
-            <!-- <h2>Result Set</h2>
+            <h2>Result Set</h2>
             <br/>
             <div ng-repeat="res in results">
             <table ng:repeat="values in res.result" id="resultTbl" class="table horizontal">
@@ -167,7 +167,8 @@
                     </td>
                 </tr>
             </table>
-            </div>  -->
+            </div> 
+            <!-- END of example -->
         <br/>
         </div>
         <div id="dvCSV" style="display:none"></div>

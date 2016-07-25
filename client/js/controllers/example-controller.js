@@ -390,14 +390,14 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
     console.log('Error: ' + data);
   });
   //See if person set is done or not, if not cannot execute method
-  var table = document.getElementById("resultTbl");
-  if(table.rows.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-    document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
-    $scope.dataDone = false;
-  }else{
-    document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
-    $scope.dataDone = true;
-  }
+  // var table = document.getElementById("resultTbl");
+  // if(table.rows.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+  //   document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
+  //   $scope.dataDone = false;
+  // }else{
+  //   document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
+  //   $scope.dataDone = true;
+  // }
   // if($scope.dataDone){
   //   document.getElementById('buttonDiviz').disabled = false;
   // } else{

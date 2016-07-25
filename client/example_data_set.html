@@ -51,10 +51,11 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" class="active" href="" ng-click="changeSection('example_data_set');">Data Set</a></li>
-                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('example_execute');">Execute</button></li>
-                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('example_results');">Results</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set &<br>Configurations</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
                     </div>
                     <!--/.nav-collapse -->
@@ -64,14 +65,42 @@
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
 		<div id="content" class="jumbotron text-center">
-            <h2>Data Set Example</h2>
-            <!-- Warnings example when adding something -->
+            <!-- EXAMPLE for methods using local files -->
+            <!-- <h2>Data Set</h2>
+            <br/>
+            <div id="createDataDiv">
+                <label id="dataLambda" style="font-size:16px;">Number of attributes: </label>
+                <input id='attributeNumber' type='number' name='attributeNumber' value="1" min="1"/>
+                <input type='button' value='Create New Data Set' ng-click='createDataSet()' class='btn btn-success'/>
+            </div>
+            <br/>
+            <table id="dataTable" class="table horizontal">
+            </table>
+            <table id="resultTbl" class="table horizontal" style="display:none;">
+            </table>
+            <br/><br/><br/>
+            <hr style="border:1px solid #033773">
+            <h2>Configurations</h2>
+            <br/>
+            <div>
+                <label id="dataLambda" style="font-size:16px;">Choose which attribute to order :</label>
+                <select class="form-control" name="repeatSelect2" id="repeatSelect2" ng-model="data2.repeatSelect2" ng-change="updateOrderAttribute(data2.repeatSelect2)" style="margin-right: 45px !important;">
+                    <option ng-repeat="option in data2.availableOptions2" value="{{option.id}}">{{option.name}}</option>
+                </select>
+                <label id="dataLambda" style="font-size:16px;">Choose type of order :</label>
+                <select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="data.repeatSelect" ng-change="updateOrderType(data.repeatSelect)">
+                    <option ng-repeat="option in data.availableOptions" value="{{option.id}}">{{option.name}}</option>
+                </select>
+            </div> -->
+            
+            <!-- EXAMPLE for methods using data base -->
+            <!-- <h2>Data Set Example</h2>-->
+            <!-- Warnings example when adding something 
             <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
               <div ng-show="myForm.name.$error.required">
                 Name is required!
               </div>
             </div>
-            <!-- Table example -->
             <form name="myForm" id="dataTable" runat="server" novalidate>
                 <div>
                     <br />
@@ -109,31 +138,76 @@
                     </script>
                 </div>
             </form>
-            <br/>
-            <!-- Export list example -->
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Export to CSV <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="#" export-to-csv>Export everything</a></li>
-                    <li><a href="#" export-to-csv>Export without something...</a></li>
-                </ul>
-            </div>
             <br/><br/>
             <hr style="border:1px solid #033773">
             <h2>Data Set Example 2</h2>
             <br/>
-            <li id="explanation" style="list-style-type: none; text-align:left;">Example of a explanation...</li>
+            <li id="explanation" style="list-style-type: none; text-align:left;">Example of a explanation...</li>  -->
             <!-- Put content -->
         </div>
+        <div id="dvCSV" style="display:none"></div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
-          <p id="loading-text">Executing...</p>
+          <p id="loading-text">Loading...</p>
         </div>
         <div id="importing">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
           <p id="loading-text">Importing...</p>
+        </div>
+        <!-- Modal to import -->
+        <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ng-click="dataUpdate()">&times;</button>
+                        <h4 class="modal-title">Import from CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Import data to:</b></p>
+                        <input type="file" id="fileUpload"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                        <br/>
+                        <p>
+                            <b>CSV file structure example:</b><br>Attribute 1, Attribute 2, Attribute 3, ...
+                            <br>value 1, value 2, value 3, ...<br>value x, value y, value z, ...<br>and so on...    
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dataUpdate()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal to export -->
+        <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export to CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Export project data:</b></p>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li>
+                                <label for="exportData" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportData" name="dataBox" checked><span class="lbl">
+                                Data</label></li>
+                        </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
+                        <br/><br/>
+                        <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
+                        <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>   
 </body>

@@ -1,7 +1,7 @@
 /* Example style css */
 
 #main{ 
-	padding-top: 60px; 
+  padding-top: 60px; 
 }
 
 #homeNav{
@@ -179,7 +179,15 @@
     font-weight: normal;
 }
 
-/* Data section */
+/* Person set section */
+#repeatSelect,
+#repeatSelect2{
+  display: inline-table;
+  width: 20%;
+  margin: auto;
+  text-align: center;
+}
+
 #dataTable{
   margin: auto;
   text-align: center;
@@ -207,6 +215,13 @@
     height: 10%;
     font-size: 16px;
     vertical-align: text-top;
+}
+
+#attributeNumber{
+  width: 10%;
+  text-align: center; 
+  vertical-align: middle;
+  margin-right: 10px; 
 }
 
 #dataLinkMethod{
@@ -244,18 +259,21 @@
 }
 
 #dataHeader{
-    text-align: center;  
-    font-size: 18px;  
+  text-align: center;  
+  font-size: 18px; 
+  font-weight: bold; 
 }
 
 #dataHeader2{
     text-align: right;   
     font-size: 18px;   
+    font-weight: bold;
 }
 
 #dataHeader3{
-    text-align: left;   
-    font-size: 18px;   
+  text-align: left;   
+  font-size: 18px;   
+  font-weight: bold;
 }
 
 #dataBody{
@@ -310,6 +328,7 @@
 #dataTbl{
   margin: auto;
   text-align: center;
+  width: 70%; 
   margin-top: 25px;
   margin-bottom: 10px;
 }
@@ -674,24 +693,6 @@ input[name="ratio"]{
     color: red;
 }
 
-#methodButtons{
-    font-size: 18px;
-    text-align: center;
-    padding: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    margin: auto;
-    margin-right: 10px; 
-}
-
-#resultName{
-    text-align: center;
-    vertical-align: middle;
-    width: 25%;
-    margin-right: 30px;
-    font-size: 16px;
-}
-
 #labelResult{
     font-size: 16px;
     vertical-align: middle;
@@ -699,12 +700,28 @@ input[name="ratio"]{
 }
 
 /* Result section */
+#resultName{
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    font-size: 16px;
+}
+
+#methodErrorMessage{
+  text-align: left;  
+  font-size: 16px; 
+  width: 97%; 
+  margin: 6px;
+  font-family: Arial,sans-serif;
+}
+
 #headers{
   text-align: left;  
   font-size: 16px;  
 }
 
-#resultTbl{
+#resultTbl,
+#resultTbl2{
   margin: auto;
   width: 97%;
 }
@@ -742,7 +759,8 @@ tr.noBorder td{
 
 /* Loading/importing gif for loader aspects */
 #loading,
-#importing {
+#importing,
+#executing {
    width: 100%;
    height: 100%;
    top: 0;

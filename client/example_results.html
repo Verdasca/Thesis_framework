@@ -51,10 +51,11 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set</a></li>
-                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('example_execute');">Execute</button></li>
-                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('example_results');">Results</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
+                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set &<br>Configurations</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
                     </div>
                     <!--/.nav-collapse -->
@@ -64,9 +65,49 @@
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
 		<div id="content" class="jumbotron text-center">
-            <h2>Result Set</h2>
+            <!-- EXAMPLE for methods using local files -->
+            <!--<h2>Result Set</h2>
             <br/>
-            <!-- example how the results are shown -->
+            <div>
+                <table ng:repeat="res in results" id="resultTbl2" class="table horizontal">
+                <tr class="noBorder">
+                    <td id="titleTbl3" style="width:25%;">
+                        <button ng-click="showResult = ! showResult" class="btn btn-success">View</button>
+                        <button export-result-to-csv values="res.identifier" class="btn btn-default ng-isolate-scope">Export to CSV</button> 
+                        <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>
+                    </td> 
+                    <td id="titleTbl3" style="width:30%;"><b>Name:</b> {{ res.name }}</td> 
+                    <td style="width:15%;"></td> 
+                    <td id="titleTbl3" style="width:25%;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                </tr>
+                <tr ng-show="showResult" class="noBorder"> 
+                    <td colspan="4">
+                        <h4 id="titleTbl2">Results - Attribute: {{ res.orderAttributes }}, Order Type: {{ res.orderTypes }}</h4>
+                        <table id="resultsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                        </table> 
+                    </td>
+                </tr>
+                </table>
+                <table id="resultTbl2" class="table horizontal" style="width: 97% !important; margin-bottom: 20px !important;">
+                <tr>
+                    <td id="titleTbl4" style="width:30%; padding-top: 10px;">
+                        <input id="methodButtons" class="btn btn-success" type="button" value="Execute Method" ng-click="executeMethod();"/>
+                    </td>
+                    <td colspan="2" id="titleTbl3" style="width:45%; padding-top: 10px;">
+                        <input id="resultName" onkeyup="checkResultName()" type="text" value="" placeholder="Result name" name="name" required></input>
+                    </td> 
+                    <td id="titleTbl3" style="width:25%; padding-top: 10px;">
+                    </td> 
+                </tr>
+            </table>
+                <table id="resultTbl" class="table horizontal" style="display:none;">
+                </table>
+            </div> -->
+
+
+            <!-- EXAMPLE for methods using data base -->
+            <!-- <h2>Result Set</h2>
+            <br/>
             <div ng-repeat="res in results">
             <table ng:repeat="values in res.result" id="resultTbl" class="table horizontal">
                 <tr class="noBorder">
@@ -126,16 +167,72 @@
                     </td>
                 </tr>
             </table>
-            </div>
+            </div>  -->
         <br/>
         </div>
+        <div id="dvCSV" style="display:none"></div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
-          <p id="loading-text">Executing...</p>
+          <p id="loading-text">Loading...</p>
         </div>
         <div id="importing">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
           <p id="loading-text">Importing...</p>
+        </div>
+        <!-- Modal to import -->
+        <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ng-click="dataUpdate()">&times;</button>
+                        <h4 class="modal-title">Import from CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Import data to:</b></p>
+                        <input type="file" id="fileUpload"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                        <br/>
+                        <p>
+                            <b>CSV file structure example:</b><br>Attribute 1, Attribute 2, Attribute 3, ...
+                            <br>value 1, value 2, value 3, ...<br>value x, value y, value z, ...<br>and so on...    
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dataUpdate()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal to export -->
+        <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export to CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Export project data:</b></p>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li>
+                                <label for="exportData" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportData" name="dataBox" checked><span class="lbl">
+                                Data</label></li>
+                        </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
+                        <br/><br/>
+                        <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
+                        <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>   
 </body>

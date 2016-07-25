@@ -52,9 +52,10 @@
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('example_description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set</a></li>
-                        <li><button id="buttonDiviz" class="btn btn-success" ng-click="changeSection('example_execute');">Execute</button></li>
-                        <li><button id="buttonResults" class="btn btn-primary" ng-click="changeSection('example_results');">Results</a></li>
+                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('example_data_set');">Data Set &<br>Configurations</a></li>
+                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('example_results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
                     </ul>
                     </div>
                     <!--/.nav-collapse -->
@@ -103,7 +104,7 @@
             <hr style="border:1px solid #033773">
             <h3>Current Data</h3>
             <br/>
-            <!-- Insert here all current data (data needed to execute the method), for the user to see all the data at once -->
+            <!-- Insert here all current data (data needed to execute the method), for the user to see all the data at once - using DB -->
             <table id="resultTbl" class="table horizontal">
                 <tr class="noBorder"> 
                     <td class="noBorder">
@@ -140,14 +141,73 @@
                     </td>
                 </tr>
             </table>
+            <!-- Table if method uses files and not DB
+            <table id="resultTbl" border="1" bordercolor="#033773" class="table table-bordered horizontal">
+            </table> -->
 		</div>
+        <div id="dvCSV" style="display:none"></div>
         <div id="loading">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
-          <p id="loading-text">Executing...</p>
+          <p id="loading-text">Loading...</p>
         </div>
         <div id="importing">
           <img id="loading-image" src="img/loader.gif" alt="Loading..." />
           <p id="loading-text">Importing...</p>
+        </div>
+        <!-- Modal to import -->
+        <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ng-click="dataUpdate()">&times;</button>
+                        <h4 class="modal-title">Import from CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Import data to:</b></p>
+                        <input type="file" id="fileUpload"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                        <br/>
+                        <p>
+                            <b>CSV file structure example:</b><br>Attribute 1, Attribute 2, Attribute 3, ...
+                            <br>value 1, value 2, value 3, ...<br>value x, value y, value z, ...<br>and so on...    
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dataUpdate()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal to export -->
+        <div class="modal fade" id="exportModal" data-backdrop="static" role="dialog" style="z-index: 3;">
+            <div class="modal-dialog" style="width:50%;">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export to CSV</h4>
+                    </div>
+                    <div class="modal-body" style="font-size: 16px;">
+                        <p><b>Export project data:</b></p>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li>
+                                <label for="exportData" class="lbl" style="font-weight: normal !important;">
+                                <input class="exportChoice" type="checkbox" id="exportData" name="dataBox" checked><span class="lbl">
+                                Data</label></li>
+                        </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
+                        <br/><br/>
+                        <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
+                        <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>   
 </body>

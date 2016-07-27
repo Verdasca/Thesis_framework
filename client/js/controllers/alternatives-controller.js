@@ -126,11 +126,11 @@ var checkStatus = function(){
     document.getElementById('sectionsAlternatives').style.backgroundColor = '#6fdc6f';
     $scope.alternativesDone = true;
   } 
-  // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-  //   document.getElementById('methodButtons').disabled = false;
-  // } else{
-  //   document.getElementById('methodButtons').disabled = true;
-  // }
+  if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  }
 }
 
 $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
@@ -181,11 +181,11 @@ $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
       $scope.configurationsDone = true;
     }
-    // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-    //   document.getElementById('methodButtons').disabled = false;
-    // } else{
-    //   document.getElementById('methodButtons').disabled = true;
-    // }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    }
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -253,6 +253,7 @@ $scope.deleteAlternative = function(alternative) {
       }
       $scope.updateProject();
       refreshAlternatives();
+      checkStatus();
     })
     .error(function() {
       //console.log('Error: ' + i);
@@ -262,6 +263,7 @@ $scope.deleteAlternative = function(alternative) {
       }
       $scope.updateProject();
       refreshAlternatives();
+      checkStatus();
     });
 }
 
@@ -364,7 +366,7 @@ var refresh = function(){
       //console.log('I got the data I requested');
       $scope.project = data;
       $scope.performances = data.performancetables;
-      checkStatus();
+      //checkStatus();
     });  
 } 
 
@@ -512,10 +514,14 @@ $scope.deletePerformance2 = function() {
     .success(function() {
       console.log("success");
       refresh();
+      checkStatus();
+      $('#loading').hide();
     })
     .error(function() {
       //console.log('Error: fail deletes' );
       refresh();
+      checkStatus();
+      $('#loading').hide();
   });
   //refresh();
 }
@@ -605,7 +611,7 @@ $scope.resetPerformanceTable  = function() {
         refresh();
         $scope.chunksCat = $scope.alternatives;
         console.log('Performance Table has been updated.');
-        $('#loading').hide();
+        //$('#loading').hide();
     }, 800);
 }
 

@@ -46,7 +46,7 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
-                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
+                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Projects</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
         </div>
@@ -57,13 +57,13 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
-                        <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" class="active" href="" ng-click="changeSection('results');">Execution and Results</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');">Description:<br>{{ project.name }}</a></li>
+                        <li id="sectionsCriteria"><a id="dataSetSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sectionsAlternatives"><a id="dataSetSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
+                        <li id="sectionsConfigurations"><a id="dataSetSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
+                        <li id="sectionsResults"><a id="dataSetSections" class="active" href="" ng-click="changeSection('results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import Data</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export Data</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -75,18 +75,26 @@
 		    <h2>Result Set</h2>
             <br/>
             <div>
+            <table id="resultTbl" class="table horizontal" style="width: 99% !important;">
+                <tr>
+                    <th id="descriptionTd" style="width:35%"></th>
+                    <th id="descriptionTd" style="width:17%">Date</th>
+                    <th id="descriptionTd" style="width:21%">Result Name</th>
+                    <th id="descriptionTd" style="width:27%">Notes</th>
+                </tr>
+            </table>
             <table ng-repeat="res in results" id="resultTbl" class="table horizontal" ng-include="getTemplate(res)" style="width: 97% !important;">
             </table>
             <script type="text/ng-template" id="showResults">
                 <tr>
-                    <td id="titleTbl4" style="width:30%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
+                    <td id="titleTbl4" style="width:35%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
                         <button ng-click="showResult = ! showResult" class="btn btn-success">View</button>
                         <div class="btn-group">
                           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Export to CSV <span class="caret"></span>
+                            Export Results<span class="caret"></span>
                           </button>
-                          <ul class="dropdown-menu keep-open-on-click" style="font-size: 16px;padding: 10px; min-width: 247px;">
-                            <li><a href="#" export-everything-to-csv values="res.identifier"><b>Export</b></a></li>
+                          <ul id="ulList{{ res.identifier }}" class="dropdown-menu keep-open-on-click" style="font-size: 16px;padding: 10px; min-width: 247px;">
+                            <li><a href="#" export-everything-to-csv values="res.identifier" names="res.name"><b>Export</b></a></li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <label for="res{{ res.identifier }}" class="lbl">
@@ -116,18 +124,24 @@
                                 <label for="pro{{ res.identifier }}" class="lbl">
                                 <input class="exportChoice" type="checkbox" id="pro{{ res.identifier }}" checked><span class="lbl">
                                 Profiles Performance Table</label></li>
+                            <li>
+                                <label for="note{{ res.identifier }}" class="lbl">
+                                <input class="exportChoice" type="checkbox" id="note{{ res.identifier }}" checked><span class="lbl">
+                                Notes</label></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" ng-click="selectAll(res.identifier);"><b>Select All</b></a></li>
                           </ul>
                         </div>
                         <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>
+                        <button ng-click="reloadData(res, res.identifier)" class="btn btn-info">Reload</button>
                     </td> 
-                    <td id="titleTbl3" style="width:30%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;"><b>Name:</b> {{ res.name }}</td> 
-                    <td style="width:15%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
-                    </td> 
-                    <td id="titleTbl3" style="width:25%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                    <td id="titleTbl3" style="width:17%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                    <td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.name }}</td> 
+                    <td id="notes{{ res.identifier }}" style="text-align:left;vertical-align: middle;font-size: 16px;padding-left: 0; width:27%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultNotes}}</td> 
                 </tr>
                 <tr ng-show="showResult"> 
-                    <td style="vertical-align: top;">
-                        <h4 id="titleTbl">Results</h4>
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Results</h4>
                         <table id="resultsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                         <thead>
                             <th id="headers">Alternative</th>
@@ -135,7 +149,7 @@
                             <th id="headers">Maximum</th>
                         </thead>
                         <tbody>
-                        <tr ng:repeat="value in res.resultValues">
+                        <tr ng:repeat="value in res.resultValues | orderBy: 'alternativeID'">
                             <td id="headers">{{ value.alternativeID }}</td>
                             <td id="headers">{{ value.minCategory }}</td>
                             <td id="headers">{{ value.maxCategory }}</td>
@@ -143,8 +157,10 @@
                         </tbody>
                         </table> 
                     </td>
-                    <td style="vertical-align: top;">
-                        <h4 id="titleTbl">Categories</h4>
+                </tr>
+                <tr ng-show="showResult"> 
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Categories</h4>
                         <table id="catTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Rank</th>
@@ -152,7 +168,7 @@
                                 <th id="headers">Ref. Action</th>
                             </thead>
                             <tbody>
-                            <tr ng:repeat="category in res.categoryValues">
+                            <tr ng:repeat="category in res.categoryValues | orderBy: 'rank'">
                                 <td id="headers">{{ category.rank }}</td>
                                 <td id="headers">{{ category.name }}</td>
                                 <td id="headers">{{ category.action }}</td>
@@ -160,8 +176,10 @@
                             </tbody>
                         </table>
                     </td>
-                    <td style="vertical-align: top;">
-                        <h4 id="titleTbl">Parameters</h4>
+                </tr>
+                <tr ng-show="showResult"> 
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Parameters</h4>
                         <table id="paramsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Credibility Lambda ( λ )</th>
@@ -173,15 +191,17 @@
                             </tbody>
                         </table>
                     </td>
-                    <td style="vertical-align: top;">
-                        <h4 id="titleTbl">Alternatives</h4>
+                </tr>
+                <tr ng-show="showResult"> 
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Alternatives</h4>
                         <table id="altTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Alternative</th>
                                 <th id="headers">Description</th>
                             </thead>
                             <tbody>
-                            <tr ng:repeat="alternative in res.alternativeValues">
+                            <tr ng:repeat="alternative in res.alternativeValues | orderBy: 'name'">
                                 <td id="headers">{{ alternative.name }}</td>
                                 <td id="headers">{{ alternative.description }}</td>
                             </tr> 
@@ -204,7 +224,7 @@
                                 <th id="headers">Veto</th>
                             </thead>
                             <tbody>
-                            <tr ng:repeat="criterion in res.criterionValues">
+                            <tr ng:repeat="criterion in res.criterionValues | orderBy: 'weight'">
                                 <td id="headers">{{ criterion.name }}</td>
                                 <td id="headers">{{ criterion.description }}</td>
                                 <td id="headers">{{ criterion.direction }}</td>
@@ -219,8 +239,8 @@
                     </td>
                 </tr>
                 <tr ng-show="showResult">
-                    <td colspan="2" style="vertical-align: top;"> 
-                        <h4 id="titleTbl">Performance Table</h4>
+                    <td colspan="4" style="vertical-align: top;"> 
+                        <h4 id="titleTbl2">Performance Table</h4>
                         <table id="perfTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Alternative</th>
@@ -228,7 +248,7 @@
                                 <th id="headers">Value</th>
                             </thead>
                             <tbody>
-                            <tr ng:repeat="performance in res.performanceValues">
+                            <tr ng:repeat="performance in res.performanceValues | orderBy: 'alternative'">
                                 <td id="headers">{{ performance.alternative }}</td>
                                 <td id="headers">{{ performance.criterion }}</td>
                                 <td id="headers">{{ performance.value }}</td>
@@ -236,8 +256,10 @@
                             </tbody>
                         </table>
                     </td>
-                    <td colspan="2" style="vertical-align: top;">
-                        <h4 id="titleTbl">Profiles Performance Table</h4>
+                </tr>
+                <tr ng-show="showResult">
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Profiles Performance Table</h4>
                         <table id="profTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Reference Action</th>
@@ -245,7 +267,7 @@
                                 <th id="headers">Value</th>
                             </thead>
                             <tbody>
-                            <tr ng:repeat="profile in res.profileValues">
+                            <tr ng:repeat="profile in res.profileValues | orderBy: 'action'">
                                 <td id="headers">{{ profile.action }}</td>
                                 <td id="headers">{{ profile.criterion }}</td>
                                 <td id="headers">{{ profile.value }}</td>
@@ -257,15 +279,15 @@
             </script>
             <script type="text/ng-template" id="showError">
                 <tr>
-                    <td id="titleTbl4" style="width:30%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
+                    <td id="titleTbl4" style="width:35%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
                         <button ng-click="showError = ! showError" class="btn btn-success">View</button>
                         <b style="color:red;">Failed Execution</b>
                         <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>
+                        <button ng-click="reloadData(res, res.identifier)" class="btn btn-info">Reload</button>
                     </td> 
-                    <td id="titleTbl3" style="width:30%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;"><b>Name:</b> {{ res.name }}</td> 
-                    <td style="width:15%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
-                    </td> 
-                    <td id="titleTbl3" style="width:25%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                    <td id="titleTbl3" style="width:17%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                    <td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.name }}</td> 
+                    <td id="notes{{ res.identifier }}" style="text-align:left;vertical-align: middle;font-size: 16px;padding-left: 0; width:27%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultNotes}}</td> 
                 </tr>
                 <tr ng-show="showError"> 
                     <td colspan="4">
@@ -281,17 +303,258 @@
                         </p>
                     </td>
                 </tr>
+                <tr ng-show="showError"> 
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Categories</h4>
+                        <table id="catTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Rank</th>
+                                <th id="headers">Category</th>
+                                <th id="headers">Ref. Action</th>
+                            </thead>
+                            <tbody>
+                            <tr ng:repeat="category in res.categoryValues | orderBy: 'rank'">
+                                <td id="headers">{{ category.rank }}</td>
+                                <td id="headers">{{ category.name }}</td>
+                                <td id="headers">{{ category.action }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-show="showError"> 
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Parameters</h4>
+                        <table id="paramsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Credibility Lambda ( λ )</th>
+                            </thead>
+                            <tbody>
+                            <tr ng:repeat="parameter in res.parameterValues">
+                                <td id="headers">{{ parameter.credibility }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-show="showError"> 
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Alternatives</h4>
+                        <table id="altTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Alternative</th>
+                                <th id="headers">Description</th>
+                            </thead>
+                            <tbody>
+                            <tr ng:repeat="alternative in res.alternativeValues | orderBy: 'name'">
+                                <td id="headers">{{ alternative.name }}</td>
+                                <td id="headers">{{ alternative.description }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-show="showError">
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Criteria</h4>
+                        <table id="criTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Criterion</th>
+                                <th id="headers">Description</th>
+                                <th id="headers">Direction</th>
+                                <th id="headers">Measure</th>
+                                <th id="headers">Weight</th>
+                                <th id="headers">Indifference</th>
+                                <th id="headers">Preference</th>
+                                <th id="headers">Veto</th>
+                            </thead>
+                            <tbody>
+                            <tr ng:repeat="criterion in res.criterionValues | orderBy: 'weight'">
+                                <td id="headers">{{ criterion.name }}</td>
+                                <td id="headers">{{ criterion.description }}</td>
+                                <td id="headers">{{ criterion.direction }}</td>
+                                <td id="headers">{{ criterion.measure }}</td>
+                                <td id="headers">{{ criterion.weight }}</td>
+                                <td id="headers">{{ criterion.indifference }}</td>
+                                <td id="headers">{{ criterion.preference }}</td>
+                                <td id="headers">{{ criterion.veto }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-show="showError">
+                    <td colspan="4" style="vertical-align: top;"> 
+                        <h4 id="titleTbl2">Performance Table</h4>
+                        <table id="perfTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Alternative</th>
+                                <th id="headers">Criterion</th>
+                                <th id="headers">Value</th>
+                            </thead>
+                            <tbody>
+                            <tr ng:repeat="performance in res.performanceValues | orderBy: 'alternative'">
+                                <td id="headers">{{ performance.alternative }}</td>
+                                <td id="headers">{{ performance.criterion }}</td>
+                                <td id="headers">{{ performance.value }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-show="showError">
+                    <td colspan="4" style="vertical-align: top;">
+                        <h4 id="titleTbl2">Profiles Performance Table</h4>
+                        <table id="profTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Reference Action</th>
+                                <th id="headers">Criterion</th>
+                                <th id="headers">Value</th>
+                            </thead>
+                            <tbody>
+                            <tr ng:repeat="profile in res.profileValues | orderBy: 'action'">
+                                <td id="headers">{{ profile.action }}</td>
+                                <td id="headers">{{ profile.criterion }}</td>
+                                <td id="headers">{{ profile.value }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
             </script>
             <table id="resultTbl" class="table horizontal" style="width: 97% !important; margin-bottom: 20px !important;">
                 <tr>
                     <td id="titleTbl4" style="width:30%; padding-top: 10px;">
+                        <button ng-click="showCurrentData = ! showCurrentData" class="btn btn-success">View</button>
                         <input id="methodButtons" class="btn btn-success" type="button" value="Execute Method" ng-click="changeSection('divizServer');"/>
                     </td>
-                    <td colspan="2" id="titleTbl3" style="width:45%; padding-top: 10px;">
-                        <input id="resultName" onkeyup="checkResultName()" type="text" value="" placeholder="Result name" name="name" required></input>
+                    <td colspan="2" id="titleTbl3" style="width:30%; padding-top: 10px;">
+                        <input id="resultName" type="text" value="" placeholder="Add a name to the result" name="name" required></input>
+                        <!-- <input id="resultName" onkeyup="checkResultName()" type="text" value="" placeholder="Add a name for the result to" name="name" required></input> -->
                     </td> 
-                    <td id="titleTbl3" style="width:25%; padding-top: 10px;">
+                    <td id="titleTbl3" style="width:40%; padding-top: 10px;">
+                        <input id="resultNotes" type="text" value="" placeholder="Add notes to the result" name="notes"></input>
                     </td> 
+                </tr>
+            </table>
+            <table id="resultTbl" class="table horizontal" ng-show="showCurrentData">
+                <tr class="noBorder"> 
+                    <td class="noBorder">
+                        <h4 id="titleTbl2">Categories</h4>
+                        <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Rank</th>
+                                <th id="headers">Category</th>
+                                <th id="headers">Ref. Action</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="category in categories | orderBy: 'rank'">
+                                <td id="headers">{{ category.rank }}</td>
+                                <td id="headers">{{ category.name }}</td>
+                                <td id="headers">{{ category.action }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="noBorder"> 
+                    <td>
+                        <h4 id="titleTbl2">Parameters</h4>
+                        <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Credibility Lambda ( λ )</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="parameter in parameters">
+                                <td id="headers">{{ parameter.credibility }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="noBorder"> 
+                    <td>
+                        <h4 id="titleTbl2">Alternatives</h4>
+                        <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Alternative</th>
+                                <th id="headers">Description</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="alternative in alternatives | orderBy: 'name'">
+                                <td id="headers">{{ alternative.name }}</td>
+                                <td id="headers">{{ alternative.description }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="noBorder">
+                    <td>
+                        <h4 id="titleTbl2">Criteria</h4>
+                        <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Criterion</th>
+                                <th id="headers">Description</th>
+                                <th id="headers">Direction</th>
+                                <th id="headers">Measure</th>
+                                <th id="headers">Weight</th>
+                                <th id="headers">Indifference</th>
+                                <th id="headers">Preference</th>
+                                <th id="headers">Veto</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="criterion in criteria | orderBy: 'weight'">
+                                <td id="headers">{{ criterion.name }}</td>
+                                <td id="headers">{{ criterion.description }}</td>
+                                <td id="headers">{{ criterion.direction }}</td>
+                                <td id="headers">{{ criterion.measure }}</td>
+                                <td id="headers">{{ criterion.weight }}</td>
+                                <td id="headers">{{ criterion.indifference }}</td>
+                                <td id="headers">{{ criterion.preference }}</td>
+                                <td id="headers">{{ criterion.veto }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="noBorder">
+                    <td>
+                        <h4 id="titleTbl2">Performance Table</h4>
+                        <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Alternative</th>
+                                <th id="headers">Criterion</th>
+                                <th id="headers">Value</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="performance in performancetables | orderBy: 'alternative'">
+                                <td id="headers">{{ performance.alternative }}</td>
+                                <td id="headers">{{ performance.criterion }}</td>
+                                <td id="headers">{{ performance.value }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="noBorder">
+                    <td>
+                        <h4 id="titleTbl2">Profiles Performance Table</h4>
+                        <table style="background-color:white;" class=" table borderless">
+                            <thead>
+                                <th id="headers">Reference Action</th>
+                                <th id="headers">Criterion</th>
+                                <th id="headers">Value</th>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="profile in profiletables | orderBy: 'action'">
+                                <td id="headers">{{ profile.action }}</td>
+                                <td id="headers">{{ profile.criterion }}</td>
+                                <td id="headers">{{ profile.value }}</td>
+                            </tr> 
+                            </tbody>
+                        </table>
+                    </td>
                 </tr>
             </table>
             </div>
@@ -313,7 +576,7 @@
         </div>
         <!-- Modal -->
         <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="importController">
-            <div class="modal-dialog" style="width:50%;">
+            <div class="modal-dialog" style="width:52%;">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -322,20 +585,47 @@
                     </div>
                     <div class="modal-body" style="font-size: 16px;">
                         <p><b>Import data to:</b></p>
-                        <form>
-                            <input type="radio" ng-model="content" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"> Criteria<br>
-                            <input type="radio" ng-model="content" name="dataType" value="alternativesData" class="importRatio" style="margin-bottom: 5px;"> Alternatives<br>
-                            <input type="radio" ng-model="content" name="dataType" value="performanceData" class="importRatio" style="margin-bottom: 5px;"> Performance Table<br>
-                            <input type="radio" ng-model="content" name="dataType" value="altAndPerfData" class="importRatio" style="margin-bottom: 5px;"> Alternatives and Performance Table<br>
-                            <input type="radio" ng-model="content" name="dataType" value="categoriesData" class="importRatio" style="margin-bottom: 5px;"> Categories<br>
-                            <input type="radio" ng-model="content" name="dataType" value="parametersData" class="importRatio" style="margin-bottom: 5px;"> Parameters<br>
-                            <input type="radio" ng-model="content" name="dataType" value="profileData" class="importRatio" style="margin-bottom: 5px;"> Profile Performance Table
-                        </form>
-                        <input type="file" id="fileUpload"/>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li><label for="importCri" class="lbl" style="font-weight: normal !important;">
+                            <input id="importCri" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Criteria <input type="file" id="fileUpload"/></label></li><br>
+                            <li><label for="importAlt" class="lbl" style="font-weight: normal !important;">
+                            <input id="importAlt" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Alternatives <input type="file" id="fileUpload2"/></label></li><br>
+                            <li><label for="importPer" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Performance Table <input type="file" id="fileUpload3"/></label></li><br>
+                            <li><label for="importAltPer" class="lbl" style="font-weight: normal !important;">
+                            <input id="importAltPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"><span class="lbl">
+                             Alternatives and Performance Table <input type="file" id="fileUpload4"/></label></li><br>
+                            <li><label for="importCat" class="lbl" style="font-weight: normal !important;">
+                            <input id="importCat" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Categories <input type="file" id="fileUpload5"/></label></li><br>
+                            <li><label for="importPar" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPar" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Parameters <input type="file" id="fileUpload6"/></label></li><br>
+                            <li><label for="importPro" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPro" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Profile Performance Table <input type="file" id="fileUpload7"/></label></li>
+                        </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
-                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
-                        <div class="wrapper">
+                        <p id="importMessageError1" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage1" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError2" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage2" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError3" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage3" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError4" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage4" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError5" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage5" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError6" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage6" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError7" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage7" style="color:green; display:none; font-size: 16px;"></p> 
+                        <!-- <div class="wrapper">
                             <p ng-show="content == 'criteriaData'">
                                 <b>CSV file structure example:</b><br>Name, Description, Direction, Measure, Weight, Indifference, Preference, Veto 
                                 <br>criterion name 1, test, min, ordinal, 10, 2, 4, 6<br>criterion name 2, other, max, cardinal, 1.0, 2.44, 9, 2.5<br>and so on...    
@@ -364,7 +654,7 @@
                                 <b>CSV file structure example:</b><br>Reference Actions\Criteria, criterion name 1, criterion name 2, ...
                                 <br>reference action name 1, 5.9, 21, ...<br>reference action name 2, 3.98, 3, ...<br>and so on... 
                             </p>
-                            </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="refreshBeforeClosing();">Close</button>
@@ -409,6 +699,7 @@
                                 <input class="exportChoice" type="checkbox" id="exportPro" name="dataBox" checked><span class="lbl">
                                 Profiles Performance Table</label></li>
                         </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
@@ -427,17 +718,17 @@
         });
 
         // Disabled run/execute button when input as a name
-        function checkResultName() {
-            if(document.getElementById("resultName").value == ""){
-                document.getElementById("methodButtons").disabled=true;
-            }else{
-                if(document.getElementById('sectionsCriteria').style.backgroundColor == 'rgb(255, 51, 51)' || document.getElementById('sectionsAlternatives').style.backgroundColor == 'rgb(255, 51, 51)' || document.getElementById('sectionsConfigurations').style.backgroundColor == 'rgb(255, 51, 51)'){
-                    document.getElementById("methodButtons").disabled=true;
-                }else{
-                    document.getElementById("methodButtons").disabled=false;
-                }
-            }
-        }
+        // function checkResultName() {
+        //     if(document.getElementById("resultName").value == ""){
+        //          document.getElementById("methodButtons").disabled=true;
+        //     }else{
+        //         if(document.getElementById('sectionsCriteria').style.backgroundColor == 'rgb(255, 51, 51)' || document.getElementById('sectionsAlternatives').style.backgroundColor == 'rgb(255, 51, 51)' || document.getElementById('sectionsConfigurations').style.backgroundColor == 'rgb(255, 51, 51)'){
+        //             document.getElementById("methodButtons").disabled=true;
+        //         }else{
+        //             document.getElementById("methodButtons").disabled=false;
+        //         }
+        //     }
+        // }
     </script>
     </div>  
 </body>

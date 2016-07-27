@@ -80,6 +80,7 @@ app.get('/api/projects/:id', projectsController.get);
 app.get('/api/project/:id', projectsController.findById);
 app.get('/api/cloneproject/:id/:projectId', projectsController.duplicate);
 app.post('/api/projects/:id', projectsController.create);
+app.post('/api/reloadProject/:projectId/:id', projectsController.reloadProject);
 app.put('/api/project/:id', projectsController.edit);
 app.put('/api/projectAddResult/:projectId', projectsController.addResult);
 app.put('/api/projectSaveResult/:id/:projectId', projectsController.saveResult);

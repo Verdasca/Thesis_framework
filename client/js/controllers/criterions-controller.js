@@ -46,11 +46,11 @@ var checkStatus = function(){
     document.getElementById('sectionsCriteria').style.backgroundColor = '#6fdc6f';
     $scope.criteriaDone = true;
   }
-  // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-  //   document.getElementById('methodButtons').disabled = false;
-  // } else{
-  //   document.getElementById('methodButtons').disabled = true;
-  // }
+  if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  }
 }
 
 //Get the data from criterions in mongoDB
@@ -101,11 +101,11 @@ $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
       $scope.configurationsDone = true;
     }
-    // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-    //   document.getElementById('methodButtons').disabled = false;
-    // } else{
-    //   document.getElementById('methodButtons').disabled = true;
-    // }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    }
     $('#loading').hide();
   })
   .error(function(data) {

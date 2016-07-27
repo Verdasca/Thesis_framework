@@ -70,7 +70,7 @@ module.exports.edit = function (req, res) {
     Project.findOneAndUpdate({
             _id:req.params.id
         },
-        {$set:{ name:req.body.name, dateSet:req.body.dateSet, methodChosen:req.body.methodChosen, numExecutions:req.body.numExecutions, orderType:req.body.orderType, orderAttribute:req.body.orderAttribute, decimals:req.body.decimals, ratioOption:req.body.ratioOption, ratioZ:req.body.ratioZ, ratioZMax:req.body.ratioZMax, ratioZMin:req.body.ratioZMin, ratioZInterval:req.body.ratioZInterval, ratioZ1:req.body.ratioZ1, ratioZ2:req.body.ratioZ2, ratioZ3:req.body.ratioZ3 }},
+        {$set:{ name:req.body.name, dateSet:req.body.dateSet, methodChosen:req.body.methodChosen, notes:req.body.notes, numExecutions:req.body.numExecutions, orderType:req.body.orderType, orderAttribute:req.body.orderAttribute, decimals:req.body.decimals, ratioOption:req.body.ratioOption, ratioZ:req.body.ratioZ, ratioZMax:req.body.ratioZMax, ratioZMin:req.body.ratioZMin, ratioZInterval:req.body.ratioZInterval, ratioZ1:req.body.ratioZ1, ratioZ2:req.body.ratioZ2, ratioZ3:req.body.ratioZ3 }},
         {upsert:true},
         function(err,project){
             if(err){
@@ -142,6 +142,122 @@ module.exports.deleteResult = function (req, res) {
             }
             res.send('Delete result complete.');
       });
+}
+
+//Reload the data from the result into the current data of the project - for electre tri-c method
+module.exports.reloadProject = function (req, res) {
+    console.log('Reloading result...');
+    var projectID = req.params.projectId;
+    var resultID = req.params.id;
+    var resultData = req.body;
+
+    var alternative = resultData.alternativeValues;
+    var alts = [];
+    //var alt = {name: "",description: ""};
+    for (var i = 0; i < alternative.length; i++) {
+        //alt.name = alternative[i].alternativeName;
+        //alt.description = alternative[i].alternativeDescription;
+        //var newalt = new Alternative(alt);
+        var newalt = new Alternative(alternative[i]);
+        newalt.save(function (err, result) {
+            //res.json(result);
+        });
+        alts.push(newalt);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {alternatives: alts}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded alternatives.");
+        }
+    });
+
+    var criterion = resultData.criterionValues;
+    var cris = [];
+    for (var i = 0; i < criterion.length; i++) {
+        var newcri = new Criterion(criterion[i]);
+        newcri.save(function (err, result) {
+            //res.json(result);
+        });
+        cris.push(newcri);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {criteria: cris}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded criteria.");
+        }
+    });
+
+    var parameter = resultData.parameterValues;
+    var pars = [];
+    for (var i = 0; i < parameter.length; i++) {
+        var newpar = new Parameter(parameter[i]);
+        newpar.save(function (err, result) {
+            //res.json(result);
+        });
+        pars.push(newpar);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {parameters: pars}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded parameters.");
+        }
+    });
+
+    var category = resultData.categoryValues;
+    var cats = [];
+    for (var i = 0; i < category.length; i++) {
+        var newcat = new Category(category[i]);
+        newcat.save(function (err, result) {
+            //res.json(result);
+        });
+        cats.push(newcat);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {categories: cats}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded categories.");
+        }
+    });
+
+    var performance = resultData.performanceValues;
+    var perfs = [];
+    for (var i = 0; i < performance.length; i++) {
+        var newperf = new Performance(performance[i]);
+        newperf.save(function (err, result) {
+            //res.json(result);
+        });
+        perfs.push(newperf);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {performancetables: perfs}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded performances.");
+        }
+    });
+
+    var profile = resultData.profileValues;
+    var pros = [];
+    for (var i = 0; i < profile.length; i++) {
+        var newpro = new Profile(profile[i]);
+        newpro.save(function (err, result) {
+            //res.json(result);
+        });
+        pros.push(newpro);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {profiletables: pros}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded profiles.");
+        }
+    });
+
+    res.send('Data reloaded.');
 }
 
 //Delete a project + delete the associated data from other collections
@@ -277,6 +393,7 @@ module.exports.duplicate = function(req, res){
             project._id = mongoose.Types.ObjectId();
             var newId = project._id;
             console.log(newId);
+            project.isNew = true;
             project.name = project.name + '_2';
             project.creationDate = new Date();
             project.dateSet = new Date();
@@ -288,9 +405,7 @@ module.exports.duplicate = function(req, res){
             project.performancetables = [];
             project.profiletables = [];
             project.people = [];
-            project.results = [];
-            project.isNew = true; 
-            //var alternatives = project.alternatives;
+            project.results = []; 
             project.save(function (err, result) {
                 //res.json(result);
             });

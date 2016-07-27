@@ -22,6 +22,42 @@ $http.get('/api/userFind/' + $scope.username).success(function(data) {
 $http.get('/api/project/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.results = data.results; 
+  $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
+      $scope.alternatives = data.alternatives;
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+    });  
+    $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
+      $scope.criteria = data.criteria;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+    $http.get('/api/categories/' + $scope.projectID).success(function(data) {
+      $scope.categories = data.categories;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+    $http.get('/api/parameters/' + $scope.projectID).success(function(data) {
+      $scope.parameters = data.parameters;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+    $http.get('/api/performances/' + $scope.projectID).success(function(data) {
+      $scope.performancetables = data.performancetables;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    });
+    $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
+      $scope.profiletables = data.profiletables;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    });
   if($scope.project.criteria.length == 0){
       document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
       $scope.criteriaDone = false;
@@ -44,15 +80,20 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
       $scope.configurationsDone = true;
     }
     if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
       document.getElementById('methodButtons').disabled = false;
     } else{
       document.getElementById('methodButtons').disabled = true;
     }
-    if(document.getElementById("resultName").value == ""){
-      document.getElementById("methodButtons").disabled=true;
-    }else{
-      document.getElementById("methodButtons").disabled=false;
-    }
+    // if(document.getElementById("resultName").value == ""){
+    //   document.getElementById("methodButtons").disabled=true;
+    // }else{
+    //   document.getElementById("methodButtons").disabled=false;
+    // }
     $('#loading').hide();
   })
   .error(function(data) {
@@ -75,11 +116,12 @@ $scope.changeSection = function(name){
   var sectionName = name;
   var n = $scope.username;
   var nameResult = document.getElementById("resultName").value;
+  var notes = document.getElementById("resultNotes").value;
   var projectName = $scope.project.name;
   if(sectionName == 'divizServer'){
     // Show loader when execute button was clicked
     $('#executing').show();
-    $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName+'&resName='+nameResult;   
+    $window.location.href = 'http://vps288667.ovh.net:5010/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName+'&resName='+nameResult+'&notes='+notes;   
     //$window.location.href = 'http://localhost:5000/electreTriC/?projectId='+id+'&n='+n+'&project='+projectName+'&resName='+nameResult;     
   }else{
     $window.location.href = '/'+sectionName+'.html?projectId='+id+'&n='+n;  
@@ -127,12 +169,175 @@ $scope.deleteResult = function(result, identifier) {
     });
 }
 
+//Reload the data from the result into the current data of the project
+$scope.reloadData = function(result, identifier) {
+  $('#loading').show();
+  var i = $scope.project._id;
+  var id = identifier;
+  var dataResult = result;
+  if($scope.project.alternatives.length == 0){
+    console.log('There are no alternatives to delete...');
+  }else{
+    //Delete all current alternatives 
+    $http.delete('/api/alternatives/' + i)
+      .success(function() {
+        console.log("Done deleting all alternatives.");
+    })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  if($scope.project.criteria.length == 0){
+      console.log('There are no criteria to delete...');
+  }else{
+    //Delete all current criteria 
+    $http.delete('/api/criterions/' + i)
+      .success(function() {
+        console.log("Done deleting all criteria.");
+    })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  if($scope.project.performancetables.length == 0){
+    console.log('There are no performances to delete...');
+  }else{
+    //Delete all current performances 
+    $http.delete('/api/performances/' + i)
+      .success(function() {
+        console.log("Done deleting all performances.");
+      })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  if($scope.project.categories.length == 0){
+    console.log('There are no categories to delete...');
+  }else{
+    //Delete all current categories 
+    $http.delete('/api/categories/' + i)
+      .success(function() {
+        console.log("Done deleting all categories.");
+      })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  if($scope.project.parameters.length == 0){
+    console.log('There are no parameters to delete...');
+  }else{
+    //Delete all current parameters 
+    $http.delete('/api/parameters/' + i)
+      .success(function() {
+        console.log("Done deleting all parameters.");
+      })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  if($scope.project.profiletables.length == 0){
+    console.log('There are no profiles to delete...');
+  }else{
+    //Delete all current profiles 
+    $http.delete('/api/profiles/' + i)
+      .success(function() {
+        console.log("Done deleting all profiles.");
+      })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  // Reload data
+  $http.post('/api/reloadProject/' + i + '/' + id, dataResult).success(function(response) {
+    refreshData();
+    //$('#loading').hide();
+  });
+}
+
+var refreshData = function(){
+$http.get('/api/project/' + $scope.projectID).success(function(data) {
+  $scope.project = data;
+  $scope.results = data.results; 
+  $http.get('/api/alternatives/' + $scope.projectID).success(function(data) {
+      $scope.alternatives = data.alternatives;
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+    });  
+    $http.get('/api/criterions/' + $scope.projectID).success(function(data) {
+      $scope.criteria = data.criteria;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+    $http.get('/api/categories/' + $scope.projectID).success(function(data) {
+      $scope.categories = data.categories;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+    $http.get('/api/parameters/' + $scope.projectID).success(function(data) {
+      $scope.parameters = data.parameters;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    }); 
+    $http.get('/api/performances/' + $scope.projectID).success(function(data) {
+      $scope.performancetables = data.performancetables;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    });
+    $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
+      $scope.profiletables = data.profiletables;
+      })
+      .error(function(data) {
+        console.log('Error: ' + data);
+    });
+  if($scope.project.criteria.length == 0){
+      document.getElementById('sectionsCriteria').style.backgroundColor = '#ff3333';
+      $scope.criteriaDone = false;
+    }else{
+      document.getElementById('sectionsCriteria').style.backgroundColor = '#6fdc6f';
+      $scope.criteriaDone = true;
+    }
+    if($scope.project.alternatives.length == 0 || $scope.project.performancetables.length == 0){
+      document.getElementById('sectionsAlternatives').style.backgroundColor = '#ff3333';
+      $scope.alternativesDone = false;
+    }else{
+      document.getElementById('sectionsAlternatives').style.backgroundColor = '#6fdc6f';
+      $scope.alternativesDone = true;
+    }
+    if($scope.project.profiletables.length == 0 || $scope.project.categories.length == 0 || $scope.project.parameters.length == 0){
+      document.getElementById('sectionsConfigurations').style.backgroundColor = '#ff3333';
+      $scope.configurationsDone = false;
+    }else{
+      document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
+      $scope.configurationsDone = true;
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('methodButtons').disabled = false;
+    } else{
+      document.getElementById('methodButtons').disabled = true;
+    }
+    $('#loading').hide();
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+});
+}
+
 // Refresh the page current data after closing the import section (so the data on the page is actualized with the imported data)
 $scope.refreshBeforeClosing = function(){
   $('#loading').show();
   checkStatus();
   $scope.updateProject();
-  refresh();
+  refreshData();
   $('#loading').hide();
 }
 
@@ -162,15 +367,20 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
       $scope.configurationsDone = true;
     }
     if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
       document.getElementById('methodButtons').disabled = false;
     } else{
       document.getElementById('methodButtons').disabled = true;
     }
-    if(document.getElementById("resultName").value == ""){
-      document.getElementById("methodButtons").disabled=true;
-    }else{
-      document.getElementById("methodButtons").disabled=false;
-    }
+    // if(document.getElementById("resultName").value == ""){
+    //   document.getElementById("methodButtons").disabled=true;
+    // }else{
+    //   document.getElementById("methodButtons").disabled=false;
+    // }
     $('#loading').hide();
   })
   .error(function(data) {
@@ -189,6 +399,19 @@ $scope.getTemplate = function (result) {
   }else{ 
     return 'showError';
   }
+}
+
+//Select all checkboxes from the export result options
+$scope.selectAll = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = true;
+  document.getElementById("cri"+idList).checked = true;
+  document.getElementById("alt"+idList).checked = true;
+  document.getElementById("per"+idList).checked = true;
+  document.getElementById("cat"+idList).checked = true;
+  document.getElementById("par"+idList).checked = true;
+  document.getElementById("pro"+idList).checked = true;
+  document.getElementById("note"+idList).checked = true;
 }
 
 }]);
@@ -266,7 +489,8 @@ app.directive('exportEverythingToCsv',function($timeout){
       restrict: 'A',
       // Get the id of the result table to be exported
       scope: {
-        values: '=values'
+        values: '=values',
+        names: '=names'
       },
       link: function (scope, element, attrs) {
         $timeout( function(){
@@ -287,7 +511,7 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_results.csv'
+                download: scope.names+'_results.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -309,7 +533,7 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_criteria.csv'
+                download: scope.names+'_criteria.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -331,7 +555,7 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_alternatives.csv'
+                download: scope.names+'_alternatives.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -353,7 +577,7 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_performances.csv'
+                download: scope.names+'_performances.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -375,7 +599,7 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_categories.csv'
+                download: scope.names+'_categories.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -397,7 +621,7 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_parameters.csv'
+                download: scope.names+'_parameters.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
@@ -419,7 +643,22 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_profiles.csv'
+                download: scope.names+'_profiles.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+          }
+        });
+        element.bind('click', function(e){
+          if(document.getElementById('note'+scope.values).checked == true){
+            var notes = document.getElementById("notes"+scope.values).innerHTML;
+            var csvString = 'Notes:';
+            csvString = csvString + "\n";
+            csvString = csvString + notes;
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:text/plain;charset=utf-8,'+encodeURIComponent(csvString),
+                download: scope.names+'_notes.txt'
             }).appendTo('body')
             a[0].click()
             a.remove();

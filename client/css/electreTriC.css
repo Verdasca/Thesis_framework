@@ -40,9 +40,9 @@
 
 #content{
     text-align: center;
-    width: 85%;
+    width: 83%;
     float: right;
-    padding-top: 5px;
+    padding-top: 0px;
     background-color: #ffffff;
 }
 
@@ -83,7 +83,7 @@
   margin-top: 52px;
   border: none;
   font-size: 16px;
-  width: 16%;
+  width: 17%;
 }
 
 #sections:hover,
@@ -92,7 +92,7 @@
 #sectionsPerformances:hover,
 #sectionsConfigurations:hover,
 #sectionsResults:hover{
-    background-color: #033773;
+    background-color: #b3b3b3;
 }     
 
 #sections,
@@ -104,16 +104,31 @@
     margin-bottom: 5px;
 }
 
-#aSections{
+#dataSetSections{
     color: #333333;
 }
 
-#aSections:hover{
+#dataSetSections:hover{
     color: #ffffff;
 }
 
+#aSections{
+  background-color: #b3b3b3;
+  color: #333333;
+}
+
+#aSections:hover{
+  background-color: #b3b3b3;
+  color: #ffffff;
+}
+
 #aSections.active{
-    background-color: #033773;
+    border: 5px solid #033773;
+    color: #fff;
+}
+
+#dataSetSections.active{
+    border: 5px solid #033773;
     color: #fff;
 }
 
@@ -163,12 +178,13 @@
 #descriptionTable{
   margin: auto;
   text-align: left;
-  width: 90%;
+  width: 97%;
 }
 
 #descriptionTd{
     font-size: 17px;  
-    vertical-align: left;
+    text-align: left;
+    padding-left: 0;
 }
 
 #tutorial{
@@ -199,7 +215,7 @@
 #categoryTable{
   margin: auto;
   text-align: center;
-  width: 97%;
+  width: 99%;
 }
 
 #criLabel{
@@ -313,7 +329,7 @@
 #alternativeTable{
     margin: auto;
     text-align: center;
-    width: 95%;
+    width: 99%;
 }
 
 #altLabel{
@@ -358,7 +374,7 @@
 #resultsTable{
     margin: auto;
     text-align: center;
-    width: 97%;
+    width: 99%;
 }
 
 #explanation{
@@ -379,12 +395,18 @@
 }
 
 #fileUpload,
+#fileUpload2,
+#fileUpload3,
+#fileUpload4,
+#fileUpload5,
+#fileUpload6,
+#fileUpload7,
 #upload{
     display: inline;
     margin-top: 20px;
-    margin-bottom: 35px;
+    /*margin-bottom: 35px;*/
     margin-right: 30px;
-    vertical-align: middle;
+    /*vertical-align: middle;*/
     text-align: center;
     font-size: 16px;
 }
@@ -1027,7 +1049,8 @@ input[name="ratio"]{
 }
 
 /* Result section */
-#resultName{
+#resultName,
+#resultNotes{
     text-align: center;
     vertical-align: middle;
     width: 100%;
@@ -1037,7 +1060,7 @@ input[name="ratio"]{
 #methodErrorMessage{
   text-align: left;  
   font-size: 16px; 
-  width: 97%; 
+  width: 99%; 
   margin: 6px;
   font-family: Arial,sans-serif;
 }
@@ -1049,7 +1072,7 @@ input[name="ratio"]{
 
 #resultTbl{
   margin: auto;
-  width: 97%;
+  width: 99%;
 }
 
 #titleTbl{
@@ -1068,6 +1091,7 @@ input[name="ratio"]{
   text-align: left;
   vertical-align: middle;
   font-size: 16px;
+  padding-left: 0;
 }
 
 #titleTbl4{

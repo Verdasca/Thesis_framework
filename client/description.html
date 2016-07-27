@@ -42,7 +42,7 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
-                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
+                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Projects</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
         </div>
@@ -53,13 +53,13 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsCriteria"><a id="aSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
-                        <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description');">Description:<br>{{ project.name }}</a></li>
+                        <li id="sectionsCriteria"><a id="dataSetSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sectionsAlternatives"><a id="dataSetSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
+                        <li id="sectionsConfigurations"><a id="dataSetSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
+                        <li id="sectionsResults"><a id="dataSetSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import Data</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export Data</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -72,16 +72,18 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <th id="descriptionTd" style="width:30%">Project Name</th>
-                    <th id="descriptionTd" style="width:24%">Method</th>
-                    <th id="descriptionTd" style="width:23%">Creation Date</th>
-                    <th id="descriptionTd" style="width:23%">Updated</th>
+                    <th id="descriptionTd" style="width:18%">Creation Date</th>
+                    <th id="descriptionTd" style="width:18%">Updated</th>
+                    <th id="descriptionTd" style="width:25%">Project Name</th>
+                    <th id="descriptionTd" style="width:15%">Method</th>
+                    <th id="descriptionTd" style="width:24%">Notes</th>
                 </tr>
                 <tr>
-                    <td id="descriptionTd">{{ project.name }}</td>
-                    <td id="descriptionTd">{{ project.methodChosen }}</td>
                     <td id="descriptionTd">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td id="descriptionTd">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.name }}</td>
+                    <td id="descriptionTd">{{ project.methodChosen }}</td>
+                    <td id="descriptionTd">{{ project.notes }}</td>
                 </tr>
             </table>
             <br/>
@@ -110,7 +112,7 @@
             <table id="resultTbl" class="table horizontal">
                 <tr class="noBorder"> 
                     <td class="noBorder">
-                        <h4 id="titleTbl">Categories</h4>
+                        <h4 id="titleTbl2">Categories</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Rank</th>
@@ -118,7 +120,7 @@
                                 <th id="headers">Ref. Action</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="category in categories">
+                            <tr ng-repeat="category in categories | orderBy: 'rank'">
                                 <td id="headers">{{ category.rank }}</td>
                                 <td id="headers">{{ category.name }}</td>
                                 <td id="headers">{{ category.action }}</td>
@@ -126,8 +128,10 @@
                             </tbody>
                         </table>
                     </td>
+                </tr>
+                <tr class="noBorder"> 
                     <td>
-                        <h4 id="titleTbl">Parameters</h4>
+                        <h4 id="titleTbl2">Parameters</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Credibility Lambda ( λ )</th>
@@ -139,15 +143,17 @@
                             </tbody>
                         </table>
                     </td>
+                </tr>
+                <tr class="noBorder"> 
                     <td>
-                        <h4 id="titleTbl">Alternatives</h4>
+                        <h4 id="titleTbl2">Alternatives</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Alternative</th>
                                 <th id="headers">Description</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="alternative in alternatives">
+                            <tr ng-repeat="alternative in alternatives | orderBy: 'name'">
                                 <td id="headers">{{ alternative.name }}</td>
                                 <td id="headers">{{ alternative.description }}</td>
                             </tr> 
@@ -156,7 +162,7 @@
                     </td>
                 </tr>
                 <tr class="noBorder">
-                    <td colspan="3">
+                    <td>
                         <h4 id="titleTbl2">Criteria</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
@@ -170,7 +176,7 @@
                                 <th id="headers">Veto</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="criterion in criteria">
+                            <tr ng-repeat="criterion in criteria | orderBy: 'weight'">
                                 <td id="headers">{{ criterion.name }}</td>
                                 <td id="headers">{{ criterion.description }}</td>
                                 <td id="headers">{{ criterion.direction }}</td>
@@ -186,7 +192,7 @@
                 </tr>
                 <tr class="noBorder">
                     <td>
-                        <h4 id="titleTbl">Performance Table</h4>
+                        <h4 id="titleTbl2">Performance Table</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Alternative</th>
@@ -194,7 +200,7 @@
                                 <th id="headers">Value</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="performance in performancetables">
+                            <tr ng-repeat="performance in performancetables | orderBy: 'alternative'">
                                 <td id="headers">{{ performance.alternative }}</td>
                                 <td id="headers">{{ performance.criterion }}</td>
                                 <td id="headers">{{ performance.value }}</td>
@@ -202,8 +208,10 @@
                             </tbody>
                         </table>
                     </td>
+                </tr>
+                <tr class="noBorder">
                     <td>
-                        <h4 id="titleTbl">Profiles Performance Table</h4>
+                        <h4 id="titleTbl2">Profiles Performance Table</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Reference Action</th>
@@ -211,7 +219,7 @@
                                 <th id="headers">Value</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="profile in profiletables">
+                            <tr ng-repeat="profile in profiletables | orderBy: 'action'">
                                 <td id="headers">{{ profile.action }}</td>
                                 <td id="headers">{{ profile.criterion }}</td>
                                 <td id="headers">{{ profile.value }}</td>
@@ -329,6 +337,7 @@
                                 <input class="exportChoice" type="checkbox" id="exportPro" name="dataBox" checked><span class="lbl">
                                 Profiles Performance Table</label></li>
                         </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 

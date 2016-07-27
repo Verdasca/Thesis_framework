@@ -6,6 +6,16 @@ $scope.criteriaDone = false;
 $scope.alternativesDone = false;
 $scope.configurationsDone = false;
 
+//Select all checkboxes from the export section
+$scope.selectAll = function(){
+  document.getElementById("exportCri").checked = true;
+  document.getElementById("exportAlt").checked = true;
+  document.getElementById("exportPerf").checked = true;
+  document.getElementById("exportCat").checked = true;
+  document.getElementById("exportPar").checked = true;
+  document.getElementById("exportPro").checked = true;
+}
+
 }]);
 
 //Export into a .csv file 

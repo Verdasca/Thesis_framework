@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Project', {
-	name: { type: String, required: true},
+	name: { type: String, required: true, default: 'Project Clone'},
 	creationDate: { type: Date, default: Date.now},
 	dateSet: { type: Date, default: Date.now},
 	methodChosen: { type: String, required: true },
+	notes: { type: String, default: '' },
 	numExecutions: { type: Number, default: 0 },
 	alternatives : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Alternative' }],
 	criteria : [{ type: mongoose.Schema.Types.ObjectId, ref: 'Criterion' }],
@@ -29,6 +30,7 @@ module.exports = mongoose.model('Project', {
 		name : { type: String, default: 'Results' },
 		methodError : { type: String, default: 'Everything OK. No errors.' },
 		resultDate: { type: Date, default: Date.now},
+		resultNotes: { type: String, default: '' },
 		orderTypes : String,
 		orderAttributes : String,
 		resultValues: [{ 

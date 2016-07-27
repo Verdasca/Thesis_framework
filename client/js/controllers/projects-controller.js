@@ -6,6 +6,8 @@ var Projects = $resource('/api/projects');
 
 $scope.userId = $location.search().userId;
 
+$('#loading').hide();
+
 $scope.data = {
     repeatSelect: 'notSelected',
     availableOptions: [
@@ -22,6 +24,7 @@ var refresh = function(){
     console.log('I got the data I requested');
       $scope.user = data;
       $scope.projects = data.projects;
+      $('#loading').hide();
     });  
 }
 
@@ -36,6 +39,7 @@ $http.get('/api/projects/' + $scope.userId ).success(function(data) {
 
 //Create project
 $scope.createProject = function (nameValid) {
+  $('#loading').show();
   if($scope.data.repeatSelect == 'notSelected'){
     //If method was not selected don't create project
     document.getElementById("noMethod").style.display = 'block';
@@ -51,8 +55,10 @@ $scope.createProject = function (nameValid) {
     var project = new Projects();
     project.name = $scope.project.name; 
     project.methodChosen = $scope.data.repeatSelect;
+    project.notes = $scope.project.notes;
     $http.post('/api/projects/' + i, project).success(function(response) {
       $scope.project.name = '';
+      $scope.project.notes = '';
       refresh();
     });
   }
@@ -60,6 +66,7 @@ $scope.createProject = function (nameValid) {
 
 //Delete project
 $scope.deleteProject = function(project) {
+  $('#loading').show();
   var i = $scope.user._id;
   var id = project._id;
   if(project.methodChosen == 'Order By'){
@@ -155,6 +162,7 @@ $scope.openProject = function (project){
 
 // Clone/duplicate a project with a different name but with the same data
 $scope.cloneProject = function(project){
+  $('#loading').show();
   var i = $scope.user._id;
   var id = project._id;
   $http.get('/api/cloneproject/' + i + '/' + id).success(function(data) {

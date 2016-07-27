@@ -55,17 +55,18 @@
     <!-- MAIN CONTENT AND INJECTED VIEWS -->
     <div id="main">
         <div id="content2" class="jumbotron text-center">
-            <h2>Project Set</h2>
+            <h2>Projects</h2>
             <br>
             <form name="myForm" id="projectsTable" runat="server" novalidate>
                 <br />
                 <table id="projectsTbl" border="0" bordercolor="#033773" class="table horizontal">
                     <tr>
-                        <th id="projectHeader2" style="width:30%"></th>
-                        <th id="projectHeader" style="width:21%">Project Name</th>
-                        <th id="projectHeader" style="width:17%">Method</th>
-                        <th id="projectHeader" style="width:16%">Creation Date</th>
-                        <th id="projectHeader" style="width:16%">Updated</th>
+                        <th id="projectHeader2" style="width:27%"></th>
+                        <th id="projectHeader" style="width:15%">Creation Date</th>
+                        <th id="projectHeader" style="width:15%">Updated</th>
+                        <th id="projectHeader" style="width:15%">Project Name</th>
+                        <th id="projectHeader" style="width:10%">Method</th>
+                        <th id="projectHeader" style="width:20%">Notes</th>
                         <!-- <th id="projectHeader2" style="width:150px">Action</th> -->
                     </tr>
                     <!-- <tr>
@@ -77,22 +78,22 @@
                     <tr ng-repeat="project in projects" ng-include="getTemplate(project)">
                     </tr>
                     <tr>
-                        <td><input type="button" value="Create Project" ng-click="createProject(myForm.name.$valid)" class="btn btn-primary"/></td>
-                        <td colspan="2"><input id="projectInput" value="" type="text" placeholder="Project name" name="name" ng-model="project.name" required/>
-                            <p id="noName" style="display: none; color:red;">Please insert a name for the project!</p>
+                        <td><input type="button" value="Create Project" ng-click="createProject(myForm.name.$valid)" class="btn btn-primary"/>
                         </td>
-                        <td colspan="3"> 
-                            <!-- <select class="form-control" id="projectMethod">
-                              <option selected>Select method for the project</option>
-                              <option value="electreTriC">Electre Tri-C</option>
-                              <option value="void">Void</option>
-                            </select> -->
-                            <select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="data.repeatSelect">
+                        <td colspan="5">
+                            <input id="projectInput" style="width:30%; display:inline-table !important;" value="" type="text" placeholder="Project name" name="name" ng-model="project.name" required/>
+                            <p id="noName" style="display: none; color:red;">Please insert a name for the project!</p>
+                        <!-- </td>
+                        <td colspan="2"> -->
+                            <select class="form-control" style="width:32%; display:inline-table !important;" name="repeatSelect" id="repeatSelect" ng-model="data.repeatSelect">
                                 <option ng-repeat="option in data.availableOptions" value="{{option.id}}">{{option.name}}</option>
                             </select>
                             <p id="noMethod" style="display: none; color:red;">Method not selected!</p>
                             <!-- {{data.repeatSelect}} -->
-                        </td>
+                        <!-- </td> 
+                        <td>-->
+                            <input id="projectInput" style="width:37%; display:inline-table !important;" value="" type="text" placeholder="Notes" name="notes" ng-model="project.notes"/>
+                        <!-- </td> -->
                     </tr>
                 </table>
                 <script type="text/ng-template" id="display">
@@ -102,10 +103,11 @@
                         <input type="button" value="Duplicate" ng-click="cloneProject(project)" class="btn btn-primary"/>
                         <input type="button" value="Delete" ng-click="deleteProject(project)" class="btn btn-danger"/> 
                     </td> 
-                    <td id="projectBody">{{ project.name }}</td>
-                    <td id="projectBody">{{ project.methodChosen }}</td>
                     <td id="projectBody">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td id="projectBody">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="projectBody">{{ project.name }}</td>
+                    <td id="projectBody">{{ project.methodChosen }}</td>
+                    <td id="projectBody">{{ project.notes }}</td>
                 </script>
                 <script type="text/ng-template" id="edit">
                     <td>
@@ -113,9 +115,14 @@
                         <input type="button" value="Cancel" ng-click="reset()" class="btn btn-danger"/>
                     </td>
                     <td colspan="2"><input id="projectInput" type="text" placeholder="Project name" ng-model="model.name"/></td>
-                    <td td colspan="3" id="projectBody2">{{ project.methodChosen }}</td>
+                    <td td id="projectBody2">{{ project.methodChosen }}</td>
+                    <td td colspan="2" id="projectBody2">{{ project.notes }}</td>
                 </script>
             </form>
+        </div>
+        <div id="loading">
+          <img id="loading-image" src="img/loader.gif" alt="Loading..." />
+          <p id="loading-text">Loading...</p>
         </div>
     </div>
 </body>

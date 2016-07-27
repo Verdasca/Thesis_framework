@@ -173,11 +173,11 @@ $http.get('/api/categories/' + $scope.projectID).success(function(data) {
       document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
       $scope.configurationsDone = true;
     }
-    // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-    //   document.getElementById('methodButtons').disabled = false;
-    // } else{
-    //   document.getElementById('methodButtons').disabled = true;
-    // }
+    if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    }
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -187,7 +187,7 @@ var refresh = function(){
   $http.get('/api/categories/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.categories = data.categories;
-    checkStatus();
+    //checkStatus();
   });  
 }  
 
@@ -200,11 +200,11 @@ var checkStatus = function(){
     document.getElementById('sectionsConfigurations').style.backgroundColor = '#6fdc6f';
     $scope.configurationsDone = true;
   }
-  // if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
-  //   document.getElementById('methodButtons').disabled = false;
-  // } else{
-  //   document.getElementById('methodButtons').disabled = true;
-  // }
+  if($scope.criteriaDone && $scope.alternativesDone && $scope.configurationsDone){
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  }
 }
 
 //Create category
@@ -251,6 +251,7 @@ $scope.deleteCategory = function(category) {
       }
       $scope.updateProject();
       refresh();
+      checkStatus();
     })
     .error(function() {
       //console.log('Error: ' + i);
@@ -260,6 +261,7 @@ $scope.deleteCategory = function(category) {
       }
       $scope.updateProject();
       refresh();
+      checkStatus();
     });
 }
 
@@ -403,7 +405,7 @@ var refreshParameter = function(){
   $http.get('/api/parameters/' + $scope.projectID).success(function(response) {
     $scope.project = response;
     $scope.parameters = response.parameters;
-    checkStatus();
+    //checkStatus();
   });  
 }  
 
@@ -420,10 +422,8 @@ $scope.createParameter = function () {
   parameter.credibility = 0.7;
   $http.post('/api/parameters/' + i, parameter).success(function(response) {
     refreshParameter();
-    refreshParameter();
   });
   $scope.updateProject();
-  refreshParameter();
 }
 
 //Then save it or update it
@@ -443,7 +443,7 @@ var refreshProfiles = function(){
   $http.get('/api/profiles/' + $scope.projectID).success(function(data) {
     $scope.project = data;
     $scope.profiles = data.profiletables;
-    checkStatus();
+    //checkStatus();
   });  
 }  
 
@@ -602,10 +602,12 @@ $scope.deleteProfile2 = function() {
     .success(function() {
       console.log("success");
       refreshProfiles();
+      checkStatus();
     })
     .error(function() {
       //console.log('Error: fail deletes' );
       refreshProfiles();
+      checkStatus();
     });
 }
 
@@ -681,6 +683,7 @@ $scope.resetChunks  = function() {
         console.log('Number of profiles that should exist: ' + rightNumProfiles);
         console.log('Actual number of profiles now: ' + numExistingProfiles);
         console.log('Done slicing profiles');
+        $('#loading').hide();
     }, 1700);
 }
 

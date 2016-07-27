@@ -46,7 +46,7 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
-                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
+                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Projects</a></li>
                 <li><a id="textNav2" href="" onclick="showHelp();"><span class="glyphicon glyphicon-info-sign"></span> Help</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
@@ -58,13 +58,13 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsCriteria"><a id="aSections" href="" class="active" ng-click="changeSection('criterion');">Criterion Set</a></li>
-                        <li id="sectionsAlternatives"><a id="aSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
-                        <li id="sectionsConfigurations"><a id="aSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');">Description:<br>{{ project.name }}</a></li>
+                        <li id="sectionsCriteria"><a id="dataSetSections" href="" class="active" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sectionsAlternatives"><a id="dataSetSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
+                        <li id="sectionsConfigurations"><a id="dataSetSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
+                        <li id="sectionsResults"><a id="dataSetSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import Data</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export Data</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -667,6 +667,7 @@
                                 <input class="exportChoice" type="checkbox" id="exportPro" name="dataBox" checked><span class="lbl">
                                 Profiles Performance Table</label></li>
                         </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 

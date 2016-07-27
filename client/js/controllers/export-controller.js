@@ -19,27 +19,27 @@ $scope.selectAll = function(){
 }]);
 
 //Export into a .csv file 
-app.directive('exportToCsv',function($http, $location){
+app.directive('exportToCsv',function($http, $location, $timeout){
     return {
       restrict: 'A',
+      scope: {
+        names: '=names'
+      },
       link: function (scope, element, attrs) {
       	var projectID = $location.search().projectId;
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
         element.bind('click', function(e){
+          var zip = new JSZip();
           document.getElementById("exportMessage").style.display = "none";
           document.getElementById("exportMessageError").style.display = "none";
           if(!elements[0].checked && !elements[1].checked && !elements[2].checked && !elements[3].checked && !elements[4].checked && !elements[5].checked){
             document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
             document.getElementById("exportMessageError").style.display = "block";
           }
-          if(elements[0].checked || elements[1].checked || elements[2].checked || elements[3].checked || elements[4].checked || elements[5].checked){
-            document.getElementById("exportMessage").innerHTML = "Export successfully.";
-            document.getElementById("exportMessage").style.display = "block";
-          }
           if(elements[0].checked){
           	$http.get('/api/criterions/' + projectID).success(function(data) {
-	     	var criteriaUpdated = data.criteria;
+	     	    var criteriaUpdated = data.criteria;
             var csvString = '';
             csvString = csvString + 'Name,Description,Direction,Measure,Weight,Indifference,Preference,Veto';
             csvString = csvString + "\n";
@@ -58,20 +58,12 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'criteria.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/criteria.csv", csvString);
             })
           }
-        });
-        element.bind('click', function(e){
           if(elements[1].checked){
-          	$http.get('/api/alternatives/' + projectID).success(function(data) {
-          	var alternativesUpdated = data.alternatives;
+            $http.get('/api/alternatives/' + projectID).success(function(data) {
+            var alternativesUpdated = data.alternatives;
             var csvString = '';
             csvString = csvString + 'Name,Description';
             csvString = csvString + "\n";
@@ -84,20 +76,12 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'alternatives.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/alternatives.csv", csvString);
             })
           }
-        });
-        element.bind('click', function(e){
           if(elements[2].checked){
-          	$http.get('/api/performances/' + projectID).success(function(data) {
-          	var performancesUpdated = data.performancetables;
+            $http.get('/api/performances/' + projectID).success(function(data) {
+            var performancesUpdated = data.performancetables;
             var csvString = '';
             csvString = csvString + 'Alternative,Criterion,Value';
             csvString = csvString + "\n";
@@ -111,20 +95,12 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'performances.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/performances.csv", csvString);
             })
           }
-        });
-        element.bind('click', function(e){
           if(elements[3].checked){
-          	$http.get('/api/categories/' + projectID).success(function(data) {
-          	var categoriesUpdated = data.categories;
+            $http.get('/api/categories/' + projectID).success(function(data) {
+            var categoriesUpdated = data.categories;
             var csvString = '';
             csvString = csvString + 'Rank,Category,Reference Action';
             csvString = csvString + "\n";
@@ -138,20 +114,12 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'categories.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/categories.csv", csvString);
             })
           }
-        });
-        element.bind('click', function(e){
           if(elements[4].checked){
-          	$http.get('/api/parameters/' + projectID).success(function(data) {
-          	var parametersUpdated = data.parameters;
+            $http.get('/api/parameters/' + projectID).success(function(data) {
+            var parametersUpdated = data.parameters;
             var csvString = '';
             csvString = csvString + 'Credibility Lambda';
             csvString = csvString + "\n";
@@ -163,20 +131,12 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'parameters.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/parameters.csv", csvString);
             })
           }
-        });
-        element.bind('click', function(e){
           if(elements[5].checked){
-          	$http.get('/api/profiles/' + projectID).success(function(data) {
-          	var profilesUpdated = data.profiletables;
+            $http.get('/api/profiles/' + projectID).success(function(data) {
+            var profilesUpdated = data.profiletables;
             var csvString = '';
             csvString = csvString + 'Reference Action,Criterion,Value';
             csvString = csvString + "\n";
@@ -190,14 +150,19 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'profiles.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/profiles.csv", csvString);
             })
+          }
+          if(elements[0].checked || elements[1].checked || elements[2].checked || elements[3].checked || elements[4].checked || elements[5].checked){
+            $timeout( function(){
+              zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                  // see FileSaver.js
+                  saveAs(content, scope.names+".zip");
+              });
+              document.getElementById("exportMessage").innerHTML = "Export successfully.";
+              document.getElementById("exportMessage").style.display = "block";
+            }, 1500);
           }
         });
       }

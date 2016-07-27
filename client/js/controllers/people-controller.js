@@ -423,6 +423,68 @@ var refreshResults = function(){
   });
 }
 
+//Reload the data from the result into the current data of the project
+$scope.reloadData = function(result, identifier) {
+  $('#loading').show();
+  var i = $scope.project._id;
+  var id = identifier;
+  var dataResult = result;
+  if($scope.project.people.length == 0){
+      console.log('There are no people to delete...');
+  }else{
+    //Delete all current people 
+    $http.delete('/api/people/' + i)
+      .success(function() {
+        console.log("Done deleting all people.");
+      })
+      .error(function() {
+        //console.log('Error: fail deletes' );
+    });
+  }
+  // Reload data
+  $http.post('/api/reloadProjectOrderPeople/' + i + '/' + id, dataResult).success(function(response) {
+    refreshReload();
+    //$('#loading').hide();
+  });
+}
+
+// Refresh after reload
+var refreshReload = function(){
+  $http.get('/api/people/' + $scope.projectID).success(function(data) {
+  $scope.project = data;
+  $scope.people = data.people;
+  $scope.results = data.results;
+  if($scope.project.orderType == ""){
+    // Do nothing, the order type is empty
+  }else{
+    $scope.data.repeatSelect = $scope.project.orderType;
+  }
+  if($scope.project.orderAttribute == ""){
+    // Do nothing, the order parameter is empty
+  }else{
+    $scope.data2.repeatSelect2 = $scope.project.orderAttribute;
+  }
+  //See if person set is done or not, if not cannot execute method
+  if($scope.project.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+    document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
+    $scope.peopleDone = false;
+  }else{
+    document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
+    $scope.peopleDone = true;
+  }
+  if($scope.project.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+  }
+  $('#loading').hide();
+  })
+  .error(function(data) {
+    console.log('Error: ' + data);
+});
+
+}
+
 // Start import when clicking on import button
 // First delete existing current data before importing and see which data was selected to import
 $scope.importData = function(){
@@ -438,7 +500,7 @@ $scope.importData = function(){
       // Import data
       UploadPeople();
     }else{
-      //Delete all current criteria 
+      //Delete all current people 
       $http.delete('/api/people/' + i)
         .success(function() {
           console.log("Done deleting all people.");
@@ -557,6 +619,13 @@ function UploadPeople(){
   }
 }
 
+//Select all checkboxes from the export result options
+$scope.selectAll = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = true;
+  document.getElementById("note"+idList).checked = true;
+}
+
 }]);
 
 // Function to export the results
@@ -573,6 +642,7 @@ app.directive('exportEverythingToCsv',function($timeout){
         $timeout( function(){
         var el = element[0];
         element.bind('click', function(e){
+          var zip = new JSZip();
           if(document.getElementById('res'+scope.values).checked == true){
             var table = document.getElementById("resultsTable"+scope.values);
             var csvString = '';
@@ -585,28 +655,21 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_results.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/results.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('note'+scope.values).checked == true){
             var notes = document.getElementById("notes"+scope.values).innerHTML;
             var csvString = 'Notes:';
             csvString = csvString + "\n";
             csvString = csvString + notes;
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:text/plain;charset=utf-8,'+encodeURIComponent(csvString),
-                download: scope.names+'_notes.txt'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/notes.txt", csvString);
+          }
+          if(document.getElementById('res'+scope.values).checked == true || document.getElementById('note'+scope.values).checked == true){
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                // see FileSaver.js
+                saveAs(content, scope.names+".zip");
+            });
           }
         });
       }, 1000);
@@ -618,11 +681,15 @@ app.directive('exportEverythingToCsv',function($timeout){
 app.directive('exportToCsv',function($http, $location){
     return {
       restrict: 'A',
+      scope: {
+        names: '=names'
+      },
       link: function (scope, element, attrs) {
         var id = $location.search().projectId;
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
         element.bind('click', function(e){
+          var zip = new JSZip();
           document.getElementById("exportMessage").style.display = "none";
           document.getElementById("exportMessageError").style.display = "none";
           if(elements[0].checked){
@@ -640,13 +707,12 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'people.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/people.csv", csvString);
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                // see FileSaver.js
+                saveAs(content, scope.names+".zip");
+            });
             document.getElementById("exportMessage").innerHTML = "Export successfully.";
             document.getElementById("exportMessage").style.display = "block";
             })

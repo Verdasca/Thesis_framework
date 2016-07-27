@@ -484,7 +484,7 @@ app.directive('exportResultsToCsv',function(){
 });
 
 //Export everything into a .csv file 
-app.directive('exportEverythingToCsv',function($timeout){
+app.directive('exportEverythingToCsv',function($timeout, $http){
     return {
       restrict: 'A',
       // Get the id of the result table to be exported
@@ -496,6 +496,7 @@ app.directive('exportEverythingToCsv',function($timeout){
         $timeout( function(){
         var el = element[0];
         element.bind('click', function(e){
+          var zip = new JSZip();
           if(document.getElementById('res'+scope.values).checked == true){
             var table = document.getElementById("resultsTable"+scope.values);
             var csvString = '';
@@ -508,16 +509,8 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_results.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/results.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('cri'+scope.values).checked == true){
             var table = document.getElementById("criTable"+scope.values);
             var csvString = '';
@@ -530,16 +523,8 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_criteria.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/criteria.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('alt'+scope.values).checked == true){
             var table = document.getElementById("altTable"+scope.values);
             var csvString = '';
@@ -552,16 +537,8 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_alternatives.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/alternatives.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('per'+scope.values).checked == true){
             var table = document.getElementById("perfTable"+scope.values);
             var csvString = '';
@@ -574,16 +551,8 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_performances.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/performances.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('cat'+scope.values).checked == true){
             var table = document.getElementById("catTable"+scope.values);
             var csvString = '';
@@ -596,16 +565,8 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_categories.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/categories.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('par'+scope.values).checked == true){
             var table = document.getElementById("paramsTable"+scope.values);
             var csvString = '';
@@ -618,16 +579,8 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_parameters.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/parameters.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('pro'+scope.values).checked == true){
             var table = document.getElementById("profTable"+scope.values);
             var csvString = '';
@@ -640,28 +593,21 @@ app.directive('exportEverythingToCsv',function($timeout){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download: scope.names+'_profiles.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/profiles.csv", csvString);
           }
-        });
-        element.bind('click', function(e){
           if(document.getElementById('note'+scope.values).checked == true){
             var notes = document.getElementById("notes"+scope.values).innerHTML;
             var csvString = 'Notes:';
             csvString = csvString + "\n";
             csvString = csvString + notes;
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:text/plain;charset=utf-8,'+encodeURIComponent(csvString),
-                download: scope.names+'_notes.txt'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/notes.txt", csvString);
+          }
+          if(document.getElementById('res'+scope.values).checked == true || document.getElementById('cri'+scope.values).checked == true || document.getElementById('alt'+scope.values).checked == true || document.getElementById('per'+scope.values).checked == true || document.getElementById('cat'+scope.values).checked == true || document.getElementById('par'+scope.values).checked == true || document.getElementById('pro'+scope.values).checked == true || document.getElementById('note'+scope.values).checked == true){
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                // see FileSaver.js
+                saveAs(content, scope.names+".zip");
+            });
           }
         });
       }, 1000);

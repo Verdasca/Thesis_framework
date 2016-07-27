@@ -163,12 +163,13 @@
 #descriptionTable{
   margin: auto;
   text-align: left;
-  width: 90%;
+  width: 97%;
 }
 
 #descriptionTd{
     font-size: 17px;  
-    vertical-align: left;
+    text-align: left;
+    padding-left: 0;
 }
 
 #tutorial{
@@ -351,9 +352,9 @@
 #upload{
     display: inline;
     margin-top: 20px;
-    margin-bottom: 35px;
+    /*margin-bottom: 35px;*/
     margin-right: 30px;
-    vertical-align: middle;
+    /*vertical-align: middle;*/
     text-align: center;
     font-size: 16px;
 }

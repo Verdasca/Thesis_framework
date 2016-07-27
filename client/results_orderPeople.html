@@ -18,6 +18,8 @@
     <script src="libs/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="libs/angular-resource/angular-resource.js" type="text/javascript"></script>
     <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="libs/jszip/dist/jszip.js" type="text/javascript"></script>
+    <script src="libs/file-saver/FileSaver.js" type="text/javascript"></script>
     <!-- ANGULAR CUSTOM -->
     <script src="js/appRoutes.js" type="text/javascript"></script>
     <script src="js/app.js" type="text/javascript"></script>
@@ -90,9 +92,12 @@
                                 <label for="note{{ res.identifier }}" class="lbl">
                                 <input class="exportChoice" type="checkbox" id="note{{ res.identifier }}" checked><span class="lbl">
                                 Notes</label></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" ng-click="selectAll(res.identifier);"><b>Select All</b></a></li>
                           </ul>
                         </div>
                         <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>
+                        <button ng-click="reloadData(res, res.identifier)" class="btn btn-info">Reload</button>
                     </td> 
                     <td id="titleTbl3" style="width:17%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
                     <td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.name }}</td> 
@@ -134,14 +139,14 @@
             <table id="resultTbl" class="table horizontal" ng-show="showCurrentData">
                 <tr class="noBorder"> 
                     <td>
-                        <h4 id="titleTbl">Data - Attribute: {{ project.orderAttributes }}, Order Type: {{ project.orderTypes }}</h4>
+                        <h4 id="titleTbl2">Data - Attribute: {{ project.orderAttribute }}, Order Type: {{ project.orderType }}</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Name</th>
                                 <th id="headers">Age</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="data in people">
+                            <tr ng-repeat="data in project.people">
                                 <td id="headers">{{ data.name }}</td>
                                 <td id="headers">{{ data.age }}</td>
                             </tr> 
@@ -177,11 +182,13 @@
                     </div>
                     <div class="modal-body" style="font-size: 16px;">
                         <p><b>Import data to:</b></p>
-                        <form>
-                            <input type="radio" ng-model="content" name="dataType" value="peopleData" class="importRatio" style="margin-bottom: 5px;"> People
-                        </form>
-                        <input type="file" id="fileUpload"/>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li><label for="importPeople" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPeople" type="checkbox" name="dataType" value="peopleData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             People <input type="file" id="fileUpload"/></label></li>
+                        </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
                         <!-- <div class="wrapper">
@@ -214,7 +221,7 @@
                                 <input class="exportChoice" type="checkbox" id="exportCri" name="dataBox" checked><span class="lbl">
                                 People</label></li>
                         </ul>
-                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv names="project.name"/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 
                         <p id="exportMessage" style="color:green; display:none; font-size: 16px;"></p> 

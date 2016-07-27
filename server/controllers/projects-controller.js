@@ -118,7 +118,7 @@ module.exports.saveResult = function (req, res) {
     Project.findOneAndUpdate( 
         { '_id': projectID, 'results.identifier': resultID },
         { $push: {'results.$.personValues': {personName : name, personAge: age} } },
-        {safe: true},
+        //{safe: true},
         function(err, result) {
             if(err){
                 res.send(err);
@@ -143,6 +143,26 @@ module.exports.deleteResult = function (req, res) {
             }
             res.send('Delete result complete.');
       });
+}
+
+//Reload the data from the result into the current data of the project - for methods based on local files and not DB (update configurations)
+module.exports.reloadProjectFileMethods = function (req, res) {
+    console.log('Reloading...');
+    var projectID = req.params.projectId;
+    var resultID = req.params.id;
+    var resultData = req.body;
+    var order = resultData.orderTypes;
+    var attribute = resultData.orderAttributes;
+    //Reload configurations
+    Project.update({ _id: projectID}, { orderType: order, orderAttribute: attribute},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded configurations.");
+        }
+    });
+
+    res.send('Data reloaded.');
 }
 
 //Reload the data from the result into the current data of the project - for electre tri-c method
@@ -255,6 +275,46 @@ module.exports.reloadProject = function (req, res) {
             console.log(err);
         }else{
             console.log("Successfully reloaded profiles.");
+        }
+    });
+
+    res.send('Data reloaded.');
+}
+
+//Reload the data from the result into the current data of the project - for order people method
+module.exports.reloadProjectOrderPeople = function (req, res) {
+    console.log('Reloading result...');
+    var projectID = req.params.projectId;
+    var resultID = req.params.id;
+    var resultData = req.body;
+    var order = resultData.orderTypes;
+    var attribute = resultData.orderAttributes;
+    //Reload configurations
+    Project.update({ _id: projectID}, { orderType: order, orderAttribute: attribute},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded configurations.");
+        }
+    });
+
+    var person = resultData.personValues;
+    var pers = [];
+    var per = {name:"", age:0};
+    for (var i = 0; i < person.length; i++) {
+        per.name = person[i].personName;
+        per.age = person[i].personAge;
+        var newper = new Person(per);
+        newper.save(function (err, result) {
+            //res.json(result);
+        });
+        pers.push(newper);
+    }
+    Project.update({ _id: projectID}, {'$pushAll': {people: pers}},{upsert:true},function(err){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("Successfully reloaded people.");
         }
     });
 

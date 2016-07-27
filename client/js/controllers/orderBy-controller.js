@@ -649,6 +649,31 @@ updateDataFile = function(jsonData){
   $scope.dataUpdate(); 
 }
 
+// Reload project data
+$scope.reloadData = function(result, identifier){
+  $('#loading').show();
+  var i = $scope.projectID;
+  var id = identifier;
+  var dataResult = result;
+  // Reload configurations
+  $http.post('/api/reloadProjectFileMethods/' + i + '/' + id, dataResult).success(function(response) {
+    $http.post('/saveDataReload/' + i +'/' + id, dataResult).success(function(data) {
+      refresh();
+      $scope.dataUpdate(); 
+    })
+    .error(function(data) {
+      console.log('Error: ' + data);
+    });
+  })
+}
+
+//Select all checkboxes from the export result options
+$scope.selectAll = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = true;
+  document.getElementById("note"+idList).checked = true;
+}
+
 }]);
 
 //Delete data
@@ -720,12 +745,16 @@ function createData2(){
 app.directive('exportToCsv',function(){
     return {
       restrict: 'A',
+      scope: {
+        names: '=names'
+      },
       link: function (scope, element, attrs) {
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
         element.bind('click', function(e){
           document.getElementById("exportMessage").style.display = "none";
           document.getElementById("exportMessageError").style.display = "none";
+          var zip = new JSZip();
           if(elements[0].checked){
             var table = document.getElementById("resultTbl");
             if(table.rows.length == 0){
@@ -742,13 +771,12 @@ app.directive('exportToCsv',function(){
                 csvString = csvString + "\n";
               }
               csvString = csvString.substring(0, csvString.length - 1);
-              var a = $('<a/>', {
-                  style:'display:none',
-                  href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                  download:'data.csv'
-              }).appendTo('body')
-              a[0].click()
-              a.remove();
+              zip.file(scope.names+"/data.csv", csvString);
+              zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                  // see FileSaver.js
+                  saveAs(content, scope.names+".zip");
+              });
               document.getElementById("exportMessage").innerHTML = "Export successfully.";
               document.getElementById("exportMessage").style.display = "block";
             }
@@ -773,40 +801,35 @@ app.directive('exportResultToCsv',function(){
       link: function (scope, element, attrs) {
         var el = element[0];
           element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
-            var table = document.getElementById("resultsTable"+scope.values);
-            var csvString = '';
-            for(var i=0; i<table.rows.length;i++){
-              var rowData = table.rows[i].cells;
-              for(var j=0; j<rowData.length;j++){ //number of columns to export
-                csvString = csvString + rowData[j].innerHTML + ",";
+            var zip = new JSZip();
+            if(document.getElementById('res'+scope.values).checked == true){
+              var table = document.getElementById("resultsTable"+scope.values);
+              var csvString = '';
+              for(var i=0; i<table.rows.length;i++){
+                var rowData = table.rows[i].cells;
+                for(var j=0; j<rowData.length;j++){ //number of columns to export
+                  csvString = csvString + rowData[j].innerHTML + ",";
+                }
+                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                csvString = csvString + "\n";
               }
-              csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+              csvString = csvString.substring(0, csvString.length - 1);
+              zip.file(scope.names+"/results.csv", csvString);
+            }
+            if(document.getElementById('note'+scope.values).checked == true){
+              var notes = document.getElementById("notes"+scope.values).innerHTML;
+              var csvString = 'Notes:';
               csvString = csvString + "\n";
-          }
-            csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download: scope.names+'results.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          });
-          element.bind('click', function(e){
-          if(document.getElementById('note'+scope.values).checked == true){
-            var notes = document.getElementById("notes"+scope.values).innerHTML;
-            var csvString = 'Notes:';
-            csvString = csvString + "\n";
-            csvString = csvString + notes;
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:text/plain;charset=utf-8,'+encodeURIComponent(csvString),
-                download: scope.names+'_notes.txt'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
-          }
+              csvString = csvString + notes;
+              zip.file(scope.names+"/notes.txt", csvString);
+            }
+            if(document.getElementById('res'+scope.values).checked == true || document.getElementById('note'+scope.values).checked == true){
+              zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                  // see FileSaver.js
+                  saveAs(content, scope.names+".zip");
+              });
+            }
         });
       }
     }

@@ -152,6 +152,11 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
     document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
     $scope.dataDone = true;
   }
+  if(!$scope.dataDone || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+  }
   // if($scope.dataDone){
   //   document.getElementById('buttonDiviz').disabled = false;
   // } else{
@@ -234,6 +239,11 @@ var checkStatus = function(){
     document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
     $scope.dataDone = true;
   }
+  if(!$scope.dataDone || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+  }
 }
 
 // Update order type
@@ -311,6 +321,7 @@ $scope.saveResult = function(results){
   var type = $scope.project.orderType;
   var attribute = $scope.project.orderAttribute;
   var datas = results;
+  var notes = document.getElementById("resultNotes").value;
   $scope.project.numExecutions = resId + 1;
   $scope.project.dateSet = new Date();
   var project = $scope.project;
@@ -325,11 +336,12 @@ $scope.saveResult = function(results){
     date: new Date(),
     orderTypes: type,
     orderAttributes: attribute,
-    dataValues: datas
+    resultNotes: notes
   };
   $http.put('/api/projectAddResult/' + projectID, $scope.newResult).success(function(response){
     $http.post('/saveDataResults/' + projectID + '/'+resId, datas).success(function(response){
       document.getElementById("resultName").value = "";
+      document.getElementById("resultNotes").value = "";
       refresh();
       //$('#executing').hide(); 
     });
@@ -400,12 +412,22 @@ $scope.dataUpdate = function(){
 
 //Import data
 $scope.importData = function(){
-  UploadData();
+  $('#importing').show();
+  document.getElementById("importMessage").style.display = "none";
+  document.getElementById("importMessageError").style.display = "none";
+  var elements = document.getElementsByName("dataType");
+  if(elements[0].checked){
+    //Import data
+    UploadData();
+  }else{
+    document.getElementById("importMessageError").innerHTML = "Data to import not selected.";
+    document.getElementById("importMessageError").style.display = "block";
+    $('#importing').hide(); 
+  }
 }
 
 // Upload file to get the data  
 function UploadData(){
-  $('#importing').show();
   document.getElementById("importMessage").style.display = "none";
   document.getElementById("importMessageError").style.display = "none";
   var fileUpload = document.getElementById("fileUpload");
@@ -745,7 +767,8 @@ app.directive('exportResultToCsv',function(){
     return {
       restrict: 'A',
       scope: {
-        values: '=values'
+        values: '=values',
+        names: '=names'
       },
       link: function (scope, element, attrs) {
         var el = element[0];
@@ -765,11 +788,26 @@ app.directive('exportResultToCsv',function(){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'results.csv'
+                download: scope.names+'results.csv'
             }).appendTo('body')
             a[0].click()
             a.remove();
           });
+          element.bind('click', function(e){
+          if(document.getElementById('note'+scope.values).checked == true){
+            var notes = document.getElementById("notes"+scope.values).innerHTML;
+            var csvString = 'Notes:';
+            csvString = csvString + "\n";
+            csvString = csvString + notes;
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:text/plain;charset=utf-8,'+encodeURIComponent(csvString),
+                download: scope.names+'_notes.txt'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+          }
+        });
       }
     }
 });

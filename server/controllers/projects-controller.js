@@ -94,9 +94,10 @@ module.exports.addResult = function (req, res) {
     var date = req.body.date;
     var type = req.body.orderTypes;
     var attribute = req.body.orderAttributes;
+    var notes = req.body.resultNotes;
     Project.findOneAndUpdate( 
         { '_id': projectID },
-        { $push: { results: {identifier : id, name: n, resultDate: date, orderTypes: type, orderAttributes: attribute} } },
+        { $push: { results: {identifier : id, name: n, resultDate: date, orderTypes: type, orderAttributes: attribute, resultNotes: notes} } },
         {safe: true, upsert: true, new : true},
         function(err, result) {
             if(err){

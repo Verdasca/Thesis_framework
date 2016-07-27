@@ -51,10 +51,10 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('descriptionVoid');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="">Execution and Results</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('descriptionVoid');">Description:<br>{{ project.name }}</a></li>
+                        <li id="sectionsResults"><a id="dataSetSections" href="" ng-click="">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import Data</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export Data</a></li>
                     </ul>
                     </div><!--/.nav-collapse -->
                 </div>
@@ -67,16 +67,18 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <th id="descriptionTd" style="width:30%">Project Name</th>
-                    <th id="descriptionTd" style="width:24%">Method</th>
-                    <th id="descriptionTd" style="width:23%">Creation Date</th>
-                    <th id="descriptionTd" style="width:23%">Updated</th>
+                    <th id="descriptionTd" style="width:18%">Creation Date</th>
+                    <th id="descriptionTd" style="width:18%">Updated</th>
+                    <th id="descriptionTd" style="width:25%">Project Name</th>
+                    <th id="descriptionTd" style="width:15%">Method</th>
+                    <th id="descriptionTd" style="width:24%">Notes</th>
                 </tr>
                 <tr>
-                    <td id="descriptionTd">{{ project.name }}</td>
-                    <td id="descriptionTd">{{ project.methodChosen }}</td>
                     <td id="descriptionTd">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td id="descriptionTd">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.name }}</td>
+                    <td id="descriptionTd">{{ project.methodChosen }}</td>
+                    <td id="descriptionTd">{{ project.notes }}</td>
                 </tr>
             </table>
             <br/>

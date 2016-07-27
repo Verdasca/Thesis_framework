@@ -40,9 +40,9 @@
 
 #content{
     text-align: center;
-    width: 85%;
+    width: 83%;
     float: right;
-    padding-top: 5px;
+    padding-top: 0px;
     background-color: #ffffff;
 }
 
@@ -83,13 +83,13 @@
   margin-top: 52px;
   border: none;
   font-size: 16px;
-  width: 16%;
+  width: 17%;
 }
 
 #sections:hover,
 #sectionsData:hover,
 #sectionsResults:hover{
-    background-color: #033773;
+    background-color: #b3b3b3;
 }     
 
 #sections,
@@ -98,16 +98,31 @@
     margin-bottom: 5px;
 }
 
-#aSections{
+#dataSetSections{
     color: #333333;
 }
 
-#aSections:hover{
+#dataSetSections:hover{
     color: #ffffff;
 }
 
+#aSections{
+  background-color: #b3b3b3;
+  color: #333333;
+}
+
+#aSections:hover{
+  background-color: #b3b3b3;
+  color: #ffffff;
+}
+
 #aSections.active{
-    background-color: #033773;
+    border: 5px solid #033773;
+    color: #fff;
+}
+
+#dataSetSections.active{
+    border: 5px solid #033773;
     color: #fff;
 }
 
@@ -191,7 +206,7 @@
 #dataTable{
   margin: auto;
   text-align: center;
-  width: 97%;
+  width: 99%;
 }
 
 #dataLabel{
@@ -699,7 +714,8 @@ input[name="ratio"]{
 }
 
 /* Result section */
-#resultName{
+#resultName,
+#resultNotes{
     text-align: center;
     vertical-align: middle;
     width: 100%;
@@ -709,7 +725,7 @@ input[name="ratio"]{
 #methodErrorMessage{
   text-align: left;  
   font-size: 16px; 
-  width: 97%; 
+  width: 99%; 
   margin: 6px;
   font-family: Arial,sans-serif;
 }
@@ -720,9 +736,10 @@ input[name="ratio"]{
 }
 
 #resultTbl,
-#resultTbl2{
+#resultTbl2,
+#resultTblx{
   margin: auto;
-  width: 97%;
+  width: 99%;
 }
 
 #titleTbl{

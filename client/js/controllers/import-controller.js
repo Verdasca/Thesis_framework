@@ -236,7 +236,8 @@ $scope.importData = function(){
           $('#importing').hide();
       });
     }
-  }else{
+  }
+  if(!elements[0].checked && !elements[1].checked && !elements[2].checked && !elements[3].checked && !elements[4].checked && !elements[5].checked && !elements[6].checked){
     document.getElementById("importMessageError").innerHTML = "Data to import not selected.";
     document.getElementById("importMessageError").style.display = "block";
     $('#importing').hide(); 

@@ -45,11 +45,11 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description_orderBy');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('data_orderBy');">Data Set &<br>Configurations</a></li>
-                        <li id="sectionsResults"><a id="aSections" class="active" href="" ng-click="changeSection('results_orderBy');">Execution and Results</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
+                        <li id="sections"><a id="aSections" href="" ng-click="changeSection('description_orderBy');">Description:<br>{{ project.name }}</a></li>
+                        <li id="sectionsData"><a id="dataSetSections" href="" ng-click="changeSection('data_orderBy');">Data Set &<br>Configurations</a></li>
+                        <li id="sectionsResults"><a id="dataSetSections" class="active" href="" ng-click="changeSection('results_orderBy');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import Data</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export Data</a></li>
                     </ul>
                     </div>
                     <!--/.nav-collapse -->
@@ -63,16 +63,40 @@
             <br/>
             <!-- example how the results are shown -->
             <div>
+                <table id="resultTblx" class="table horizontal" style="width: 99% !important;">
+                    <tr>
+                        <th id="descriptionTd" style="width:35%"></th>
+                        <th id="descriptionTd" style="width:17%">Date</th>
+                        <th id="descriptionTd" style="width:21%">Result Name</th>
+                        <th id="descriptionTd" style="width:27%">Notes</th>
+                    </tr>
+                </table>
                 <table ng:repeat="res in results" id="resultTbl2" class="table horizontal">
                 <tr class="noBorder">
-                    <td id="titleTbl3" style="width:25%;">
+                    <td id="titleTbl3" style="width:35%;">
                         <button ng-click="showResult = ! showResult" class="btn btn-success">View</button>
-                        <button export-result-to-csv values="res.identifier" class="btn btn-default ng-isolate-scope">Export to CSV</button> 
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Export Results<span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu keep-open-on-click" style="font-size: 16px;padding: 10px; min-width: 247px;">
+                            <li><a href="#" export-result-to-csv values="res.identifier" names="res.name"><b>Export</b></a></li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <label for="res{{ res.identifier }}" class="lbl">
+                                <input class="exportChoice" type="checkbox" id="res{{ res.identifier }}" checked/>
+                                Results</label></li>
+                            <li>
+                                <label for="note{{ res.identifier }}" class="lbl">
+                                <input class="exportChoice" type="checkbox" id="note{{ res.identifier }}" checked><span class="lbl">
+                                Notes</label></li>
+                          </ul>
+                        </div>
                         <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>
                     </td> 
-                    <td id="titleTbl3" style="width:30%;"><b>Name:</b> {{ res.name }}</td> 
-                    <td style="width:15%;"></td> 
-                    <td id="titleTbl3" style="width:25%;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                    <td id="titleTbl3" style="width:17%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
+                    <td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.name }}</td> 
+                    <td id="notes{{ res.identifier }}" style="text-align:left;vertical-align: middle;font-size: 16px;padding-left: 0; width:27%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultNotes}}</td> 
                 </tr>
                 <tr ng-show="showResult" class="noBorder"> 
                     <td colspan="4">
@@ -85,16 +109,19 @@
                 <table id="resultTbl2" class="table horizontal" style="width: 97% !important; margin-bottom: 20px !important;">
                 <tr>
                     <td id="titleTbl4" style="width:30%; padding-top: 10px;">
+                        <button ng-click="showCurrentData = ! showCurrentData" class="btn btn-success">View</button>
                         <input id="methodButtons" class="btn btn-success" type="button" value="Execute Method" ng-click="executeMethod();"/>
                     </td>
-                    <td colspan="2" id="titleTbl3" style="width:45%; padding-top: 10px;">
-                        <input id="resultName" onkeyup="checkResultName()" type="text" value="" placeholder="Result name" name="name" required></input>
+                    <td colspan="2" id="titleTbl3" style="width:30%; padding-top: 10px;">
+                        <input id="resultName" type="text" value="" placeholder="Add a name to the result" name="name" required></input>
+                        <!-- <input id="resultName" onkeyup="checkResultName()" type="text" value="" placeholder="Add a name for the result to" name="name" required></input> -->
                     </td> 
-                    <td id="titleTbl3" style="width:25%; padding-top: 10px;">
+                    <td id="titleTbl3" style="width:40%; padding-top: 10px;">
+                        <input id="resultNotes" type="text" value="" placeholder="Add notes to the result" name="notes"></input>
                     </td> 
                 </tr>
-            </table>
-                <table id="resultTbl" class="table horizontal" style="display:none;">
+                </table>
+                <table id="resultTbl" class="table horizontal" ng-show="showCurrentData">
                 </table>
             </div>
         <br/>
@@ -123,6 +150,9 @@
                     </div>
                     <div class="modal-body" style="font-size: 16px;">
                         <p><b>Import data to:</b></p>
+                        <form>
+                            <input type="radio" ng-model="content" name="dataType" value="data" class="importRatio" style="margin-bottom: 5px;"> Data
+                        </form>
                         <input type="file" id="fileUpload"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
@@ -172,19 +202,19 @@
         $(document).on('click', '.dropdown-menu', function(e) {
             if ($(this).hasClass('keep-open-on-click')) { e.stopPropagation(); }
         });
-        document.getElementById("methodButtons").disabled=true;
-        // Disabled run/execute button when input as a name
-        function checkResultName() {
-            if(document.getElementById("resultName").value == ""){
-                document.getElementById("methodButtons").disabled=true;
-            }else{
-                if(document.getElementById('sectionsData').style.backgroundColor == 'rgb(255, 51, 51)'){
-                    document.getElementById("methodButtons").disabled=true;
-                }else{
-                    document.getElementById("methodButtons").disabled=false;
-                }
-            }
-        }
+        // document.getElementById("methodButtons").disabled=true;
+        // // Disabled run/execute button when input as a name
+        // function checkResultName() {
+        //     if(document.getElementById("resultName").value == ""){
+        //         document.getElementById("methodButtons").disabled=true;
+        //     }else{
+        //         if(document.getElementById('sectionsData').style.backgroundColor == 'rgb(255, 51, 51)'){
+        //             document.getElementById("methodButtons").disabled=true;
+        //         }else{
+        //             document.getElementById("methodButtons").disabled=false;
+        //         }
+        //     }
+        // }
         </script>
     </div>   
 </body>

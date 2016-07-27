@@ -195,7 +195,7 @@
         </div>
         <!-- Modal -->
         <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="importController">
-            <div class="modal-dialog" style="width:50%;">
+            <div class="modal-dialog" style="width:52%;">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -204,20 +204,47 @@
                     </div>
                     <div class="modal-body" style="font-size: 16px;">
                         <p><b>Import data to:</b></p>
-                        <form>
-                            <input type="radio" ng-model="content" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"> Criteria<br>
-                            <input type="radio" ng-model="content" name="dataType" value="alternativesData" class="importRatio" style="margin-bottom: 5px;"> Alternatives<br>
-                            <input type="radio" ng-model="content" name="dataType" value="performanceData" class="importRatio" style="margin-bottom: 5px;"> Performance Table<br>
-                            <input type="radio" ng-model="content" name="dataType" value="altAndPerfData" class="importRatio" style="margin-bottom: 5px;"> Alternatives and Performance Table<br>
-                            <input type="radio" ng-model="content" name="dataType" value="categoriesData" class="importRatio" style="margin-bottom: 5px;"> Categories<br>
-                            <input type="radio" ng-model="content" name="dataType" value="parametersData" class="importRatio" style="margin-bottom: 5px;"> Parameters<br>
-                            <input type="radio" ng-model="content" name="dataType" value="profileData" class="importRatio" style="margin-bottom: 5px;"> Profile Performance Table
-                        </form>
-                        <input type="file" id="fileUpload"/>
+                        <ul class="list-group" style="list-style-type: none;">
+                            <li><label for="importCri" class="lbl" style="font-weight: normal !important;">
+                            <input id="importCri" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Criteria <input type="file" id="fileUpload"/></label></li><br>
+                            <li><label for="importAlt" class="lbl" style="font-weight: normal !important;">
+                            <input id="importAlt" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Alternatives <input type="file" id="fileUpload2"/></label></li><br>
+                            <li><label for="importPer" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Performance Table <input type="file" id="fileUpload3"/></label></li><br>
+                            <li><label for="importAltPer" class="lbl" style="font-weight: normal !important;">
+                            <input id="importAltPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"><span class="lbl">
+                             Alternatives and Performance Table <input type="file" id="fileUpload4"/></label></li><br>
+                            <li><label for="importCat" class="lbl" style="font-weight: normal !important;">
+                            <input id="importCat" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Categories <input type="file" id="fileUpload5"/></label></li><br>
+                            <li><label for="importPar" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPar" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Parameters <input type="file" id="fileUpload6"/></label></li><br>
+                            <li><label for="importPro" class="lbl" style="font-weight: normal !important;">
+                            <input id="importPro" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
+                             Profile Performance Table <input type="file" id="fileUpload7"/></label></li>
+                        </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
-                        <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
-                        <div class="wrapper">
+                        <p id="importMessageError1" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage1" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError2" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage2" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError3" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage3" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError4" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage4" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError5" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage5" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError6" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage6" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError7" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage7" style="color:green; display:none; font-size: 16px;"></p> 
+                        <!-- <div class="wrapper">
                             <p ng-show="content == 'criteriaData'">
                                 <b>CSV file structure example:</b><br>Name, Description, Direction, Measure, Weight, Indifference, Preference, Veto 
                                 <br>criterion name 1, test, min, ordinal, 10, 2, 4, 6<br>criterion name 2, other, max, cardinal, 1.0, 2.44, 9, 2.5<br>and so on...    
@@ -246,7 +273,7 @@
                                 <b>CSV file structure example:</b><br>Reference Actions\Criteria, criterion name 1, criterion name 2, ...
                                 <br>reference action name 1, 5.9, 21, ...<br>reference action name 2, 3.98, 3, ...<br>and so on... 
                             </p>
-                            </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="!proTblImported && refreshBeforeClosing(); proTblImported && refreshProfilesBeforeClosing(); (categoriesImported || criteriaImported) && !proTblImported && refreshNewProfileBeforeClosing(); proTblImported=false; categoriesImported=false; criteriaImported=false;">Close</button>

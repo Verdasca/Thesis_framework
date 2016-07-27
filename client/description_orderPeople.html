@@ -47,11 +47,11 @@
                 <div id="verticalNav" class="navbar navbar-default" role="navigation">
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
-                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description_orderPeople');"> {{ project.name }}<br>Description</a></li>
-                        <li id="sectionsData"><a id="aSections" href="" ng-click="changeSection('data_orderPeople');">Person Set</a></li>
-                        <li id="sectionsResults"><a id="aSections" href="" ng-click="changeSection('results_orderPeople');">Execution and Results</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import from CSV</a></li>
-                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export to CSV</a></li>
+                        <li id="sections"><a id="aSections" class="active" href="" ng-click="changeSection('description_orderPeople');">Description:<br>{{ project.name }}</a></li>
+                        <li id="sectionsData"><a id="dataSetSections" href="" ng-click="changeSection('data_orderPeople');">Person Set</a></li>
+                        <li id="sectionsResults"><a id="dataSetSections" href="" ng-click="changeSection('results_orderPeople');">Execution and Results</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#myModal">Import Data</a></li>
+                        <li><button id="buttonResults" class="btn btn-info" data-toggle="modal" data-target="#exportModal">Export Data</a></li>
                     </ul>
                     </div>
                     <!--/.nav-collapse -->
@@ -65,16 +65,18 @@
             <br/>
             <table id="descriptionTable" class="table table-bordered horizontal">
                 <tr>
-                    <th id="descriptionTd" style="width:30%">Project Name</th>
-                    <th id="descriptionTd" style="width:24%">Method</th>
-                    <th id="descriptionTd" style="width:23%">Creation Date</th>
-                    <th id="descriptionTd" style="width:23%">Updated</th>
+                    <th id="descriptionTd" style="width:18%">Creation Date</th>
+                    <th id="descriptionTd" style="width:18%">Updated</th>
+                    <th id="descriptionTd" style="width:25%">Project Name</th>
+                    <th id="descriptionTd" style="width:15%">Method</th>
+                    <th id="descriptionTd" style="width:24%">Notes</th>
                 </tr>
                 <tr>
-                    <td id="descriptionTd">{{ project.name }}</td>
-                    <td id="descriptionTd">{{ project.methodChosen }}</td>
                     <td id="descriptionTd">{{ project.creationDate | date:'yyyy-MM-dd HH:mm:ss' }}</td>
                     <td id="descriptionTd">{{ project.dateSet | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                    <td id="descriptionTd">{{ project.name }}</td>
+                    <td id="descriptionTd">{{ project.methodChosen }}</td>
+                    <td id="descriptionTd">{{ project.notes }}</td>
                 </tr>
             </table>
             <br/>
@@ -135,12 +137,12 @@
                         <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
-                        <div class="wrapper">
+                        <!-- <div class="wrapper">
                             <p ng-show="content == 'peopleData'">
                                 <b>CSV file structure example:</b><br>Name, Age
                                 <br>person name 1, 6<br>person name 2,32<br>and so on...    
                             </p>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="refreshBeforeClosing();">Close</button>

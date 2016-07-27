@@ -66,18 +66,23 @@ $http.get('/api/people/' + $scope.projectID).success(function(data) {
     document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
     $scope.peopleDone = true;
   }
-  if($location.path() == '/results_orderPeople.html'){
-    if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-      document.getElementById('methodButtons').disabled = true;
-    } else{
-      document.getElementById('methodButtons').disabled = false;
-    }
-    if(document.getElementById("resultName").value == ""){
-      document.getElementById("methodButtons").disabled=true;
-    }else{
-      document.getElementById("methodButtons").disabled=false;
-    }
+  if($scope.project.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+    document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+  } else{
+    document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
   }
+  // if($location.path() == '/results_orderPeople.html'){
+  //   if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+  //     document.getElementById('methodButtons').disabled = true;
+  //   } else{
+  //     document.getElementById('methodButtons').disabled = false;
+  //   }
+  //   if(document.getElementById("resultName").value == ""){
+  //     document.getElementById("methodButtons").disabled=true;
+  //   }else{
+  //     document.getElementById("methodButtons").disabled=false;
+  //   }
+  // }
   $('#loading').hide();
   })
   .error(function(data) {
@@ -103,18 +108,23 @@ $scope.refreshBeforeClosing = function(){
       document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
       $scope.peopleDone = true;
     }
-    if($location.path() == '/results_orderPeople.html'){
-      if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-        document.getElementById('methodButtons').disabled = true;
-      } else{
-        document.getElementById('methodButtons').disabled = false;
-      }
-      if(document.getElementById("resultName").value == ""){
-        document.getElementById("methodButtons").disabled=true;
-      }else{
-        document.getElementById("methodButtons").disabled=false;
-      }
+    if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
     }
+    // if($location.path() == '/results_orderPeople.html'){
+    //   if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+    //     document.getElementById('methodButtons').disabled = true;
+    //   } else{
+    //     document.getElementById('methodButtons').disabled = false;
+    //   }
+    //   if(document.getElementById("resultName").value == ""){
+    //     document.getElementById("methodButtons").disabled=true;
+    //   }else{
+    //     document.getElementById("methodButtons").disabled=false;
+    //   }
+    // }
     $('#loading').hide();
   })
   .error(function(data) {
@@ -194,18 +204,23 @@ var checkStatus = function(){
       document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
       $scope.peopleDone = true;
     }
-    if($location.path() == '/results_orderPeople.html'){
-      if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-        document.getElementById('methodButtons').disabled = true;
-      } else{
-        document.getElementById('methodButtons').disabled = false;
-      }
-      if(document.getElementById("resultName").value == ""){
-        document.getElementById("methodButtons").disabled=true;
-      }else{
-        document.getElementById("methodButtons").disabled=false;
-      }
-  }
+    if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+    } else{
+      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+    }
+  //   if($location.path() == '/results_orderPeople.html'){
+  //     if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+  //       document.getElementById('methodButtons').disabled = true;
+  //     } else{
+  //       document.getElementById('methodButtons').disabled = false;
+  //     }
+  //     if(document.getElementById("resultName").value == ""){
+  //       document.getElementById("methodButtons").disabled=true;
+  //     }else{
+  //       document.getElementById("methodButtons").disabled=false;
+  //     }
+  // }
 }
 
 //Create person
@@ -334,6 +349,7 @@ $scope.saveResult = function(results){
   var type = $scope.project.orderType;
   var attribute = $scope.project.orderAttribute;
   var datas = results;
+  var notes = document.getElementById("resultNotes").value;
   $scope.project.numExecutions = resId + 1;
   $scope.project.dateSet = new Date();
   var project = $scope.project;
@@ -347,7 +363,8 @@ $scope.saveResult = function(results){
     resName: name, 
     date: new Date(),
     orderTypes: type,
-    orderAttributes: attribute
+    orderAttributes: attribute,
+    resultNotes: notes
   };
   //console.log('N: '+resId+' and name: '+name);
   $http.put('/api/projectAddResult/' + projectID, $scope.newResult).success(function(response) {
@@ -363,6 +380,7 @@ $scope.saveResult = function(results){
       // Add data into result
       $http.put('/api/projectSaveResult/'+ resId +'/'+ projectID, res).success(function(response) {
         document.getElementById("resultName").value = "";
+        document.getElementById("resultNotes").value = "";
         refresh();
       });
       //}, 2000);
@@ -548,7 +566,8 @@ app.directive('exportEverythingToCsv',function($timeout){
       restrict: 'A',
       // Get the id of the result table to be exported
       scope: {
-        values: '=values'
+        values: '=values',
+        names: '=names'
       },
       link: function (scope, element, attrs) {
         $timeout( function(){
@@ -569,7 +588,22 @@ app.directive('exportEverythingToCsv',function($timeout){
             var a = $('<a/>', {
                 style:'display:none',
                 href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'electre_Tri_C_results.csv'
+                download: scope.names+'_results.csv'
+            }).appendTo('body')
+            a[0].click()
+            a.remove();
+          }
+        });
+        element.bind('click', function(e){
+          if(document.getElementById('note'+scope.values).checked == true){
+            var notes = document.getElementById("notes"+scope.values).innerHTML;
+            var csvString = 'Notes:';
+            csvString = csvString + "\n";
+            csvString = csvString + notes;
+            var a = $('<a/>', {
+                style:'display:none',
+                href:'data:text/plain;charset=utf-8,'+encodeURIComponent(csvString),
+                download: scope.names+'_notes.txt'
             }).appendTo('body')
             a[0].click()
             a.remove();

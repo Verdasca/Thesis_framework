@@ -12,6 +12,7 @@ $('#loading').hide();
 
 $http.get('/api/project/' + $scope.projectID).success(function(data) {
   $scope.project = data;
+  document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
   })
   .error(function(data) {
     console.log('Error: ' + data);

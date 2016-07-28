@@ -172,6 +172,7 @@ $scope.deleteResult = function(result, identifier) {
 //Reload the data from the result into the current data of the project
 $scope.reloadData = function(result, identifier) {
   $('#loading').show();
+  document.getElementById("reportMessage").style.display = "none";
   var i = $scope.project._id;
   var id = identifier;
   var dataResult = result;
@@ -250,6 +251,8 @@ $scope.reloadData = function(result, identifier) {
   // Reload data
   $http.post('/api/reloadProject/' + i + '/' + id, dataResult).success(function(response) {
     refreshData();
+    document.getElementById("reportMessage").style.display = "block";
+    document.getElementById("reportMessage").innerHTML = "Reload complete.";
     //$('#loading').hide();
   });
 }

@@ -1,6 +1,6 @@
 var app = angular.module("projects-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'ngCsv', 'appRoutes', 'mainCtrl', 'ui']);
 
-app.controller('projectsController', ['$scope', '$http', '$resource', '$state', '$stateParams', '$window', '$location', function ($scope, $http, $resource, $state, $stateParams, $window, $location) {
+app.controller('projectsController', ['$scope', '$http', '$resource', '$state', '$stateParams', '$window', '$location', '$timeout', function ($scope, $http, $resource, $state, $stateParams, $window, $location, $timeout) {
 
 var Projects = $resource('/api/projects');
 
@@ -20,12 +20,14 @@ $scope.data = {
 };
 
 var refresh = function(){
+  $timeout( function(){
   $http.get('/api/projects/' + $scope.userId ).success(function(data) {
     console.log('I got the data I requested');
       $scope.user = data;
       $scope.projects = data.projects;
       $('#loading').hide();
     });  
+  }, 1000);
 }
 
 $http.get('/api/projects/' + $scope.userId ).success(function(data) {
@@ -44,10 +46,12 @@ $scope.createProject = function (nameValid) {
     //If method was not selected don't create project
     document.getElementById("noMethod").style.display = 'block';
     document.getElementById("noName").style.display = 'none';
+    $('#loading').hide();
   }else if(!nameValid){
     //If name empty don't create project
     document.getElementById("noName").style.display = 'block';
     document.getElementById("noMethod").style.display = 'none';
+    $('#loading').hide();
   }else{
     document.getElementById("noMethod").style.display = 'none';
     document.getElementById("noName").style.display = 'none';
@@ -96,6 +100,7 @@ $scope.deleteProject = function(project) {
 $scope.updateProject2 = function(project) {
   var i = project._id;
   project.name = $scope.model.name;
+  project.notes = $scope.model.notes;
   project.dateSet = new Date();
   $http.get('/api/project/' + i).success(function(response) {
         $scope.project = response;
@@ -104,6 +109,7 @@ $scope.updateProject2 = function(project) {
   $http.put('/api/project/' + i, project).success(function(response) {
     refresh();
     $scope.project.name = '';
+    $scope.project.notes = '';
   });
   $scope.reset();
 }

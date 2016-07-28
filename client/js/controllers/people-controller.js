@@ -97,35 +97,23 @@ $scope.refreshBeforeClosing = function(){
     $scope.project = data;
     $http.get('/api/people/' + $scope.projectID).success(function(data) {
       $scope.people = data.people;
+      if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+        document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
+        $scope.peopleDone = false;
+      }else{
+        document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
+        $scope.peopleDone = true;
+      }
+      if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
+        document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
+      } else{
+        document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
+      }
+      $('#loading').hide();
     })
     .error(function(data) {
       console.log('Error: ' + data);
     }); 
-    if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-      document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
-      $scope.peopleDone = false;
-    }else{
-      document.getElementById('sectionsData').style.backgroundColor = '#6fdc6f';
-      $scope.peopleDone = true;
-    }
-    if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-      document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
-    } else{
-      document.getElementById('sectionsResults').style.backgroundColor = '#6fdc6f';
-    }
-    // if($location.path() == '/results_orderPeople.html'){
-    //   if($scope.people.length == 0 || $scope.project.orderType == "" || $scope.project.orderAttribute == ""){
-    //     document.getElementById('methodButtons').disabled = true;
-    //   } else{
-    //     document.getElementById('methodButtons').disabled = false;
-    //   }
-    //   if(document.getElementById("resultName").value == ""){
-    //     document.getElementById("methodButtons").disabled=true;
-    //   }else{
-    //     document.getElementById("methodButtons").disabled=false;
-    //   }
-    // }
-    $('#loading').hide();
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -320,6 +308,7 @@ $scope.reverse = false; // Ascending
 // Execute order people function when execute button is clicked
 $scope.executeMethod = function(){
   $('#executing').show();
+  document.getElementById("reportMessage").style.display = "none";
   $scope.propertyName = $scope.project.orderAttribute; // Order attribute
   $http.get('/api/people/' + $scope.projectID).success(function(data) {
     $scope.project2 = data;
@@ -385,6 +374,8 @@ $scope.saveResult = function(results){
       });
       //}, 2000);
     }
+    document.getElementById("reportMessage").style.display = "block";
+    document.getElementById("reportMessage").innerHTML = "Execution complete and result saved.";
     $('#executing').hide();
   });
 }
@@ -415,7 +406,8 @@ $scope.deleteResult = function(result, identifier) {
 
 var refreshResults = function(){
   $http.get('/api/project/' + $scope.projectID).success(function(data) {
-    $scope.project = data;
+    //$scope.project = data;
+    //$scope.people = data.people;
     $scope.results = data.results; 
     })
     .error(function(data) {
@@ -426,6 +418,7 @@ var refreshResults = function(){
 //Reload the data from the result into the current data of the project
 $scope.reloadData = function(result, identifier) {
   $('#loading').show();
+  document.getElementById("reportMessage").style.display = "none";
   var i = $scope.project._id;
   var id = identifier;
   var dataResult = result;
@@ -444,12 +437,15 @@ $scope.reloadData = function(result, identifier) {
   // Reload data
   $http.post('/api/reloadProjectOrderPeople/' + i + '/' + id, dataResult).success(function(response) {
     refreshReload();
+    document.getElementById("reportMessage").style.display = "block";
+    document.getElementById("reportMessage").innerHTML = "Reload complete.";
     //$('#loading').hide();
   });
 }
 
 // Refresh after reload
 var refreshReload = function(){
+  $timeout( function(){
   $http.get('/api/people/' + $scope.projectID).success(function(data) {
   $scope.project = data;
   $scope.people = data.people;
@@ -482,7 +478,7 @@ var refreshReload = function(){
   .error(function(data) {
     console.log('Error: ' + data);
 });
-
+  }, 1000);
 }
 
 // Start import when clicking on import button
@@ -599,7 +595,7 @@ function UploadPeople(){
         // var dvCSV = document.getElementById("dvCSV");
         // dvCSV.innerHTML = "";
         // dvCSV.appendChild(table);
-        $timeout( function(){ refresh(); $('#importing').hide(); }, 1000);
+        $timeout( function(){ $('#importing').hide(); }, 1000);
         document.getElementById("importMessage").innerHTML = "Successfully imported people.";
         document.getElementById("importMessage").style.display = "block";
         $scope.peoleTblImported = true;
@@ -625,6 +621,18 @@ $scope.selectAll = function(id){
   document.getElementById("res"+idList).checked = true;
   document.getElementById("note"+idList).checked = true;
 }
+
+// $scope.uploadFiles = function(){
+//   var formdata = new FormData();
+//   $scope.getTheFiles = function ($files) {
+//     angular.forEach($files, function (value, key) {
+//       formdata.append(key, value);
+//       console.log(key +' '+ value);
+//       console.log(formdata);
+//     });
+//   };
+//   console.log(formdata);
+// }
 
 }]);
 
@@ -695,26 +703,31 @@ app.directive('exportToCsv',function($http, $location){
           if(elements[0].checked){
             $http.get('/api/people/' + id).success(function(data) {
             var peopleUpdated = data.people;
-            var csvString = '';
-            csvString = csvString + 'Name,Age';
-            csvString = csvString + "\n";
-            for(var i=0; i < peopleUpdated.length; i++){
-                var rowData = peopleUpdated[i];
-                // Get the data
-                csvString = csvString + rowData.name + ",";
-                csvString = csvString + rowData.age + ",";
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
+            if(peopleUpdated.length == 0){
+              document.getElementById("exportMessageError").innerHTML = "No data to export.";
+              document.getElementById("exportMessageError").style.display = "block"; 
+            }else{
+              var csvString = '';
+              csvString = csvString + 'Name,Age';
+              csvString = csvString + "\n";
+              for(var i=0; i < peopleUpdated.length; i++){
+                  var rowData = peopleUpdated[i];
+                  // Get the data
+                  csvString = csvString + rowData.name + ",";
+                  csvString = csvString + rowData.age + ",";
+                  csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                  csvString = csvString + "\n";
+              }
+              csvString = csvString.substring(0, csvString.length - 1);
+              zip.file(scope.names+"/people.csv", csvString);
+              zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                  // see FileSaver.js
+                  saveAs(content, scope.names+".zip");
+              });
+              document.getElementById("exportMessage").innerHTML = "Export successfully.";
+              document.getElementById("exportMessage").style.display = "block";
             }
-            csvString = csvString.substring(0, csvString.length - 1);
-            zip.file(scope.names+"/people.csv", csvString);
-            zip.generateAsync({type:"blob"})
-            .then(function(content) {
-                // see FileSaver.js
-                saveAs(content, scope.names+".zip");
-            });
-            document.getElementById("exportMessage").innerHTML = "Export successfully.";
-            document.getElementById("exportMessage").style.display = "block";
             })
           }else{
             document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";

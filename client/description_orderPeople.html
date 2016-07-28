@@ -95,7 +95,7 @@
             <table id="resultTbl" class="table horizontal">
                 <tr class="noBorder"> 
                     <td>
-                        <h4 id="titleTbl">Data - Attribute: {{ project.orderAttributes }}, Order Type: {{ project.orderTypes }}</h4>
+                        <h4 id="titleTbl">Data - Attribute: {{ project.orderAttribute }}, Order Type: {{ project.orderType }}</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Name</th>
@@ -141,6 +141,8 @@
                         <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
+                        <!-- <input type="file" id="file1" name="file" multiple ng-files="getTheFiles($files)" />
+                        <input type="button" ng-click="uploadFiles()" value="Upload" /> -->
                         <!-- <div class="wrapper">
                             <p ng-show="content == 'peopleData'">
                                 <b>CSV file structure example:</b><br>Name, Age

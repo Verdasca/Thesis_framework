@@ -136,7 +136,8 @@
                     </td> 
                 </tr>
             </table>
-            <table id="resultTbl" class="table horizontal" ng-show="showCurrentData">
+            <p id="reportMessage" style="color:green; display:none; font-size: 16px; font-weight:bold;"></p> 
+            <table id="resultTbl" class="table horizontal" ng-show="!showCurrentData">
                 <tr class="noBorder"> 
                     <td>
                         <h4 id="titleTbl2">Data - Attribute: {{ project.orderAttribute }}, Order Type: {{ project.orderType }}</h4>
@@ -146,7 +147,7 @@
                                 <th id="headers">Age</th>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="data in project.people">
+                            <tr ng-repeat="data in people">
                                 <td id="headers">{{ data.name }}</td>
                                 <td id="headers">{{ data.age }}</td>
                             </tr> 

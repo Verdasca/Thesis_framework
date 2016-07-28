@@ -126,8 +126,9 @@
                     </td> 
                 </tr>
                 </table>
-                <h4 id="titleTbl2" ng-show="showCurrentData">Results - Attribute: {{ project.orderAttribute }}, Order Type: {{ project.orderType }}</h4>
-                <table id="resultTbl" class="table horizontal" ng-show="showCurrentData">
+                <p id="reportMessage" style="color:green; display:none; font-size: 16px; font-weight:bold;"></p> 
+                <h4 id="titleTbl2" ng-show="!showCurrentData">Results - Attribute: {{ project.orderAttribute }}, Order Type: {{ project.orderType }}</h4>
+                <table id="resultTbl" class="table horizontal" ng-show="!showCurrentData">
                 </table>
             </div>
         <br/>

@@ -333,12 +333,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var parameter = project.parameters;
-            Project.update({ _id: project }, {'$pullAll': {parameters: parameter }})
-              .exec(function(err) {
-                Parameter.remove({ _id: { $in: parameter }}, function(err, numberRemoved) {
-                  // The identified parameter are now removed.
+            if(parameter.length == 0 || parameter == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {parameters: parameter }})
+                  .exec(function(err) {
+                    Parameter.remove({ _id: { $in: parameter }}, function(err, numberRemoved) {
+                      // The identified parameter are now removed.
+                    });
                 });
-            });
+            }
     });
     //Delete all associated alternatives
     Project.findOne({ _id: project })
@@ -348,12 +352,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var alternative = project.alternatives;
-            Project.update({ _id: project }, {'$pullAll': {alternatives: alternative }})
-              .exec(function(err) {
-                Alternative.remove({ _id: { $in: alternative }}, function(err, numberRemoved) {
-                  // The identified alternative are now removed.
+            if(alternative.length == 0 || alternative == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {alternatives: alternative }})
+                  .exec(function(err) {
+                    Alternative.remove({ _id: { $in: alternative }}, function(err, numberRemoved) {
+                      // The identified alternative are now removed.
+                    });
                 });
-            });
+            }
     });
     //Delete all associated criteria
     Project.findOne({ _id: project })
@@ -363,12 +371,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var criterion = project.criteria;
-            Project.update({ _id: project }, {'$pullAll': {criteria: criterion }})
-              .exec(function(err) {
-                Criterion.remove({ _id: { $in: criterion }}, function(err, numberRemoved) {
-                  // The identified criterion are now removed.
-                });
-            });
+            if(criterion.length == 0 || criterion == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {criteria: criterion }})
+                  .exec(function(err) {
+                    Criterion.remove({ _id: { $in: criterion }}, function(err, numberRemoved) {
+                      // The identified criterion are now removed.
+                    });
+                }); 
+            }   
     });
     //Delete all associated categories
     Project.findOne({ _id: project })
@@ -378,12 +390,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var category = project.categories;
-            Project.update({ _id: project }, {'$pullAll': {categories: category }})
-              .exec(function(err) {
-                Category.remove({ _id: { $in: category }}, function(err, numberRemoved) {
-                  // The identified category are now removed.
-                });
-            });
+            if(category.length == 0 || category == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {categories: category }})
+                  .exec(function(err) {
+                    Category.remove({ _id: { $in: category }}, function(err, numberRemoved) {
+                      // The identified category are now removed.
+                    });
+                });    
+            }
     });
     //Delete all associated performances
     Project.findOne({ _id: project })
@@ -393,12 +409,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var performance = project.performancetables;
-            Project.update({ _id: project }, {'$pullAll': {performancetables: performance }})
-              .exec(function(err) {
-                Performance.remove({ _id: { $in: performance }}, function(err, numberRemoved) {
-                  // The identified performance are now removed.
-                });
-            });
+            if(performance.length == 0 || performance == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {performancetables: performance }})
+                  .exec(function(err) {
+                    Performance.remove({ _id: { $in: performance }}, function(err, numberRemoved) {
+                      // The identified performance are now removed.
+                    });
+                });  
+            }
     });
     //Delete all associated profiles
     Project.findOne({ _id: project })
@@ -408,12 +428,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var profile = project.profiletables;
-            Project.update({ _id: project }, {'$pullAll': {profiletables: profile }})
-              .exec(function(err) {
-                Profile.remove({ _id: { $in: profile }}, function(err, numberRemoved) {
-                  // The identified profile are now removed.
-                });
-            });
+            if(profile.length == 0 || profile == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {profiletables: profile }})
+                  .exec(function(err) {
+                    Profile.remove({ _id: { $in: profile }}, function(err, numberRemoved) {
+                      // The identified profile are now removed.
+                    });
+                });    
+            }
     });
     //Delete all associated people
     Project.findOne({ _id: project })
@@ -423,12 +447,16 @@ module.exports.delete = function(req, res){
                 //res.send(err);
             }
             var person = project.people;
-            Project.update({ _id: project }, {'$pullAll': {people: person }})
-              .exec(function(err) {
-                Person.remove({ _id: { $in: person }}, function(err, numberRemoved) {
-                  // The identified person are now removed.
-                });
-            });
+            if(person.length == 0 || person == ''){
+                //Do nothing
+            }else{
+                Project.update({ _id: project }, {'$pullAll': {people: person }})
+                  .exec(function(err) {
+                    Person.remove({ _id: { $in: person }}, function(err, numberRemoved) {
+                      // The identified person are now removed.
+                    });
+                });   
+            }
     });
     //console.log('ID user: '+req.params.id+' id project: '+req.params.projectId);
     User.update({ '_id' :req.params.id }, {$pull: { projects: project }} )

@@ -285,6 +285,7 @@ $scope.reverse = false; // Ascending
 // Execute order people function when execute button is clicked
 $scope.executeMethod = function(){
   $('#executing').show();
+  document.getElementById("reportMessage").style.display = "none";
   $scope.propertyName = $scope.project.orderAttribute; // Order attribute
   $http.get('/getData/' + $scope.projectID).success(function(data) {
     $scope.currentData = data;
@@ -299,12 +300,6 @@ $scope.executeMethod = function(){
     }
     $scope.dataOrdered = orderBy($scope.currentData, $scope.propertyName, $scope.reverse);
     $scope.saveResult($scope.dataOrdered);
-    //var jsonData = angular.toJson(dataList);
-    // $http.post('/saveDataResults/' + $scope.projectID, $scope.dataOrdered).success(function(data) {
-    // })
-    // .error(function(data) {
-    //   console.log('Error: ' + data);
-    // });
   })
   .error(function(data) {
     console.log('Error: ' + data);
@@ -343,6 +338,8 @@ $scope.saveResult = function(results){
       document.getElementById("resultName").value = "";
       document.getElementById("resultNotes").value = "";
       refresh();
+      document.getElementById("reportMessage").style.display = "block";
+      document.getElementById("reportMessage").innerHTML = "Execution complete and result saved.";
       //$('#executing').hide(); 
     });
   });
@@ -652,6 +649,7 @@ updateDataFile = function(jsonData){
 // Reload project data
 $scope.reloadData = function(result, identifier){
   $('#loading').show();
+  document.getElementById("reportMessage").style.display = "none";
   var i = $scope.projectID;
   var id = identifier;
   var dataResult = result;
@@ -660,6 +658,8 @@ $scope.reloadData = function(result, identifier){
     $http.post('/saveDataReload/' + i +'/' + id, dataResult).success(function(data) {
       refresh();
       $scope.dataUpdate(); 
+      document.getElementById("reportMessage").style.display = "block";
+      document.getElementById("reportMessage").innerHTML = "Reload complete.";
     })
     .error(function(data) {
       console.log('Error: ' + data);

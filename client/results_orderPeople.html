@@ -112,7 +112,7 @@
                             <th id="headers">Age</th>
                         </thead>
                         <tbody>
-                        <tr ng:repeat="value in res.personValues">
+                        <tr ng:repeat="value in res.personValues | orderBy:defineAttribute(res.orderAttributes):defineOrder(res.orderTypes)">
                             <td id="headers">{{ value.personName }}</td>
                             <td id="headers">{{ value.personAge }}</td>
                         </tr> 

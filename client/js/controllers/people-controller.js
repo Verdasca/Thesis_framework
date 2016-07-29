@@ -622,18 +622,23 @@ $scope.selectAll = function(id){
   document.getElementById("note"+idList).checked = true;
 }
 
-// $scope.uploadFiles = function(){
-//   var formdata = new FormData();
-//   $scope.getTheFiles = function ($files) {
-//     angular.forEach($files, function (value, key) {
-//       formdata.append(key, value);
-//       console.log(key +' '+ value);
-//       console.log(formdata);
-//     });
-//   };
-//   console.log(formdata);
-// }
+$scope.defineAttribute = function(attribute) {
+  if(attribute == "Age"){
+    return 'personAge';
+  }else{
+    return 'personName';
+  }
+  //return '\''+attribute+'\'';
+}
 
+$scope.defineOrder = function(type) {
+  if(type == "Descending"){
+    return true;
+  }else{
+    return false;
+  }
+}
+    
 }]);
 
 // Function to export the results

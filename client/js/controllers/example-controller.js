@@ -26,6 +26,8 @@ $http.get('/api/userFind/' + $scope.username).success(function(data) {
 // Get project data
 $http.get('/api/project/' + $scope.projectID).success(function(data) {
   $scope.project = data;
+  document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
+  document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
   // See if data set is done or not, if not cannot execute method
   // if($scope.project.data.length == 0){
   //   document.getElementById('sectionsData').style.backgroundColor = '#ff3333';
@@ -862,23 +864,24 @@ function createData2(){
 
 // Function example used to export data from a table into csv, can change function to export only certain rows or columns 
 //Export into a .csv file 
-app.directive('exportToCsv',function($http, $location){
+app.directive('exportToCsvDB',function($http, $location){
     return {
       restrict: 'A',
+      scope: {
+        names: '=names'
+      },
       link: function (scope, element, attrs) {
         var projectID = $location.search().projectId;
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
         element.bind('click', function(e){
+          var zip = new JSZip();
           document.getElementById("exportMessage").style.display = "none";
           document.getElementById("exportMessageError").style.display = "none";
           // This is like the import function, has a list of options to what to export - this case only has 1 but can have more
           if(!elements[0].checked){
             document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
             document.getElementById("exportMessageError").style.display = "block";
-          }else{
-            document.getElementById("exportMessage").innerHTML = "Export successfully.";
-            document.getElementById("exportMessage").style.display = "block";
           }
           if(elements[0].checked){
             $http.get('/api/criterions/' + projectID).success(function(data) {
@@ -901,13 +904,18 @@ app.directive('exportToCsv',function($http, $location){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                download:'criteria.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/data.csv", csvString);
+            if(elements[0].checked){
+            $timeout( function(){
+              zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                  // see FileSaver.js
+                  saveAs(content, scope.names+".zip");
+              });
+              document.getElementById("exportMessage").innerHTML = "Export successfully.";
+              document.getElementById("exportMessage").style.display = "block";
+            }, 1500);
+            }
             })
           }
         });
@@ -917,26 +925,18 @@ app.directive('exportToCsv',function($http, $location){
 
 // Function example to export the results
 //Export results into a .csv file 
-app.directive('exportResultsToCsv',function(){
+app.directive('exportResultsToCsvDB',function(){
     return {
       restrict: 'A',
       // Get the id of the result table to be exported
       scope: {
         values: '=values',
-        tableName: '@tbl'
+        names: '=names'
       },
       link: function (scope, element, attrs) {
         var el = element[0];
           element.bind('click', function(e){
-            var fileName = "";
-            switch(scope.tableName) {
-              case "resultsTable":
-                  fileName = 'method_name_results.csv';
-                  break;
-              case "dataTable":
-                  fileName = 'data.csv';
-                  break;
-            }
+            var zip = new JSZip();
             var table = document.getElementById(scope.tableName+scope.values);
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
@@ -948,13 +948,12 @@ app.directive('exportResultsToCsv',function(){
                 csvString = csvString + "\n";
             }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download: fileName
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/results.csv", csvString);
+            zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                // see FileSaver.js
+                saveAs(content, scope.names+".zip");
+            });
           });
       }
     }
@@ -968,10 +967,14 @@ app.directive('exportResultsToCsv',function(){
 app.directive('exportToCsv',function(){
     return {
       restrict: 'A',
+      scope: {
+        names: '=names'
+      },
       link: function (scope, element, attrs) {
         var el = element[0];
         var elements = document.getElementsByName("dataBox");
         element.bind('click', function(e){
+          var zip = new JSZip();
           document.getElementById("exportMessage").style.display = "none";
           document.getElementById("exportMessageError").style.display = "none";
           if(elements[0].checked){
@@ -990,15 +993,18 @@ app.directive('exportToCsv',function(){
                 csvString = csvString + "\n";
               }
               csvString = csvString.substring(0, csvString.length - 1);
-              var a = $('<a/>', {
-                  style:'display:none',
-                  href:'data:application/octet-stream;base64,'+btoa(unescape(encodeURIComponent(csvString))),
-                  download:'data.csv'
-              }).appendTo('body')
-              a[0].click()
-              a.remove();
-              document.getElementById("exportMessage").innerHTML = "Export successfully.";
-              document.getElementById("exportMessage").style.display = "block";
+              zip.file(scope.names+"/data.csv", csvString);
+              if(elements[0].checked){
+              $timeout( function(){
+                zip.generateAsync({type:"blob"})
+                .then(function(content) {
+                    // see FileSaver.js
+                    saveAs(content, scope.names+".zip");
+                });
+                document.getElementById("exportMessage").innerHTML = "Export successfully.";
+                document.getElementById("exportMessage").style.display = "block";
+              }, 1500);
+            }
             }
           }else{
             document.getElementById("exportMessageError").innerHTML = "Data to export not selected.";
@@ -1015,12 +1021,13 @@ app.directive('exportResultToCsv',function(){
     return {
       restrict: 'A',
       scope: {
-        values: '=values'
+        values: '=values',
+        names: '=names'
       },
       link: function (scope, element, attrs) {
         var el = element[0];
           element.bind('click', function(e){
-            //var table = e.target.nextElementSibling;
+            var zip = new JSZip();
             var table = document.getElementById("resultsTable"+scope.values);
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
@@ -1032,13 +1039,12 @@ app.directive('exportResultToCsv',function(){
               csvString = csvString + "\n";
           }
             csvString = csvString.substring(0, csvString.length - 1);
-            var a = $('<a/>', {
-                style:'display:none',
-                href:'data:application/octet-stream;base64,'+btoa(csvString),
-                download:'results.csv'
-            }).appendTo('body')
-            a[0].click()
-            a.remove();
+            zip.file(scope.names+"/results.csv", csvString);
+            zip.generateAsync({type:"blob"})
+              .then(function(content) {
+                // see FileSaver.js
+                saveAs(content, scope.names+".zip");
+            });
           });
       }
     }

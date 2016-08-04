@@ -90,22 +90,45 @@ app.directive('exportToCsv',function($http, $location, $timeout){
             })
           }
           if(elements[2].checked){
-            $http.get('/api/performances/' + projectID).success(function(data) {
-            var performancesUpdated = data.performancetables;
-            var csvString = '';
-            csvString = csvString + 'Alternative,Criterion,Value';
-            csvString = csvString + "\n";
-            for(var i=0; i<performancesUpdated.length;i++){
-                var rowData = performancesUpdated[i];
-                // Get the data
-                csvString = csvString + rowData.alternative + ",";
-                csvString = csvString + rowData.criterion + ",";
-                csvString = csvString + rowData.value + ",";
+            $http.get('/api/criterions/' + projectID).success(function(data) {
+              var criteriaLen = data.criteria.length;
+              var criteriaData = data.criteria;
+              $http.get('/api/alternatives/' + projectID).success(function(data) {
+                var alternativesLen = data.alternatives.length;
+                var alternativesData = data.alternatives;
+                $http.get('/api/performances/' + projectID).success(function(data) {
+                var performancesUpdated = data.performancetables;
+                var csvString = '';
+                csvString = csvString + 'Alternatives/Criteria' + ",";
+                // Build header with criteria
+                for (var k = 0; k < criteriaLen; k++) {
+                  csvString = csvString + criteriaData[k].name + ",";
+                }
+                //csvString = csvString + 'Alternative,Criterion,Value';
                 csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
                 csvString = csvString + "\n";
-            }
-            csvString = csvString.substring(0, csvString.length - 1);
-            zip.file(scope.names+"/performances.csv", csvString);
+                for(var i=0; i<alternativesLen;i++){
+                  //var rowData = performancesUpdated[i];
+                  csvString = csvString + alternativesData[i].name + ",";
+                  for(var m=0; m<criteriaLen;m++){
+                    // Get the data
+                    for(var n=0; n<performancesUpdated.length;n++){
+                      if(performancesUpdated[n].alternative == alternativesData[i].name && performancesUpdated[n].criterion == criteriaData[m].name){
+                        csvString = csvString + performancesUpdated[n].value + ",";
+                      }
+                    }
+                  }
+                  csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                  if(i+1 == alternativesLen){
+                    //Don't add new line
+                  }else{
+                    csvString = csvString + "\n";
+                  }
+                }
+                //csvString = csvString.substring(0, csvString.length - 1);
+                zip.file(scope.names+"/performances.csv", csvString);
+                })
+              })
             })
           }
           if(elements[3].checked){
@@ -145,22 +168,43 @@ app.directive('exportToCsv',function($http, $location, $timeout){
             })
           }
           if(elements[5].checked){
-            $http.get('/api/profiles/' + projectID).success(function(data) {
-            var profilesUpdated = data.profiletables;
-            var csvString = '';
-            csvString = csvString + 'Reference Action,Criterion,Value';
-            csvString = csvString + "\n";
-            for(var i=0; i<profilesUpdated.length;i++){
-                var rowData = profilesUpdated[i];
-                // Get the data
-                csvString = csvString + rowData.action + ",";
-                csvString = csvString + rowData.criterion + ",";
-                csvString = csvString + rowData.value + ",";
-                csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
-                csvString = csvString + "\n";
-            }
-            csvString = csvString.substring(0, csvString.length - 1);
-            zip.file(scope.names+"/profiles.csv", csvString);
+            $http.get('/api/criterions/' + projectID).success(function(data) {
+              var criteriaLen = data.criteria.length;
+              var criteriaData = data.criteria;
+              $http.get('/api/categories/' + projectID).success(function(data) {
+                var categoriesLen = data.categories.length;
+                var categoriesData = data.categories;
+                $http.get('/api/profiles/' + projectID).success(function(data) {
+                  var profilesUpdated = data.profiletables;
+                  var csvString = '';
+                  csvString = csvString + 'Reference Actions/Criteria' + ",";
+                  // Build header with criteria
+                  for (var k = 0; k < criteriaLen; k++) {
+                    csvString = csvString + criteriaData[k].name + ",";
+                  }
+                  csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                  csvString = csvString + "\n";
+                  for(var i=0; i<categoriesLen;i++){
+                    csvString = csvString + categoriesData[i].action + ",";
+                    for(var m=0; m<criteriaLen;m++){
+                      // Get the data
+                      for(var n=0; n<profilesUpdated.length;n++){
+                        if(profilesUpdated[n].action == categoriesData[i].action && profilesUpdated[n].criterion == criteriaData[m].name){
+                          csvString = csvString + profilesUpdated[n].value + ",";
+                        }
+                      }
+                    }
+                    csvString = csvString.substring(0,csvString.length - 1); //delete the last values which is a coma (,)
+                    if(i+1 == categoriesLen){
+                      //Don't add new line
+                    }else{
+                      csvString = csvString + "\n";
+                    }
+                  }
+                  //csvString = csvString.substring(0, csvString.length - 1);
+                  zip.file(scope.names+"/profiles.csv", csvString);
+                })
+              })
             })
           }
           if(elements[0].checked || elements[1].checked || elements[2].checked || elements[3].checked || elements[4].checked || elements[5].checked){

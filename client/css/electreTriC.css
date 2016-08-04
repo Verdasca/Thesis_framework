@@ -401,7 +401,7 @@
 #fileUpload5,
 #fileUpload6,
 #fileUpload7,
-#upload{
+#fileUpload8{
     display: inline;
     margin-top: 20px;
     /*margin-bottom: 35px;*/
@@ -1067,6 +1067,11 @@ input[name="ratio"]{
 
 #headers{
   text-align: left;  
+  font-size: 16px;  
+}
+
+#headers2{
+  text-align: right;  
   font-size: 16px;  
 }
 

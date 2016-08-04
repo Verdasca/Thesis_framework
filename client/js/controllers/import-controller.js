@@ -1,7 +1,7 @@
 app.controller('importController', ['$scope', '$http', '$resource', '$location', '$window', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $location, $window, $timeout, orderBy) {
 
 $scope.projectID = $location.search().projectId;
-$scope.username = $location.search().n
+$scope.username = $location.search().n;
 $scope.criteriaDone = false;
 $scope.alternativesDone = false;
 $scope.configurationsDone = false;
@@ -23,6 +23,30 @@ $scope.alternativesImported = false;
 $scope.categoriesImported = false;
 // Boolean needed if we are on section decison configurations to update the data 
 $scope.proTblImported = false;
+
+//Select all checkboxes from the import section
+$scope.selectAll = function(){
+  document.getElementById("importCri").checked = true;
+  document.getElementById("importAlt").checked = true;
+  document.getElementById("importPer").checked = true;
+  document.getElementById("importAltPer").checked = true;
+  document.getElementById("importAltCriPer").checked = true;
+  document.getElementById("importCat").checked = true;
+  document.getElementById("importPar").checked = true;
+  document.getElementById("importPro").checked = true;
+}
+
+//Unselect all checkboxes from the import section
+$scope.selectNone = function(){
+  document.getElementById("importCri").checked = false;
+  document.getElementById("importAlt").checked = false;
+  document.getElementById("importPer").checked = false;
+  document.getElementById("importAltPer").checked = false;
+  document.getElementById("importAltCriPer").checked = false;
+  document.getElementById("importCat").checked = false;
+  document.getElementById("importPar").checked = false;
+  document.getElementById("importPro").checked = false;
+}
 
 // Import section
 $http.get('/api/project/' + $scope.projectID).success(function(data) {
@@ -82,6 +106,8 @@ $scope.importData = function(){
   document.getElementById("importMessageError6").style.display = "none";
   document.getElementById("importMessage7").style.display = "none";
   document.getElementById("importMessageError7").style.display = "none";
+  document.getElementById("importMessage8").style.display = "none";
+  document.getElementById("importMessageError8").style.display = "none";
   var i = $scope.project._id;
   var elements = document.getElementsByName("dataType");
   if(elements[0].checked){
@@ -178,6 +204,50 @@ $scope.importData = function(){
     }
   }
   if(elements[4].checked){
+    console.log('Importing alternatives, criteria and performances...');
+    if($scope.projectUpdated.performancetables.length == 0 && $scope.projectUpdated.alternatives.length == 0 && $scope.projectUpdated.criteria.length == 0){
+      console.log('There are no performances or alternatives or criteria to delete...');
+      // Import data
+      UploadAlternativesCriteriaAndPerformances();
+    }else{
+      if($scope.projectUpdated.performancetables.length != 0){
+        //Delete all current performances 
+          $http.delete('/api/performances/' + i)
+          .success(function() {
+            console.log("Done deleting all performances.");
+          })
+          .error(function() {
+            //console.log('Error: fail deletes' );
+            $('#importing').hide();
+          });
+      }
+      if($scope.projectUpdated.alternatives.length != 0){
+        //Delete all current alternatives 
+        $http.delete('/api/alternatives/' + i)
+            .success(function() {
+            console.log("Done deleting all alternatives.");
+        })
+            .error(function() {
+            //console.log('Error: fail deletes' );
+            $('#importing').hide();
+        });
+      }
+      if($scope.projectUpdated.criteria.length != 0){
+        //Delete all current criteria 
+        $http.delete('/api/criterions/' + i)
+          .success(function() {
+            console.log("Done deleting all criteria.");
+          })
+          .error(function() {
+            //console.log('Error: fail deletes' );
+            $('#importing').hide();
+        });
+      }
+      // Import data
+      $timeout( function(){ UploadAlternativesCriteriaAndPerformances(); }, 1000);
+    }
+  }
+  if(elements[5].checked){
     console.log('Importing categories...');
     if($scope.projectUpdated.categories.length == 0){
       console.log('There are no categories to delete...');
@@ -197,7 +267,7 @@ $scope.importData = function(){
       });
     }
   }
-  if(elements[5].checked){
+  if(elements[6].checked){
     console.log('Importing parameters...');
     if($scope.projectUpdated.parameters.length == 0){
       console.log('There are no parameters to delete...');
@@ -217,7 +287,7 @@ $scope.importData = function(){
       });
     }
   }
-  if(elements[6].checked){
+  if(elements[7].checked){
     console.log('Importing profiles...');
     if($scope.projectUpdated.profiletables.length == 0){
 	    console.log('There are no profiles to delete...');
@@ -237,7 +307,7 @@ $scope.importData = function(){
       });
     }
   }
-  if(!elements[0].checked && !elements[1].checked && !elements[2].checked && !elements[3].checked && !elements[4].checked && !elements[5].checked && !elements[6].checked){
+  if(!elements[0].checked && !elements[1].checked && !elements[2].checked && !elements[3].checked && !elements[4].checked && !elements[5].checked && !elements[6].checked && !elements[7].checked){
     document.getElementById("importMessageError").innerHTML = "Data to import not selected.";
     document.getElementById("importMessageError").style.display = "block";
     $('#importing').hide(); 
@@ -259,7 +329,7 @@ function UploadCriteria(){
         if(numRows <= 1){
           console.log('Number of rows insufficient.');
           //alert("CSV file was rejected: number of rows are incorrect.\n\nNumber of rows = 1 header line for the criteria attributes (8 in total) + total number of data. Example:\nData attribute 1, Data attribute 1, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...");
-          document.getElementById("importMessageError1").innerHTML = "Criteria CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
+          document.getElementById("importMessageError1").innerHTML = "Criteria CSV file rejected: number of rows are incorrect or insufficient.";
           document.getElementById("importMessageError1").style.display = "block";
           $('#importing').hide();
           return 0;
@@ -267,10 +337,10 @@ function UploadCriteria(){
         //Check number of columns
         var c = rows[0].split(",");
         var numCells = c.length;
-        if(numCells != 8){
+        if(numCells < 1 || numCells > 8){
           console.log('Number of columns are incorrect or do not correspond to the actual number of criteria.');
           //alert("CSV file was rejected: number of columns are incorrect.\n\nNumber of columns = 1 header column for alternative names + total number of criteria. Example:\n\nAlternatives Criteria, criteria 1, criteria 2, ...\nalternative 1, value, value, ...\nalternative 2, value, value, ...\nand so on...");
-          document.getElementById("importMessageError1").innerHTML = "Criteria CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
+          document.getElementById("importMessageError1").innerHTML = "Criteria CSV file rejected: number of columns are incorrect or insufficient.";
           document.getElementById("importMessageError1").style.display = "block";
           $('#importing').hide();
           return 0;    
@@ -278,22 +348,40 @@ function UploadCriteria(){
         for (var i = 1; i < rows.length; i++) {
           var row = table.insertRow(-1);
           var cells = rows[i].split(",");
-          var criterion = {name:"", description:"", direction:"", measure:"", weight:0, indifference:0,  preference:0,  veto:0};
+          var criterion = {name:"", description:"", direction:"max", measure:"cardinal", weight:0, indifference:0,  preference:0,  veto:0};
           if(cells[0] == '' || cells[0] == null){
             // Do nothing - no criterion name, don't create
           }else{
             criterion.name = cells[0];
-            criterion.description = cells[1];
-            if(cells[2] == "max" || cells[2] == "min"){
-              criterion.direction = cells[2];
+            if(numCells > 1){
+              criterion.description = cells[1];
             }
-            if(cells[3] == "cardinal" || cells[3] == "ordinal"){
-              criterion.measure = cells[3];
+            if(numCells > 2){
+              if(cells[2] == "max" || cells[2] == "min"){
+                criterion.direction = cells[2];
+              }else{
+                criterion.direction = "max";
+              }
             }
-            criterion.weight = cells[4];
-            criterion.indifference = cells[5];
-            criterion.preference = cells[6];
-            criterion.veto = cells[7];
+            if(numCells > 3){
+              if(cells[3] == "cardinal" || cells[3] == "ordinal"){
+                criterion.measure = cells[3];
+              }else{
+                criterion.measure = "cardinal";  
+              }
+            }
+            if(numCells > 4){
+              criterion.weight = cells[4];
+            }
+            if(numCells > 5){
+              criterion.indifference = cells[5];
+            }
+            if(numCells > 6){
+              criterion.preference = cells[6];
+            }
+            if(numCells > 7){
+              criterion.veto = cells[7];
+            }
             $scope.createCriterionImport(criterion);
           }
         }
@@ -335,7 +423,7 @@ function UploadAlternatives(){
         //Check number of rows
         var numRows = rows.length;
         if(numRows <= 1){
-          document.getElementById("importMessageError2").innerHTML = "Alternatives CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
+          document.getElementById("importMessageError2").innerHTML = "Alternatives CSV file rejected: number of rows are incorrect or insufficient.";
           document.getElementById("importMessageError2").style.display = "block";
           $('#importing').hide();
           return 0;
@@ -344,7 +432,7 @@ function UploadAlternatives(){
         var c = rows[0].split(",");
         var numCells = c.length;
         if(numCells > 2 || numCells == 0){
-          document.getElementById("importMessageError2").innerHTML = "Alternatives CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
+          document.getElementById("importMessageError2").innerHTML = "Alternatives CSV file rejected: number of columns are incorrect or insufficient.";
           document.getElementById("importMessageError2").style.display = "block";
           $('#importing').hide();
           return 0;    
@@ -399,7 +487,7 @@ function UploadPerformances(){
         //Check number of rows
         var numRows = rows.length;
         if(numRows != $scope.projectUpdated.alternatives.length + 1){
-        	document.getElementById("importMessageError3").innerHTML = "Performance Table CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
+        	document.getElementById("importMessageError3").innerHTML = "Performance Table CSV file rejected: number of rows are incorrect or insufficient (possibly wrong number of existing alternatives).";
           	document.getElementById("importMessageError3").style.display = "block";
           	$('#importing').hide();
           	return 0;
@@ -408,7 +496,7 @@ function UploadPerformances(){
         var c = rows[0].split(",");
         var numCells = c.length;
         if(numCells != $scope.projectUpdated.criteria.length + 1){
-        	document.getElementById("importMessageError3").innerHTML = "Performance Table CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
+        	document.getElementById("importMessageError3").innerHTML = "Performance Table CSV file rejected: number of columns are incorrect or insufficient (possibly wrong number of existing criteria).";
           	document.getElementById("importMessageError3").style.display = "block";
           	$('#importing').hide();
           	return 0;    
@@ -466,7 +554,7 @@ function UploadAlternativesAndPerformances(){
         //Check number of rows
         var numRows = rows.length;
         if(numRows <= 1){
-        	document.getElementById("importMessageError4").innerHTML = "Alternatives and Performance Table CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
+        	document.getElementById("importMessageError4").innerHTML = "Alternatives and Performance Table CSV file rejected: number of rows are incorrect or insufficient.";
           	document.getElementById("importMessageError4").style.display = "block";
           	$('#importing').hide();
           	return 0;
@@ -475,7 +563,7 @@ function UploadAlternativesAndPerformances(){
         var c = rows[0].split(",");
         var numCells = c.length;
         if(numCells != $scope.projectUpdated.criteria.length + 1){
-        	document.getElementById("importMessageError4").innerHTML = "Alternatives and Performance Table CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
+        	document.getElementById("importMessageError4").innerHTML = "Alternatives and Performance Table CSV file rejected: number of columns are incorrect or insufficient (possibly wrong number of existing criteria).";
           	document.getElementById("importMessageError4").style.display = "block";
           	$('#importing').hide();
           	return 0;    
@@ -534,8 +622,8 @@ function UploadCategories(){
         //Check number of rows
         var numRows = rows.length;
         if(numRows <= 1){
-	        document.getElementById("importMessageError5").innerHTML = "Categories CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
-	        document.getElementById("importMessageError5").style.display = "block";
+	        document.getElementById("importMessageError6").innerHTML = "Categories CSV file rejected: number of rows are incorrect or insufficient.";
+	        document.getElementById("importMessageError6").style.display = "block";
 	        $('#importing').hide();
 	        return 0;
         }
@@ -543,8 +631,8 @@ function UploadCategories(){
         var c = rows[0].split(",");
         var numCells = c.length;
         if(numCells != 3){
-        	document.getElementById("importMessageError5").innerHTML = "Categories CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
-          	document.getElementById("importMessageError5").style.display = "block";
+        	document.getElementById("importMessageError6").innerHTML = "Categories CSV file rejected: number of columns are incorrect or insufficient.";
+          	document.getElementById("importMessageError6").style.display = "block";
           	$('#importing').hide();
           	return 0;    
         }
@@ -567,21 +655,21 @@ function UploadCategories(){
         // dvCSV.innerHTML = "";
         // dvCSV.appendChild(table);
         $timeout( function(){ refreshProject(); $('#importing').hide(); }, 1000);
-      	document.getElementById("importMessage5").innerHTML = "Successfully imported categories.";
-      	document.getElementById("importMessage5").style.display = "block";
+      	document.getElementById("importMessage6").innerHTML = "Successfully imported categories.";
+      	document.getElementById("importMessage6").style.display = "block";
         $scope.categoriesImported = true;
       }
       reader.readAsText(fileUpload.files[0]);
     } else {
       //alert("This browser does not support HTML5.");
-      document.getElementById("importMessageError5").innerHTML = "This browser does not support HTML5.";
-      document.getElementById("importMessageError5").style.display = "block";
+      document.getElementById("importMessageError6").innerHTML = "This browser does not support HTML5.";
+      document.getElementById("importMessageError6").style.display = "block";
       $('#importing').hide();
     }
   } else {
       //alert("Please upload a valid CSV file.");
-      document.getElementById("importMessageError5").innerHTML = "Please upload a valid CSV file for categories.";
-      document.getElementById("importMessageError5").style.display = "block";
+      document.getElementById("importMessageError6").innerHTML = "Please upload a valid CSV file for categories.";
+      document.getElementById("importMessageError6").style.display = "block";
       $('#importing').hide();
   }
 }
@@ -599,8 +687,8 @@ function UploadParameters(){
         //Check number of rows
         var numRows = rows.length;
         if(numRows <= 1 || numRows > 2){
-        	document.getElementById("importMessageError6").innerHTML = "Parameters CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
-          	document.getElementById("importMessageError6").style.display = "block";
+        	document.getElementById("importMessageError7").innerHTML = "Parameters CSV file rejected: number of rows are incorrect or insufficient.";
+          	document.getElementById("importMessageError7").style.display = "block";
           	$('#importing').hide();
           	return 0;
         }
@@ -608,8 +696,8 @@ function UploadParameters(){
         var c = rows[0].split(",");
         var numCells = c.length;
         if(numCells != 1){
-        	document.getElementById("importMessageError6").innerHTML = "Parameters CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
-          	document.getElementById("importMessageError6").style.display = "block";
+        	document.getElementById("importMessageError7").innerHTML = "Parameters CSV file rejected: number of columns are incorrect or insufficient.";
+          	document.getElementById("importMessageError7").style.display = "block";
           	$('#importing').hide();
           	return 0;    
         }
@@ -628,20 +716,20 @@ function UploadParameters(){
         // dvCSV.innerHTML = "";
         // dvCSV.appendChild(table);
         $timeout( function(){ refreshProject(); $('#importing').hide(); }, 1000);
-      	document.getElementById("importMessage6").innerHTML = "Successfully imported parameters.";
-      	document.getElementById("importMessage6").style.display = "block";
+      	document.getElementById("importMessage7").innerHTML = "Successfully imported parameters.";
+      	document.getElementById("importMessage7").style.display = "block";
       }
       reader.readAsText(fileUpload.files[0]);
     } else {
       //alert("This browser does not support HTML5.");
-      document.getElementById("importMessageError6").innerHTML = "This browser does not support HTML5.";
-      document.getElementById("importMessageError6").style.display = "block";
+      document.getElementById("importMessageError7").innerHTML = "This browser does not support HTML5.";
+      document.getElementById("importMessageError7").style.display = "block";
       $('#importing').hide();
     }
   } else {
       //alert("Please upload a valid CSV file.");
-      document.getElementById("importMessageError6").innerHTML = "Please upload a valid CSV file for parameters.";
-      document.getElementById("importMessageError6").style.display = "block";
+      document.getElementById("importMessageError7").innerHTML = "Please upload a valid CSV file for parameters.";
+      document.getElementById("importMessageError7").style.display = "block";
       $('#importing').hide();
   }
 }
@@ -659,8 +747,8 @@ function UploadProfiles(){
         //Check number of rows
         var numRows = rows.length;
         if(numRows != $scope.projectUpdated.categories.length + 1){
-	        document.getElementById("importMessageError7").innerHTML = "Profile Performance Table CSV file rejected: number of rows are incorrect or insufficient. Check the CSV file structure example below.";
-	        document.getElementById("importMessageError7").style.display = "block";
+	        document.getElementById("importMessageError8").innerHTML = "Profile Performance Table CSV file rejected: number of rows are incorrect or insufficient (possibly wrong number of existing categories).";
+	        document.getElementById("importMessageError8").style.display = "block";
 	        $('#importing').hide();
 	        return 0;
         }
@@ -668,8 +756,8 @@ function UploadProfiles(){
         var c = rows[0].split(",");
         var numCells = c.length;
         if(numCells != $scope.projectUpdated.criteria.length + 1){
-        	document.getElementById("importMessageError7").innerHTML = "Profile Performance Table CSV file rejected: number of columns are incorrect or insufficient. Check the CSV file structure example below.";
-          	document.getElementById("importMessageError7").style.display = "block";
+        	document.getElementById("importMessageError8").innerHTML = "Profile Performance Table CSV file rejected: number of columns are incorrect or insufficient (possibly wrong number of existing criteria).";
+          	document.getElementById("importMessageError8").style.display = "block";
           	$('#importing').hide();
           	return 0;    
         }
@@ -694,21 +782,96 @@ function UploadProfiles(){
         // dvCSV.innerHTML = "";
         // dvCSV.appendChild(table);
         $timeout( function(){ refreshProject(); $('#importing').hide(); }, 1000);
-      	document.getElementById("importMessage7").innerHTML = "Successfully imported profile performance table.";
-      	document.getElementById("importMessage7").style.display = "block";
+      	document.getElementById("importMessage8").innerHTML = "Successfully imported profile performance table.";
+      	document.getElementById("importMessage8").style.display = "block";
         $scope.proTblImported = true;
       }
       reader.readAsText(fileUpload.files[0]);
     } else {
       //alert("This browser does not support HTML5.");
-      document.getElementById("importMessageError7").innerHTML = "This browser does not support HTML5.";
-      document.getElementById("importMessageError7").style.display = "block";
+      document.getElementById("importMessageError8").innerHTML = "This browser does not support HTML5.";
+      document.getElementById("importMessageError8").style.display = "block";
       $('#importing').hide();
     }
   } else {
       //alert("Please upload a valid CSV file.");
-      document.getElementById("importMessageError7").innerHTML = "Please upload a valid CSV file for the profile performance table.";
-      document.getElementById("importMessageError7").style.display = "block";
+      document.getElementById("importMessageError8").innerHTML = "Please upload a valid CSV file for the profile performance table.";
+      document.getElementById("importMessageError8").style.display = "block";
+      $('#importing').hide();
+  }
+}
+
+// Upload file to get the data for the performances, criteria and alternatives
+function UploadAlternativesCriteriaAndPerformances(){
+  var fileUpload = document.getElementById("fileUpload8");
+  var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+  if (regex.test(fileUpload.value.toLowerCase())) {
+    if (typeof (FileReader) != "undefined") {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var table = document.createElement("table");
+        var rows = e.target.result.split("\n");
+        //Check number of rows
+        var numRows = rows.length;
+        if(numRows <= 1){
+          document.getElementById("importMessageError5").innerHTML = "Alternatives, Criteria and Performance Table CSV file rejected: number of rows are incorrect or insufficient.";
+            document.getElementById("importMessageError5").style.display = "block";
+            $('#importing').hide();
+            return 0;
+        }
+        //Check number of columns
+        var c = rows[0].split(",");
+        var numCells = c.length;
+        if(numCells <= 1){
+          document.getElementById("importMessageError5").innerHTML = "Alternatives, Criteria and Performance Table CSV file rejected: number of columns are incorrect or insufficient (possibly wrong number of existing criteria).";
+            document.getElementById("importMessageError5").style.display = "block";
+            $('#importing').hide();
+            return 0;    
+        }
+        // Create the new criteria
+        var criteriaCells = rows[0].split(",");
+        for (var cc = 1; cc < criteriaCells.length; cc++) {
+          //console.log(criteriaCells[cc]); be careful with the length
+          $scope.createCriterionImport2(criteriaCells[cc]);
+        }
+        $scope.criteriaImported = true;
+        for (var i = 1; i < rows.length; i++) {
+            var row = table.insertRow(-1);
+            var cells = rows[i].split(",");
+            $scope.createAlternativeImport2(cells[0]);
+            for (var j = 1; j <= cells.length; j++) {
+              var performance = {criterion:"", alternative:"", value:0};
+              if(cells[0] == '' || cells[0] == null || cells[j] == '' || cells[j] == null || c[j] == '' || c[j] == null){
+              // Do nothing - no alternative or no value or no criterion, don't create
+              }else{
+                performance.alternative = cells[0];
+                performance.value = cells[j];
+                performance.criterion = c[j];
+                $scope.createPerformanceImport(performance);
+              }
+            }
+        }
+        table.className = 'table table-bordered horizontal';
+        table.id = 'auxTable';
+        // var dvCSV = document.getElementById("dvCSV");
+        // dvCSV.innerHTML = "";
+        // dvCSV.appendChild(table);
+        $timeout( function(){ refreshProject(); $('#importing').hide(); }, 1000);
+        document.getElementById("importMessage5").innerHTML = "Successfully imported alternatives, criteria and performance table.";
+        document.getElementById("importMessage5").style.display = "block";
+        $scope.perfTblImported = true;
+      }
+      reader.readAsText(fileUpload.files[0]);
+    } else {
+      //alert("This browser does not support HTML5.");
+      document.getElementById("importMessageError5").innerHTML = "This browser does not support HTML5.";
+      document.getElementById("importMessageError5").style.display = "block";
+      $('#importing').hide();
+    }
+  } else {
+      //alert("Please upload a valid CSV file.");
+      document.getElementById("importMessageError5").innerHTML = "Please upload a valid CSV file for alternatives, criteria and performance table.";
+      document.getElementById("importMessageError5").style.display = "block";
       $('#importing').hide();
   }
 }
@@ -725,6 +888,22 @@ $scope.createCriterionImport = function (criterion) {
   newCriterion.indifference = criterion.indifference;
   newCriterion.preference = criterion.preference;
   newCriterion.veto = criterion.veto;
+  $http.post('/api/criterions/'+i, newCriterion).success(function(response) {
+    //console.log('Done creating criterion.');
+  });
+}
+
+//Create criterion when importing
+$scope.createCriterionImport2 = function (name) {
+  var i = $scope.projectID;
+  var newCriterion = new Criterions();
+  newCriterion.name = name;
+  newCriterion.direction = "max";
+  newCriterion.measure = "cardinal";
+  newCriterion.weight = 0;
+  newCriterion.indifference = 0;
+  newCriterion.preference = 0;
+  newCriterion.veto = 0;
   $http.post('/api/criterions/'+i, newCriterion).success(function(response) {
     //console.log('Done creating criterion.');
   });

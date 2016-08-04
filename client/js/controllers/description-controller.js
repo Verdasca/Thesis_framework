@@ -1,6 +1,6 @@
 var app = angular.module("description-controller", ['ngRoute', 'ui.router', 'ngResource', 'ngSanitize', 'appRoutes', 'ui']);
 
-app.controller('descriptionController', ['$scope', '$http', '$resource', '$location', '$window', function ($scope, $http, $resource, $location, $window) {
+app.controller('descriptionController', ['$scope', '$http', '$resource', '$location', '$window', '$timeout', function ($scope, $http, $resource, $location, $window, $timeout) {
 
 $scope.projectID = $location.search().projectId;
 $scope.username = $location.search().n
@@ -188,11 +188,99 @@ $scope.refreshBeforeClosing = function(){
     } else{
       document.getElementById('sectionsResults').style.backgroundColor = '#ff3333';
     }
+    $scope.perfTblCurrent();
+    $scope.profTblCurrent();
     $('#loading').hide();
   })
   .error(function(data) {
     console.log('Error: ' + data);
   });
+}
+
+//Create performance view tables
+$scope.perfTblCurrent = function(){
+  $("#currentPerformances tbody").remove();
+  $timeout( function(){ 
+  if($scope.performancetables.length == 0){
+    // Do nothing
+  }else{
+    //$timeout( function(){ 
+      var table = document.getElementById("currentPerformances");
+      var resultData = $scope.performancetables;
+      var len = $scope.alternatives.length;
+      var lenCriteria = $scope.criteria.length;
+      var row = table.insertRow(0);
+      for (var j = 0; j <= lenCriteria; j++) {
+        var cell = row.insertCell(j);
+        cell.setAttribute("id", "headers");
+        cell.setAttribute("style", "font-weight: bold; border-top: 0; border-bottom: 2px solid #ccc;");
+        if(j == 0){
+          cell.innerHTML = "Alternatives/Criteria";
+        }else{
+          cell.innerHTML = $scope.criteria[j-1].name;
+        }
+      }
+      for (var i = 1; i <= len; i++) {
+        var row = table.insertRow(i);
+        var cell1 = row.insertCell(0);
+        cell1.setAttribute("id", "headers");
+        cell1.innerHTML = $scope.alternatives[i-1].name;
+        for (var k = 0; k < lenCriteria; k++) {
+          var cell2 = row.insertCell(k+1);
+          cell2.setAttribute("id", "headers");
+          for (var n = 0; n < resultData.length; n++) {
+            if(resultData[n].alternative == cell1.innerHTML && resultData[n].criterion == table.rows[0].cells[k+1].innerHTML){
+              cell2.innerHTML = resultData[n].value;
+            }
+          }
+        }
+      }
+    //}, 1000);
+  }
+  }, 1000);
+}
+
+//Create profile view tables
+$scope.profTblCurrent = function(){
+  $("#currentProfiles tbody").remove();
+  $timeout( function(){ 
+  if($scope.profiletables.length == 0){
+    // Do nothing
+  }else{
+    //$timeout( function(){ 
+      var table = document.getElementById("currentProfiles");
+      var resultData = $scope.profiletables;
+      var len = $scope.categories.length;
+      var lenCriteria = $scope.criteria.length;
+      var row = table.insertRow(0);
+      for (var j = 0; j <= lenCriteria; j++) {
+        var cell = row.insertCell(j);
+        cell.setAttribute("id", "headers");
+        cell.setAttribute("style", "font-weight: bold; border-top: 0; border-bottom: 2px solid #ccc;");
+        if(j == 0){
+          cell.innerHTML = "Reference Actions/Criteria";
+        }else{
+          cell.innerHTML = $scope.criteria[j-1].name;
+        }
+      }
+      for (var i = 1; i <= len; i++) {
+        var row = table.insertRow(i);
+        var cell1 = row.insertCell(0);
+        cell1.setAttribute("id", "headers");
+        cell1.innerHTML = $scope.categories[i-1].action;
+        for (var k = 0; k < lenCriteria; k++) {
+          var cell2 = row.insertCell(k+1);
+          cell2.setAttribute("id", "headers");
+          for (var n = 0; n < resultData.length; n++) {
+            if(resultData[n].action == cell1.innerHTML && resultData[n].criterion == table.rows[0].cells[k+1].innerHTML){
+              cell2.innerHTML = resultData[n].value;
+            }
+          }
+        }
+      }
+    //}, 1000);
+  }
+  }, 1000);
 }
 
 }]);

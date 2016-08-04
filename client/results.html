@@ -60,7 +60,7 @@
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');">Description:<br>{{ project.name }}</a></li>
-                        <li id="sectionsCriteria"><a id="dataSetSections" href="" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sectionsCriteria"><a id="dataSetSections" href="" ng-click="changeSection('criterion');">Criteria Set</a></li>
                         <li id="sectionsAlternatives"><a id="dataSetSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="dataSetSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li id="sectionsResults"><a id="dataSetSections" class="active" href="" ng-click="changeSection('results');">Execution and Results</a></li>
@@ -132,6 +132,7 @@
                                 Notes</label></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="#" ng-click="selectAll(res.identifier);"><b>Select All</b></a></li>
+                            <li><a href="#" ng-click="selectNone(res.identifier);"><b>Select None</b></a></li>
                           </ul>
                         </div>
                         <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>
@@ -184,7 +185,7 @@
                         <h4 id="titleTbl2">Parameters</h4>
                         <table id="paramsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
-                                <th id="headers">Credibility Lambda ( λ )</th>
+                                <th id="headers">Credibility Level ( λ )</th>
                             </thead>
                             <tbody>
                             <tr ng:repeat="parameter in res.parameterValues">
@@ -243,38 +244,14 @@
                 <tr ng-show="showResult">
                     <td colspan="4" style="vertical-align: top;"> 
                         <h4 id="titleTbl2">Performance Table</h4>
-                        <table id="perfTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
-                            <thead>
-                                <th id="headers">Alternative</th>
-                                <th id="headers">Criterion</th>
-                                <th id="headers">Value</th>
-                            </thead>
-                            <tbody>
-                            <tr ng:repeat="performance in res.performanceValues | orderBy: 'alternative'">
-                                <td id="headers">{{ performance.alternative }}</td>
-                                <td id="headers">{{ performance.criterion }}</td>
-                                <td id="headers">{{ performance.value }}</td>
-                            </tr> 
-                            </tbody>
+                        <table id="perfTable{{ res.identifier }}" style="background-color:white;" class=" table borderless" ng-init="perfTbl(res.identifier)">
                         </table>
                     </td>
                 </tr>
                 <tr ng-show="showResult">
                     <td colspan="4" style="vertical-align: top;">
                         <h4 id="titleTbl2">Profiles Performance Table</h4>
-                        <table id="profTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
-                            <thead>
-                                <th id="headers">Reference Action</th>
-                                <th id="headers">Criterion</th>
-                                <th id="headers">Value</th>
-                            </thead>
-                            <tbody>
-                            <tr ng:repeat="profile in res.profileValues | orderBy: 'action'">
-                                <td id="headers">{{ profile.action }}</td>
-                                <td id="headers">{{ profile.criterion }}</td>
-                                <td id="headers">{{ profile.value }}</td>
-                            </tr> 
-                            </tbody>
+                        <table id="profTable{{ res.identifier }}" style="background-color:white;" class=" table borderless" ng-init="profTbl(res.identifier)">
                         </table>
                     </td>
                 </tr>
@@ -329,7 +306,7 @@
                         <h4 id="titleTbl2">Parameters</h4>
                         <table id="paramsTable{{ res.identifier }}" style="background-color:white;" class=" table borderless">
                             <thead>
-                                <th id="headers">Credibility Lambda ( λ )</th>
+                                <th id="headers">Credibility Level ( λ )</th>
                             </thead>
                             <tbody>
                             <tr ng:repeat="parameter in res.parameterValues">
@@ -427,7 +404,7 @@
             <table id="resultTbl" class="table horizontal" style="width: 97% !important; margin-bottom: 20px !important;">
                 <tr>
                     <td id="titleTbl4" style="width:30%; padding-top: 10px;">
-                        <button ng-click="showCurrentData = ! showCurrentData" class="btn btn-success">View</button>
+                        <button ng-click="showCurrentData = ! showCurrentData" class="btn btn-success">View Current Data</button>
                         <input id="methodButtons" class="btn btn-success" type="button" value="Execute Method" ng-click="changeSection('divizServer');"/>
                     </td>
                     <td colspan="2" id="titleTbl3" style="width:30%; padding-top: 10px;">
@@ -440,6 +417,7 @@
                 </tr>
             </table>
             <p id="reportMessage" style="color:green; display:none; font-size: 16px; font-weight:bold;"></p> 
+            <h3 ng-show="!showCurrentData">Current Data</h3>
             <table id="resultTbl" class="table horizontal" ng-show="!showCurrentData">
                 <tr class="noBorder"> 
                     <td class="noBorder">
@@ -465,7 +443,7 @@
                         <h4 id="titleTbl2">Parameters</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
-                                <th id="headers">Credibility Lambda ( λ )</th>
+                                <th id="headers">Credibility Level ( λ )</th>
                             </thead>
                             <tbody>
                             <tr ng-repeat="parameter in parameters">
@@ -524,8 +502,8 @@
                 <tr class="noBorder">
                     <td>
                         <h4 id="titleTbl2">Performance Table</h4>
-                        <table style="background-color:white;" class=" table borderless">
-                            <thead>
+                        <table id="currentPerformances" style="background-color:white;" class=" table borderless" ng-init="perfTblCurrent()">
+                            <!-- <thead>
                                 <th id="headers">Alternative</th>
                                 <th id="headers">Criterion</th>
                                 <th id="headers">Value</th>
@@ -536,15 +514,15 @@
                                 <td id="headers">{{ performance.criterion }}</td>
                                 <td id="headers">{{ performance.value }}</td>
                             </tr> 
-                            </tbody>
+                            </tbody> -->
                         </table>
                     </td>
                 </tr>
                 <tr class="noBorder">
                     <td>
                         <h4 id="titleTbl2">Profiles Performance Table</h4>
-                        <table style="background-color:white;" class=" table borderless">
-                            <thead>
+                        <table id="currentProfiles" style="background-color:white;" class=" table borderless" ng-init="profTblCurrent()">
+                            <!-- <thead>
                                 <th id="headers">Reference Action</th>
                                 <th id="headers">Criterion</th>
                                 <th id="headers">Value</th>
@@ -555,7 +533,7 @@
                                 <td id="headers">{{ profile.criterion }}</td>
                                 <td id="headers">{{ profile.value }}</td>
                             </tr> 
-                            </tbody>
+                            </tbody> -->
                         </table>
                     </td>
                 </tr>
@@ -579,7 +557,7 @@
         </div>
         <!-- Modal -->
         <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="importController">
-            <div class="modal-dialog" style="width:52%;">
+            <div class="modal-dialog" style="width:57%;">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -601,6 +579,9 @@
                             <li><label for="importAltPer" class="lbl" style="font-weight: normal !important;">
                             <input id="importAltPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"><span class="lbl">
                              Alternatives and Performance Table <input type="file" id="fileUpload4"/></label></li><br>
+                            <li><label for="importAltCriPer" class="lbl" style="font-weight: normal !important;">
+                            <input id="importAltCriPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"><span class="lbl">
+                             Alternatives, Criteria and Performance Table <input type="file" id="fileUpload8"/></label></li><br>
                             <li><label for="importCat" class="lbl" style="font-weight: normal !important;">
                             <input id="importCat" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
                              Categories <input type="file" id="fileUpload5"/></label></li><br>
@@ -611,7 +592,9 @@
                             <input id="importPro" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
                              Profile Performance Table <input type="file" id="fileUpload7"/></label></li>
                         </ul>
-                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select None" ng-click="selectNone();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Import" ng-click="importData()"/>
                         <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessageError1" style="color:red; font-size: 16px;"></p> 
@@ -628,6 +611,8 @@
                         <p id="importMessage6" style="color:green; display:none; font-size: 16px;"></p> 
                         <p id="importMessageError7" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage7" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessageError8" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage8" style="color:green; display:none; font-size: 16px;"></p> 
                         <!-- <div class="wrapper">
                             <p ng-show="content == 'criteriaData'">
                                 <b>CSV file structure example:</b><br>Name, Description, Direction, Measure, Weight, Indifference, Preference, Veto 
@@ -703,6 +688,7 @@
                                 Profiles Performance Table</label></li>
                         </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select None" ng-click="selectNone();"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv names="project.name"/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 

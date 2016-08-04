@@ -100,6 +100,78 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
     console.log('Error: ' + data);
 });
 
+//Create performance view tables
+$scope.perfTbl = function(id){
+  $timeout( function(){ 
+    var table = document.getElementById("perfTable"+id);
+    var resultData = $scope.results[identifier=id];
+    var len = resultData.alternativeValues.length;
+    var lenCriteria = resultData.criterionValues.length;
+    var row = table.insertRow(0);
+    for (var j = 0; j <= lenCriteria; j++) {
+      var cell = row.insertCell(j);
+      cell.setAttribute("id", "headers");
+      cell.setAttribute("style", "font-weight: bold; border-top: 0; border-bottom: 2px solid #ccc;");
+      if(j == 0){
+        cell.innerHTML = "Alternatives/Criteria";
+      }else{
+        cell.innerHTML = resultData.criterionValues[j-1].name;
+      }
+    }
+    for (var i = 1; i <= len; i++) {
+      var row = table.insertRow(i);
+      var cell1 = row.insertCell(0);
+      cell1.setAttribute("id", "headers");
+      cell1.innerHTML = resultData.alternativeValues[i-1].name;
+      for (var k = 0; k < lenCriteria; k++) {
+        var cell2 = row.insertCell(k+1);
+        cell2.setAttribute("id", "headers");
+        for (var n = 0; n < resultData.performanceValues.length; n++) {
+          if(resultData.performanceValues[n].alternative == cell1.innerHTML && resultData.performanceValues[n].criterion == table.rows[0].cells[k+1].innerHTML){
+            cell2.innerHTML = resultData.performanceValues[n].value;
+          }
+        }
+      }
+    }
+  }, 1000);
+}
+
+//Create profile view tables
+$scope.profTbl = function(id){
+  $timeout( function(){ 
+    var table = document.getElementById("profTable"+id);
+    var resultData = $scope.results[identifier=id];
+    var len = resultData.categoryValues.length;
+    var lenCriteria = resultData.criterionValues.length;
+    var row = table.insertRow(0);
+    for (var j = 0; j <= lenCriteria; j++) {
+      var cell = row.insertCell(j);
+      cell.setAttribute("id", "headers");
+      cell.setAttribute("style", "font-weight: bold; border-top: 0; border-bottom: 2px solid #ccc;");
+      if(j == 0){
+        cell.innerHTML = "Reference Actions/Criteria";
+      }else{
+        cell.innerHTML = resultData.criterionValues[j-1].name;
+      }
+    }
+    for (var i = 1; i <= len; i++) {
+      var row = table.insertRow(i);
+      var cell1 = row.insertCell(0);
+      cell1.setAttribute("id", "headers");
+      cell1.innerHTML = resultData.categoryValues[i-1].action;
+      for (var k = 0; k < lenCriteria; k++) {
+        var cell2 = row.insertCell(k+1);
+        cell2.setAttribute("id", "headers");
+        for (var n = 0; n < resultData.profileValues.length; n++) {
+          if(resultData.profileValues[n].action == cell1.innerHTML && resultData.profileValues[n].criterion == table.rows[0].cells[k+1].innerHTML){
+            cell2.innerHTML = resultData.profileValues[n].value;
+          }
+        }
+      }
+    }
+  }, 1000);
+}
+
 var refresh = function(){
   $http.get('/api/project/' + $scope.projectID).success(function(data) {
     $scope.project = data;
@@ -328,6 +400,8 @@ $http.get('/api/project/' + $scope.projectID).success(function(data) {
     } else{
       document.getElementById('methodButtons').disabled = true;
     }
+    $scope.perfTblCurrent();
+    $scope.profTblCurrent();
     $('#loading').hide();
   })
   .error(function(data) {
@@ -415,6 +489,105 @@ $scope.selectAll = function(id){
   document.getElementById("par"+idList).checked = true;
   document.getElementById("pro"+idList).checked = true;
   document.getElementById("note"+idList).checked = true;
+}
+
+//Unselect all checkboxes from the export result options
+$scope.selectNone = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = false;
+  document.getElementById("cri"+idList).checked = false;
+  document.getElementById("alt"+idList).checked = false;
+  document.getElementById("per"+idList).checked = false;
+  document.getElementById("cat"+idList).checked = false;
+  document.getElementById("par"+idList).checked = false;
+  document.getElementById("pro"+idList).checked = false;
+  document.getElementById("note"+idList).checked = false;
+}
+
+//Create performance view tables
+$scope.perfTblCurrent = function(){
+  $("#currentPerformances tbody").remove();
+  $timeout( function(){ 
+  if($scope.performancetables.length == 0){
+    // Do nothing
+  }else{
+    //$timeout( function(){ 
+      var table = document.getElementById("currentPerformances");
+      var resultData = $scope.performancetables;
+      var len = $scope.alternatives.length;
+      var lenCriteria = $scope.criteria.length;
+      var row = table.insertRow(0);
+      for (var j = 0; j <= lenCriteria; j++) {
+        var cell = row.insertCell(j);
+        cell.setAttribute("id", "headers");
+        cell.setAttribute("style", "font-weight: bold; border-top: 0; border-bottom: 2px solid #ccc;");
+        if(j == 0){
+          cell.innerHTML = "Alternatives/Criteria";
+        }else{
+          cell.innerHTML = $scope.criteria[j-1].name;
+        }
+      }
+      for (var i = 1; i <= len; i++) {
+        var row = table.insertRow(i);
+        var cell1 = row.insertCell(0);
+        cell1.setAttribute("id", "headers");
+        cell1.innerHTML = $scope.alternatives[i-1].name;
+        for (var k = 0; k < lenCriteria; k++) {
+          var cell2 = row.insertCell(k+1);
+          cell2.setAttribute("id", "headers");
+          for (var n = 0; n < resultData.length; n++) {
+            if(resultData[n].alternative == cell1.innerHTML && resultData[n].criterion == table.rows[0].cells[k+1].innerHTML){
+              cell2.innerHTML = resultData[n].value;
+            }
+          }
+        }
+      }
+    //}, 1000);
+  }
+  }, 1000);
+}
+
+//Create profile view tables
+$scope.profTblCurrent = function(){
+  $("#currentProfiles tbody").remove();
+  $timeout( function(){ 
+  if($scope.profiletables.length == 0){
+    // Do nothing
+  }else{
+    //$timeout( function(){ 
+      var table = document.getElementById("currentProfiles");
+      var resultData = $scope.profiletables;
+      var len = $scope.categories.length;
+      var lenCriteria = $scope.criteria.length;
+      var row = table.insertRow(0);
+      for (var j = 0; j <= lenCriteria; j++) {
+        var cell = row.insertCell(j);
+        cell.setAttribute("id", "headers");
+        cell.setAttribute("style", "font-weight: bold; border-top: 0; border-bottom: 2px solid #ccc;");
+        if(j == 0){
+          cell.innerHTML = "Reference Actions/Criteria";
+        }else{
+          cell.innerHTML = $scope.criteria[j-1].name;
+        }
+      }
+      for (var i = 1; i <= len; i++) {
+        var row = table.insertRow(i);
+        var cell1 = row.insertCell(0);
+        cell1.setAttribute("id", "headers");
+        cell1.innerHTML = $scope.categories[i-1].action;
+        for (var k = 0; k < lenCriteria; k++) {
+          var cell2 = row.insertCell(k+1);
+          cell2.setAttribute("id", "headers");
+          for (var n = 0; n < resultData.length; n++) {
+            if(resultData[n].action == cell1.innerHTML && resultData[n].criterion == table.rows[0].cells[k+1].innerHTML){
+              cell2.innerHTML = resultData[n].value;
+            }
+          }
+        }
+      }
+    //}, 1000);
+  }
+  }, 1000);
 }
 
 }]);

@@ -61,7 +61,7 @@
                     <div class="navbar-collapse collapse sidebar-navbar-collapse">
                     <ul id="optionList" class="nav navbar-nav">
                         <li id="sections"><a id="aSections" href="" ng-click="changeSection('description');">Description:<br>{{ project.name }}</a></li>
-                        <li id="sectionsCriteria"><a id="dataSetSections" href="" class="active" ng-click="changeSection('criterion');">Criterion Set</a></li>
+                        <li id="sectionsCriteria"><a id="dataSetSections" href="" class="active" ng-click="changeSection('criterion');">Criteria Set</a></li>
                         <li id="sectionsAlternatives"><a id="dataSetSections" href="" ng-click="changeSection('alternative');">Alternative Set &<br>Performance Table</a></li>
                         <li id="sectionsConfigurations"><a id="dataSetSections" href="" ng-click="changeSection('configurations');">Decision Configurations</a></li>
                         <li id="sectionsResults"><a id="dataSetSections" href="" ng-click="changeSection('results');">Execution and Results</a></li>
@@ -86,7 +86,7 @@
                 </p>
         </div>
         <div id="content" class="jumbotron text-center">
-            <h2>Criterion Set</h2>
+            <h2>Criteria Set</h2>
             <br>
             <div ng-show="submitted && myForm.$invalid" class="alert alert-danger">
               <div ng-show="myForm.name.$error.required">
@@ -190,7 +190,7 @@
             <!-- Weight method section -->
             <div id="weightMethod" class="weight box">
                 <hr style="border:1px solid #033773">
-                <h3>Determining weights of criteria</h3>
+                <h3>SRF - Determining weights of criteria</h3>
                 <hr style="border:1px solid #033773">
                 <!-- Instructions section -->
                 <ul id="instructionsSection">
@@ -573,7 +573,7 @@
         </div>
         <!-- Modal -->
         <div class="modal fade" id="myModal" data-backdrop="static" role="dialog" style="z-index: 3;" ng-controller="importController">
-            <div class="modal-dialog" style="width:52%;">
+            <div class="modal-dialog" style="width:57%;">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -595,6 +595,9 @@
                             <li><label for="importAltPer" class="lbl" style="font-weight: normal !important;">
                             <input id="importAltPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"><span class="lbl">
                              Alternatives and Performance Table <input type="file" id="fileUpload4"/></label></li><br>
+                            <li><label for="importAltCriPer" class="lbl" style="font-weight: normal !important;">
+                            <input id="importAltCriPer" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;"><span class="lbl">
+                             Alternatives, Criteria and Performance Table <input type="file" id="fileUpload8"/></label></li><br>
                             <li><label for="importCat" class="lbl" style="font-weight: normal !important;">
                             <input id="importCat" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
                              Categories <input type="file" id="fileUpload5"/></label></li><br>
@@ -605,7 +608,9 @@
                             <input id="importPro" type="checkbox" name="dataType" value="criteriaData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
                              Profile Performance Table <input type="file" id="fileUpload7"/></label></li>
                         </ul>
-                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select None" ng-click="selectNone();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Import" ng-click="importData()"/>
                         <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessageError1" style="color:red; font-size: 16px;"></p> 
@@ -621,7 +626,9 @@
                         <p id="importMessageError6" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage6" style="color:green; display:none; font-size: 16px;"></p> 
                         <p id="importMessageError7" style="color:red; font-size: 16px;"></p> 
-                        <p id="importMessage7" style="color:green; display:none; font-size: 16px;"></p> 
+                        <p id="importMessage7" style="color:green; display:none; font-size: 16px;"></p>
+                        <p id="importMessageError8" style="color:red; font-size: 16px;"></p> 
+                        <p id="importMessage8" style="color:green; display:none; font-size: 16px;"></p>  
                         <!-- <div class="wrapper">
                             <p ng-show="content == 'criteriaData'">
                                 <b>CSV file structure example:</b><br>Name, Description, Direction, Measure, Weight, Indifference, Preference, Veto 
@@ -697,6 +704,7 @@
                                 Profiles Performance Table</label></li>
                         </ul>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAll();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select None" ng-click="selectNone();"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv names="project.name"/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 

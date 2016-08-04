@@ -1,7 +1,7 @@
 app.controller('exportController', ['$scope', '$http', '$resource', '$location', '$window', '$timeout', 'orderByFilter', function ($scope, $http, $resource, $location, $window, $timeout, orderBy) {
 
 $scope.projectID = $location.search().projectId;
-$scope.username = $location.search().n
+$scope.username = $location.search().n;
 $scope.criteriaDone = false;
 $scope.alternativesDone = false;
 $scope.configurationsDone = false;
@@ -14,6 +14,16 @@ $scope.selectAll = function(){
   document.getElementById("exportCat").checked = true;
   document.getElementById("exportPar").checked = true;
   document.getElementById("exportPro").checked = true;
+}
+
+//Unselect all checkboxes from the export section
+$scope.selectNone = function(){
+  document.getElementById("exportCri").checked = false;
+  document.getElementById("exportAlt").checked = false;
+  document.getElementById("exportPerf").checked = false;
+  document.getElementById("exportCat").checked = false;
+  document.getElementById("exportPar").checked = false;
+  document.getElementById("exportPro").checked = false;
 }
 
 }]);

@@ -145,12 +145,36 @@ $scope.createCriterion = function () {
   var criterion = new Criterions();
   criterion.name = $scope.criterion.name;
   criterion.description = $scope.criterion.description;
-  criterion.direction = $scope.criterion.direction;
-  criterion.measure = $scope.criterion.measure;
-  criterion.weight = $scope.criterion.weight;
-  criterion.indifference = $scope.criterion.indifference;
-  criterion.preference = $scope.criterion.preference;
-  criterion.veto = $scope.criterion.veto;
+  if($scope.criterion.direction == ''){
+    criterion.direction = "max";
+  }else{
+    criterion.direction = $scope.criterion.direction;
+  }
+  if($scope.criterion.measure == ''){
+    criterion.measure = "cardinal";
+  }else{
+    criterion.measure = $scope.criterion.measure;
+  }
+  if($scope.criterion.weight == ''){
+    criterion.weight = 0;
+  }else{
+    criterion.weight = $scope.criterion.weight;
+  }
+  if($scope.criterion.indifference == ''){
+    criterion.indifference = 0;
+  }else{
+    criterion.indifference = $scope.criterion.indifference;
+  }
+  if($scope.criterion.preference == ''){
+    criterion.preference = 0;
+  }else{
+    criterion.preference = $scope.criterion.preference;
+  }
+  if($scope.criterion.veto == ''){
+    criterion.veto = 0;
+  }else{
+    criterion.veto = $scope.criterion.veto;
+  }
   $http.post('/api/criterions/' + i, criterion).success(function(response) {
     refresh();
     $scope.criterion.name = '';

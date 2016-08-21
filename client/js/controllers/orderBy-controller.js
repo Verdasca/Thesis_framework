@@ -674,6 +674,33 @@ $scope.selectAll = function(id){
   document.getElementById("note"+idList).checked = true;
 }
 
+//Unselect all checkboxes from the export result options
+$scope.selectNone = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = false;
+  document.getElementById("note"+idList).checked = false;
+}
+
+//Select all checkboxes from the import section
+$scope.selectAllImport = function(){
+  document.getElementById("importDat").checked = true;
+}
+
+//Unselect all checkboxes from the import section
+$scope.selectNoneImport = function(){
+  document.getElementById("importDat").checked = false;
+}
+
+//Select all checkboxes from the export section
+$scope.selectAllExport = function(){
+  document.getElementById("exportData").checked = true;
+}
+
+//Unselect all checkboxes from the export section
+$scope.selectNoneExport  = function(){
+  document.getElementById("exportData").checked = false;
+}
+
 }]);
 
 //Delete data

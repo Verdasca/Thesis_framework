@@ -36,7 +36,7 @@
             </div>
             <ul class="nav navbar-nav navbar-right">
                 <li><a id="textNav" style="font-size:18px">User: {{ username }} </a></li>
-                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Project Set</a></li>
+                <li><a id="textNav" href="" ng-click="projectSection();"><span class="glyphicon glyphicon-list-alt"></span> Back to Projects</a></li>
                 <li><a id="textNav" href="" onclick="window.location = '/login.html'"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
             </ul>
         </div>
@@ -118,7 +118,9 @@
                             <input id="importDat" type="checkbox" name="dataType" value="infoData" class="importRatio" style="margin-bottom: 5px;" checked><span class="lbl">
                              Data <input type="file" id="fileUpload"/></label></li>
                         </ul>
-                        <input class="btn btn-default ng-isolate-scope" type="button" id="upload" value="Import" ng-click="importData()"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAllImport();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select None" ng-click="selectNoneImport();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Import" ng-click="importData()"/>
                         <br/><br/>
                         <p id="importMessageError" style="color:red; font-size: 16px;"></p> 
                         <p id="importMessage" style="color:green; display:none; font-size: 16px;"></p> 
@@ -150,6 +152,8 @@
                                 <input class="exportChoice" type="checkbox" id="exportData" name="dataBox" checked><span class="lbl">
                                 Data</label></li>
                         </ul>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select All" ng-click="selectAllExport();"/>
+                        <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Select None" ng-click="selectNoneExport();"/>
                         <input class="btn btn-default ng-isolate-scope" type="button" id="exportCSV" value="Export" export-to-csv names="project.name"/>
                         <br/><br/>
                         <p id="exportMessageError" style="color:red; font-size: 16px; display:none;"></p> 

@@ -30,6 +30,15 @@ $scope.data2 = {
     ],
 };
 
+// Update the name and notes from the result
+$scope.editResults = function(res, id){
+  var projectID = $scope.project._id;
+  var pro = {name: res.name, notes: res.resultNotes};
+  $http.put('/api/editResults/' + id + '/' + projectID, pro).success(function(response) {
+
+  });
+}
+
 $scope.arrayFiles = [];
 $scope.dataResults = function(number){
   $scope.arrayFiles = [];
@@ -576,11 +585,11 @@ $scope.buildDataSetTable = function(){
   var row2 = table.insertRow(1);
   var cellAdd2 = row2.insertCell(0);
   //cellAdd2.setAttribute("id", "dataBody2");
-  cellAdd2.innerHTML = "<input type='button' value='Add Data' onclick='createData()' class='btn btn-primary'/>";
+  cellAdd2.innerHTML = "<input type='button' value='Add Data Element' onclick='createData()' class='btn btn-primary'/>";
   for (var m = 0; m < cells; m++) {
     var cellAdd = row2.insertCell(m+1);
     cellAdd.setAttribute("id", "dataBody2");
-    cellAdd.innerHTML = "<input id='dataInput2' type='text' placeholder='Data' name='data' ng-model='data'/>";
+    cellAdd.innerHTML = "<input id='dataInput2' type='text' placeholder='New Data Element' name='data' ng-model='data'/>";
   }
   // Add current data
   for (var i = 0; i < rows; i++) {
@@ -626,11 +635,11 @@ $scope.createDataSet = function(){
   var row2 = table.insertRow(1);
   var cellAdd2 = row2.insertCell(0);
   //cellAdd2.setAttribute("id", "dataBody2");
-  cellAdd2.innerHTML = "<input type='button' value='Add Data' onclick='createData2()' class='btn btn-primary'/>";
+  cellAdd2.innerHTML = "<input type='button' value='Create Data Set' onclick='createData2()' class='btn btn-success'/>";
   for (var m = 0; m < cellsNumber; m++) {
     var cellAdd = row2.insertCell(m+1);
     cellAdd.setAttribute("id", "dataBody2");
-    cellAdd.innerHTML = "<input id='dataInput2' type='text' placeholder='Data' name='data' ng-model='data'/>";
+    cellAdd.innerHTML = "<input id='dataInput2' type='text' placeholder='New Data Element' name='data' ng-model='data'/>";
   }
   $('#loading').hide();
 }
@@ -766,7 +775,6 @@ function createData2(){
   var jsonData = angular.toJson(dataList);
   updateDataFile(jsonData);
 }
-
 
 //Export into a .csv file 
 app.directive('exportToCsv',function(){

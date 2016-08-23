@@ -83,6 +83,26 @@ module.exports.edit = function (req, res) {
     });
 }
 
+module.exports.editResults = function (req, res) {
+    var projectID = req.params.projectId;
+    var resultID = req.params.id;
+    var newName = req.body.name;
+    var notes = req.body.notes;
+    Project.findOneAndUpdate( 
+        { '_id': projectID, 'results.identifier': resultID },
+        { $set: {'results.$.name': newName,  'results.$.resultNotes': notes} },
+        {upsert:true},
+        function(err,project){
+            if(err){
+                console.log('error occured');
+                res.send(err);
+            }else{
+                //console.log(project);
+                res.send(project);
+            }    
+    });
+}
+
 //Add new result into the project
 module.exports.addResult = function (req, res) {
     console.log('Adding results...');

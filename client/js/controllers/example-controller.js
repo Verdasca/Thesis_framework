@@ -56,6 +56,15 @@ var refresh = function(){
   });
 }
 
+// Update the name and notes from the result
+$scope.editResults = function(res, id){
+  var projectID = $scope.project._id;
+  var pro = {name: res.name, notes: res.resultNotes};
+  $http.put('/api/editResults/' + id + '/' + projectID, pro).success(function(response) {
+
+  });
+}
+
 // Change section and give the project id as argument
 $scope.changeSection = function(name){
   var id = $scope.projectID;

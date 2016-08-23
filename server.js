@@ -86,6 +86,7 @@ app.post('/api/reloadProjectOrderPeople/:projectId/:id', projectsController.relo
 app.put('/api/project/:id', projectsController.edit);
 app.put('/api/projectAddResult/:projectId', projectsController.addResult);
 app.put('/api/projectSaveResult/:id/:projectId', projectsController.saveResult);
+app.put('/api/editResults/:id/:projectId', projectsController.editResults);
 app.delete('/api/project/:id/:projectId', projectsController.delete);
 app.delete('/api/projects/:projectId/:id', projectsController.deleteResult);
 //Alternative 

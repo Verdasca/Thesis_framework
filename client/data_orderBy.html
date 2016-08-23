@@ -65,16 +65,17 @@
             <br/>
             <!-- Table example -->
             <div id="createDataDiv">
-                <label id="dataLambda" style="font-size:16px;">Number of attributes: </label>
+                <label id="dataLambda" style="font-size:16px;">Number of attributes for the new data set: </label>
                 <input id='attributeNumber' type='number' name='attributeNumber' value="1" min="1"/>
-                <input type='button' value='Create New Data Set' ng-click='createDataSet()' class='btn btn-success'/>
+                <input type='button' value='Add New Attributes' ng-click='createDataSet()' class='btn btn-info'/>
             </div>
-            <br/>
+            <small style="font-size:14px; color:#999;">The attribute names are defined on the table below, after adding the respective number.</small>
+            <br/><br/><br/>
             <table id="dataTable" class="table horizontal">
             </table>
             <table id="resultTbl" class="table horizontal" style="display:none;">
             </table>
-            <br/><br/><br/>
+            <br/>
             <hr style="border:1px solid #033773">
             <h2>Configurations</h2>
             <br/>

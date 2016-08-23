@@ -590,6 +590,15 @@ $scope.profTblCurrent = function(){
   }, 1000);
 }
 
+// Update the name and notes from the result
+$scope.editResults = function(res, id){
+  var projectID = $scope.project._id;
+  var pro = {name: res.name, notes: res.resultNotes};
+  $http.put('/api/editResults/' + id + '/' + projectID, pro).success(function(response) {
+
+  });
+}
+
 }]);
 
 app.filter('split', function() {

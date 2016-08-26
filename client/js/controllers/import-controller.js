@@ -562,7 +562,7 @@ function UploadAlternativesAndPerformances(){
         //Check number of columns
         var c = rows[0].split(",");
         var numCells = c.length;
-        if(numCells != $scope.projectUpdated.criteria.length + 1){
+        if(numCells <= 1){
         	document.getElementById("importMessageError4").innerHTML = "Alternatives and Performance Table CSV file rejected: number of columns are incorrect or insufficient (possibly wrong number of existing criteria).";
           	document.getElementById("importMessageError4").style.display = "block";
           	$('#importing').hide();
@@ -746,7 +746,7 @@ function UploadProfiles(){
         var rows = e.target.result.split("\n");
         //Check number of rows
         var numRows = rows.length;
-        if(numRows != $scope.projectUpdated.categories.length + 1){
+        if(numRows <= 1){
 	        document.getElementById("importMessageError8").innerHTML = "Profile Performance Table CSV file rejected: number of rows are incorrect or insufficient (possibly wrong number of existing categories).";
 	        document.getElementById("importMessageError8").style.display = "block";
 	        $('#importing').hide();
@@ -755,7 +755,7 @@ function UploadProfiles(){
         //Check number of columns
         var c = rows[0].split(",");
         var numCells = c.length;
-        if(numCells != $scope.projectUpdated.criteria.length + 1){
+        if(numCells <= 1){
         	document.getElementById("importMessageError8").innerHTML = "Profile Performance Table CSV file rejected: number of columns are incorrect or insufficient (possibly wrong number of existing criteria).";
           	document.getElementById("importMessageError8").style.display = "block";
           	$('#importing').hide();

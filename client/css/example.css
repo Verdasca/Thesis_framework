@@ -359,6 +359,13 @@
     font-size: 16px;
 }
 
+#exportCSV{
+    display: inline;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 16px;
+}
+
 #selectionTitle{
     text-align: right;
     vertical-align: top;

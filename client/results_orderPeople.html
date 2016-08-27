@@ -147,7 +147,8 @@
             <table id="resultTbl" class="table horizontal" ng-show="!showCurrentData">
                 <tr class="noBorder"> 
                     <td>
-                        <h4 id="titleTbl2">Data - Attribute: {{ project.orderAttribute }}, Order Type: {{ project.orderType }}</h4>
+                        <h3 ng-show="!showCurrentData">Current Data</h3>
+                        <h4 id="titleTbl2">Attribute: {{ project.orderAttribute }}. Order Type: {{ project.orderType }}.</h4>
                         <table style="background-color:white;" class=" table borderless">
                             <thead>
                                 <th id="headers">Name</th>

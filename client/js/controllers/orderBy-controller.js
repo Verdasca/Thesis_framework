@@ -852,7 +852,7 @@ app.directive('exportResultToCsv',function(){
               zip.file(scope.names+"/results.csv", csvString);
             }
             if(document.getElementById('note'+scope.values).checked == true){
-              var notes = document.getElementById("notes"+scope.values).innerHTML;
+              var notes = document.getElementById("notes"+scope.values).children[0].value;
               var csvString = 'Notes:';
               csvString = csvString + "\n";
               csvString = csvString + notes;

@@ -85,10 +85,10 @@
                         <button ng-click="showResult = ! showResult" class="btn btn-success" ng-show="!showResult">View</button>
                         <button ng-click="showResult = ! showResult" class="btn btn-success" ng-show="showResult">Hide</button>
                         <div class="btn-group">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button type="button" style="z-index:1;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Export Results<span class="caret"></span>
                           </button>
-                          <ul class="dropdown-menu keep-open-on-click" style="font-size: 16px;padding: 10px; min-width: 247px;">
+                          <ul class="dropdown-menu keep-open-on-click" style="font-size: 16px;padding: 10px; min-width: 247px; z-index:2;">
                             <li><a href="#" export-result-to-csv values="res.identifier" names="res.name"><b>Export</b></a></li>
                             <li role="separator" class="divider"></li>
                             <li>

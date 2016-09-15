@@ -272,8 +272,14 @@
                         <button ng-click="reloadData(res, res.identifier)" class="btn btn-info">Reload</button>
                     </td> 
                     <td id="titleTbl3" style="width:17%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultDate | date:'yyyy-MM-dd HH:mm:ss' }}</td> 
-                    <td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.name }}</td> 
-                    <td id="notes{{ res.identifier }}" style="text-align:left;vertical-align: middle;font-size: 16px;padding-left: 0; width:27%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultNotes}}</td> 
+                    <!--//<td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.name }}</td> 
+                    //<td id="notes{{ res.identifier }}" style="text-align:left;vertical-align: middle;font-size: 16px;padding-left: 0; width:27%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">{{ res.resultNotes}}</td> -->
+                    <td id="titleTbl3" style="width:21%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
+                        <input style="width:95%;" id="titleTbl3" type="text" value="{{ res.name }}" placeholder="Results name" ng-model="res.name" ng-change="editResults(res, res.identifier);"/>
+                    </td> 
+                    <td id="notes{{ res.identifier }}" style="text-align:left;vertical-align: middle;font-size: 16px;padding-left: 0; width:27%; border-top: 1px solid #ddd; padding-top: 10px; padding-bottom: 10px;">
+                        <input id="titleTbl3" style="width:100%;" type="text" value="{{ res.resultNotes }}" placeholder="Results notes" ng-model="res.resultNotes" ng-change="editResults(res, res.identifier);"/>
+                    </td> 
                 </tr>
                 <tr ng-show="showError"> 
                     <td colspan="4">

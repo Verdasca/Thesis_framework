@@ -8,6 +8,8 @@ $scope.userId = $location.search().userId;
 
 $('#loading').hide();
 
+$scope.project = {};
+
 $scope.data = {
     repeatSelect: 'notSelected',
     availableOptions: [

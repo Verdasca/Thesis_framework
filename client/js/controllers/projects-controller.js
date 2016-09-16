@@ -73,6 +73,8 @@ $scope.deleteProject = function(project) {
   $('#loading').show();
   var i = $scope.user._id;
   var id = project._id;
+  var r = confirm("Are you sure you want to delete the project "+project.name+ "?");
+  if(r){
   if(project.methodChosen == 'Order By'){
     // Delete project folder
     $http.get('/deleteProject/' + id ).success(function(data) {
@@ -94,6 +96,9 @@ $scope.deleteProject = function(project) {
       }
       refresh();
     });
+  }else{
+    $('#loading').hide();
+  }
 }
 
 //Update the value and reset model

@@ -241,6 +241,8 @@ $scope.createPerson = function () {
 $scope.deletePerson = function(person) {
   var i = $scope.project._id;
   var id = person._id;
+  var r = confirm("Are you sure you want to delete "+person.name+ "?");
+  if(r){
   $http.delete('/api/person/' + i + '/' + id)
     .success(function() {
       console.log("success");
@@ -262,6 +264,7 @@ $scope.deletePerson = function(person) {
       checkStatus();
       refresh();
     });
+  }
 }
 
 //Update the value and reset model
@@ -393,24 +396,27 @@ $scope.saveResult = function(results){
 $scope.deleteResult = function(result, identifier) {
   var i = $scope.project._id;
   var id = identifier;
-  $http.delete('/api/projects/' + i + '/' + id)
-    .success(function() {
-      console.log("success");
-      var idx = $scope.results.indexOf(result);
-      if (idx >= 0) {
-        $scope.results.splice(idx, 1);
-      }
-      $scope.updateProject();
-      refreshResults();
-    })
-    .error(function() {
-      var idx = $scope.results.indexOf(result);
-      if (idx >= 0) {
-        $scope.results.splice(idx, 1);
-      }
-      $scope.updateProject();
-      refreshResults();
-    });
+  var r = confirm("Are you sure you want to delete the results "+result.name+ "?");
+  if(r){
+    $http.delete('/api/projects/' + i + '/' + id)
+      .success(function() {
+        console.log("success");
+        var idx = $scope.results.indexOf(result);
+        if (idx >= 0) {
+          $scope.results.splice(idx, 1);
+        }
+        $scope.updateProject();
+        refreshResults();
+      })
+      .error(function() {
+        var idx = $scope.results.indexOf(result);
+        if (idx >= 0) {
+          $scope.results.splice(idx, 1);
+        }
+        $scope.updateProject();
+        refreshResults();
+      });
+  }
 }
 
 var refreshResults = function(){
@@ -692,6 +698,8 @@ app.directive('exportEverythingToCsv',function($timeout){
         var el = element[0];
         element.bind('click', function(e){
           var zip = new JSZip();
+          document.getElementById('exportRS').style.display = "none";
+          document.getElementById('exportRF').style.display = "none";
           if(document.getElementById('res'+scope.values).checked == true){
             var table = document.getElementById("resultsTable"+scope.values);
             var csvString = '';
@@ -714,11 +722,14 @@ app.directive('exportEverythingToCsv',function($timeout){
             zip.file(scope.names+"/notes.txt", csvString);
           }
           if(document.getElementById('res'+scope.values).checked == true || document.getElementById('note'+scope.values).checked == true){
+            document.getElementById('exportRS').style.display = "";
             zip.generateAsync({type:"blob"})
             .then(function(content) {
                 // see FileSaver.js
                 saveAs(content, scope.names+".zip");
             });
+          }else{
+            document.getElementById('exportRF').style.display = "";
           }
         });
       }, 1000);

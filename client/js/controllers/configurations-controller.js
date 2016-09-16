@@ -242,27 +242,33 @@ $scope.deleteCategory = function(category) {
   $('#loading').show();
   var i = $scope.project._id;
   var id = category._id;
-  $http.delete('/api/category/' + i + '/' + id)
-    .success(function() {
-      console.log("success");
-      var idx = $scope.categories.indexOf(category);
-      if (idx >= 0) {
-        $scope.categories.splice(idx, 1);
-      }
-      $scope.updateProject();
-      refresh();
-      checkStatus();
-    })
-    .error(function() {
-      //console.log('Error: ' + i);
-      var idx = $scope.categories.indexOf(category);
-      if (idx >= 0) {
-        $scope.categories.splice(idx, 1);
-      }
-      $scope.updateProject();
-      refresh();
-      checkStatus();
-    });
+  var r = confirm("Are you sure you want to delete the category "+category.name+ "?");
+  if(r){
+    $http.delete('/api/category/' + i + '/' + id)
+      .success(function() {
+        console.log("success");
+        var idx = $scope.categories.indexOf(category);
+        if (idx >= 0) {
+          $scope.categories.splice(idx, 1);
+        }
+        $scope.updateProject();
+        refresh();
+        checkStatus();
+        $scope.resetProfileTable();
+      })
+      .error(function() {
+        //console.log('Error: ' + i);
+        var idx = $scope.categories.indexOf(category);
+        if (idx >= 0) {
+          $scope.categories.splice(idx, 1);
+        }
+        $scope.updateProject();
+        refresh();
+        checkStatus();
+      });
+  }else{
+    $('#loading').hide();
+  }
 }
 
 //Edit category

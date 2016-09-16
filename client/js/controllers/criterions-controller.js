@@ -196,25 +196,28 @@ $scope.createCriterion = function () {
 $scope.deleteCriterion = function(criterion) {
   var i = $scope.project._id;
   var id = criterion._id;
-  $http.delete('/api/criterion/' + i + '/' + id)
-    .success(function(data) {
-      var idx = $scope.criterions.indexOf(criterion);
-      if (idx >= 0) {
-        $scope.criterions.splice(idx, 1);
-      }
-      $scope.updateProject();
-      $scope.hideWeightMethod();
-      refresh();
-    })
-    .error(function(data) {
-      var idx = $scope.criterions.indexOf(criterion);
-      if (idx >= 0) {
-        $scope.criterions.splice(idx, 1);
-      }
-      $scope.updateProject();
-      $scope.hideWeightMethod();
-      refresh();
-    });
+  var r = confirm("Are you sure you want to delete the criterion "+criterion.name+ "?");
+  if(r){
+    $http.delete('/api/criterion/' + i + '/' + id)
+      .success(function(data) {
+        var idx = $scope.criterions.indexOf(criterion);
+        if (idx >= 0) {
+          $scope.criterions.splice(idx, 1);
+        }
+        $scope.updateProject();
+        $scope.hideWeightMethod();
+        refresh();
+      })
+      .error(function(data) {
+        var idx = $scope.criterions.indexOf(criterion);
+        if (idx >= 0) {
+          $scope.criterions.splice(idx, 1);
+        }
+        $scope.updateProject();
+        $scope.hideWeightMethod();
+        refresh();
+      });
+  }
 }
 
 //Edit criterion

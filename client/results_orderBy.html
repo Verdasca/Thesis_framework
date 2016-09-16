@@ -83,7 +83,10 @@
                             Export Results<span class="caret"></span>
                           </button>
                           <ul id="ulList{{ res.identifier }}" class="dropdown-menu keep-open-on-click" style="font-size: 16px;padding: 10px; min-width: 247px; z-index:2;">
-                            <li><a href="#" export-result-to-csv values="res.identifier" names="res.name"><b>Export</b></a></li>
+                            <li style="text-align:center;"><a href="#" export-result-to-csv values="res.identifier" names="res.name" style="padding:0;"><button style="width: 100%;" class="btn btn-default"><b>Export</b></button></a>
+                                <small id="exportRS" style="display:none; color:green;">Export successfully.</small>
+                                <small id="exportRF" style="display:none; color:red;">Data to export not selected.</small>
+                            </li>
                             <li role="separator" class="divider"></li>
                             <li>
                                 <label for="res{{ res.identifier }}" class="lbl">
@@ -94,8 +97,8 @@
                                 <input class="exportChoice" type="checkbox" id="note{{ res.identifier }}" checked><span class="lbl">
                                 Notes</label></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#" ng-click="selectAll(res.identifier);"><b>Select All</b></a></li>
-                            <li><a href="#" ng-click="selectNone(res.identifier);"><b>Select None</b></a></li>
+                            <li><a href="#" ng-click="selectAll(res.identifier);" style="padding:0;"><button style="width:100%; margin-bottom: 5px;" class="btn btn-default"><b>Select All</b></button></a></li>
+                            <li><a href="#" ng-click="selectNone(res.identifier);" style="padding:0;"><button style="width:100%;" class="btn btn-default"><b>Select None</b></button></a></li>
                           </ul>
                         </div>
                         <button ng-click="deleteResult(res, res.identifier)" class="btn btn-danger">Delete</button>

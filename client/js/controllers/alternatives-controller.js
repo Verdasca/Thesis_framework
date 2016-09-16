@@ -244,27 +244,33 @@ $scope.deleteAlternative = function(alternative) {
   $('#loading').show();
   var i = $scope.project._id;
   var id = alternative._id;
-  $http.delete('/api/alternative/' + i + '/' + id)
-    .success(function() {
-      console.log("success");
-      var idx = $scope.alternatives.indexOf(alternative);
-      if (idx >= 0) {
-        $scope.alternatives.splice(idx, 1);
-      }
-      $scope.updateProject();
-      refreshAlternatives();
-      checkStatus();
-    })
-    .error(function() {
-      //console.log('Error: ' + i);
-      var idx = $scope.alternatives.indexOf(alternative);
-      if (idx >= 0) {
-        $scope.alternatives.splice(idx, 1);
-      }
-      $scope.updateProject();
-      refreshAlternatives();
-      checkStatus();
-    });
+  var r = confirm("Are you sure you want to delete the alternative "+alternative.name+ "?");
+  if(r){
+    $http.delete('/api/alternative/' + i + '/' + id)
+      .success(function() {
+        console.log("success");
+        var idx = $scope.alternatives.indexOf(alternative);
+        if (idx >= 0) {
+          $scope.alternatives.splice(idx, 1);
+        }
+        $scope.updateProject();
+        refreshAlternatives();
+        checkStatus();
+        $scope.resetPerformanceTable();
+      })
+      .error(function() {
+        //console.log('Error: ' + i);
+        var idx = $scope.alternatives.indexOf(alternative);
+        if (idx >= 0) {
+          $scope.alternatives.splice(idx, 1);
+        }
+        $scope.updateProject();
+        refreshAlternatives();
+        checkStatus();
+      });
+  }else{
+    $('#loading').hide();
+  }
 }
 
 //Edit alternative

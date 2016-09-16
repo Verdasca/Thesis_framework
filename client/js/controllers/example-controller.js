@@ -98,6 +98,20 @@ $scope.updateProject = function() {
   });
 }
 
+//Select all checkboxes from the export result options
+$scope.selectAll = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = true;
+  document.getElementById("note"+idList).checked = true;
+}
+
+//Unselect all checkboxes from the export result options
+$scope.selectNone = function(id){
+  var idList = id;
+  document.getElementById("res"+idList).checked = false;
+  document.getElementById("note"+idList).checked = false;
+}
+
 // Update status to see if the execute button can be pressed
 var checkStatus = function(){
   // See if data set is done or not, if not cannot execute method
@@ -517,28 +531,31 @@ $scope.saveResult = function(results){
 $scope.deleteResult = function(result, identifier) {
   var i = $scope.project._id;
   var id = identifier;
-  $http.delete('/api/projects/' + i + '/' + id)
-    .success(function() {
-      console.log("success");
-      var idx = $scope.results.indexOf(result);
-      if (idx >= 0) {
-        $scope.results.splice(idx, 1);
-      }
-      $http.get('/deleteResult/' + $scope.projectID + '/'+id).success(function(data) {
+  var r = confirm("Are you sure you want to delete the results "+result.name+ "?");
+  if(r){
+    $http.delete('/api/projects/' + i + '/' + id)
+      .success(function() {
+        console.log("success");
+        var idx = $scope.results.indexOf(result);
+        if (idx >= 0) {
+          $scope.results.splice(idx, 1);
+        }
+        $http.get('/deleteResult/' + $scope.projectID + '/'+id).success(function(data) {
+        })
+        $scope.updateProject();
+        refreshResults();
       })
-      $scope.updateProject();
-      refreshResults();
-    })
-    .error(function() {
-      var idx = $scope.results.indexOf(result);
-      if (idx >= 0) {
-        $scope.results.splice(idx, 1);
-      }
-      $http.get('/deleteResult/' + $scope.projectID + '/'+id).success(function(data) {
-      })
-      $scope.updateProject();
-      refreshResults();
-    });
+      .error(function() {
+        var idx = $scope.results.indexOf(result);
+        if (idx >= 0) {
+          $scope.results.splice(idx, 1);
+        }
+        $http.get('/deleteResult/' + $scope.projectID + '/'+id).success(function(data) {
+        })
+        $scope.updateProject();
+        refreshResults();
+      });
+  }
 }
 
 // Refresh results
@@ -807,23 +824,26 @@ updateDataFile = function(jsonData){
 function deleteData(data){
   var d = data;
   //console.log(d);
-  //Delete row
-  document.getElementById("dataTable").deleteRow(d);
-  var table = document.getElementById("dataTable");
-  var len = table.rows.length;
-  var header = table.rows[0];
-  var columns = table.rows[0].cells.length;
-  var dataList = [];
-  for (var i = 2; i < len; i++) {
-    var data = {};
-    for (var j = 1; j < columns; j++) {
-      data[header.cells[j].innerHTML] = table.rows[i].cells[j].innerHTML;
+  var r = confirm("Are you sure you want to delete?");
+  if(r){
+    //Delete row
+    document.getElementById("dataTable").deleteRow(d);
+    var table = document.getElementById("dataTable");
+    var len = table.rows.length;
+    var header = table.rows[0];
+    var columns = table.rows[0].cells.length;
+    var dataList = [];
+    for (var i = 2; i < len; i++) {
+      var data = {};
+      for (var j = 1; j < columns; j++) {
+        data[header.cells[j].innerHTML] = table.rows[i].cells[j].innerHTML;
+      }
+      dataList.push(data);
     }
-    dataList.push(data);
+    var jsonData = angular.toJson(dataList);
+    //console.log(jsonData);
+    updateDataFile(jsonData);
   }
-  var jsonData = angular.toJson(dataList);
-  //console.log(jsonData);
-  updateDataFile(jsonData);
 }
 
 //Add new data to the file
@@ -1037,6 +1057,8 @@ app.directive('exportResultToCsv',function(){
         var el = element[0];
           element.bind('click', function(e){
             var zip = new JSZip();
+            document.getElementById('exportRS').style.display = "none";
+            document.getElementById('exportRF').style.display = "none";
             var table = document.getElementById("resultsTable"+scope.values);
             var csvString = '';
             for(var i=0; i<table.rows.length;i++){
@@ -1049,11 +1071,16 @@ app.directive('exportResultToCsv',function(){
           }
             csvString = csvString.substring(0, csvString.length - 1);
             zip.file(scope.names+"/results.csv", csvString);
-            zip.generateAsync({type:"blob"})
+            if(document.getElementById('res'+scope.values).checked == true || document.getElementById('note'+scope.values).checked == true){
+              document.getElementById('exportRS').style.display = "";
+              zip.generateAsync({type:"blob"})
               .then(function(content) {
-                // see FileSaver.js
-                saveAs(content, scope.names+".zip");
-            });
+                  // see FileSaver.js
+                  saveAs(content, scope.names+".zip");
+              });
+            }else{
+              document.getElementById('exportRF').style.display = "";
+            }
           });
       }
     }

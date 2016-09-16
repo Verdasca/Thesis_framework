@@ -63,6 +63,8 @@ $scope.createProject = function (nameValid) {
     $http.post('/api/projects/' + i, project).success(function(response) {
       $scope.project.name = '';
       $scope.project.notes = '';
+      $scope.data.repeatSelect = 'notSelected';
+      $scope.showProject = !$scope.showProject;
       refresh();
     });
   }
@@ -183,6 +185,19 @@ $scope.cloneProject = function(project){
       console.log('Error: ' + data);
       refresh();
   });
+}
+
+// Cancel project before creating it, update input boxes and messages
+$scope.cancelProject = function(){
+  document.getElementById("noName").style.display = 'none';
+  document.getElementById("noMethod").style.display = 'none';
+  if($scope.project.name =! ''){
+    $scope.project.name = '';
+  }
+  if($scope.project.notes =! ''){
+    $scope.project.notes = '';
+  }
+  $scope.data.repeatSelect = 'notSelected';
 }
 
 }]);

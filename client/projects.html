@@ -78,9 +78,13 @@
                     <tr ng-repeat="project in projects" ng-include="getTemplate(project)">
                     </tr>
                     <tr>
-                        <td><input type="button" value="Create Project" ng-click="createProject(myForm.name.$valid)" class="btn btn-primary"/>
+                        <td>
+                            <button ng-click="showProject = ! showProject" class="btn btn-success" ng-show="!showProject">Add New Project</button>
+                            <input type="button" value="Create Project" ng-click="createProject(myForm.name.$valid)" class="btn btn-success" ng-show="showProject"/>
+                            <button ng-click="showProject = ! showProject; cancelProject()" class="btn btn-danger" ng-show="showProject">Cancel</button> 
                         </td>
-                        <td colspan="5">
+                        <td colspan="5" ng-show="!showProject"></td>
+                        <td colspan="5" ng-show="showProject">
                             <input id="projectInput" style="width:30%; display:inline-table !important;" value="" type="text" placeholder="Project name" name="name" ng-model="project.name" required/>
                            <!--  <p id="noName" style="display: none; color:red;">Please insert a name for the project!</p> -->
                         <!-- </td>
